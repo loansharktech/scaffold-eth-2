@@ -1,14 +1,15 @@
 @import "tailwindcss/base";
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
-
-:root,
-[data-theme] {
-  background: hsl(var(--b2));
-}
+@import "./preflight.css";
 
 body {
   min-height: 100vh;
+  background: #fff;
+  font-family: "Inter", -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans,
+    Droid Sans, Helvetica Neue, sans-serif;
+  --nav-height: 68px;
+  --main-height: calc(100vh - var(--nav-height));
 }
 
 h1,
@@ -29,4 +30,30 @@ p {
 
 .btn.btn-ghost {
   @apply shadow-none;
+}
+
+@layer components {
+  .layout-block {
+    @apply mx-auto max-w-[1440px];
+  }
+  .action {
+    @apply transition-all hover:cursor-pointer hover:opacity-80;
+  }
+}
+
+.mantine-Table-root thead tr th {
+  color: #2679b8;
+  font-size: 15px;
+  font-weight: 400;
+  height: 62px;
+  border-color: #e3f2ff !important;
+  white-space: nowrap;
+}
+
+.mantine-Table-root tbody tr {
+  height: 108px;
+}
+
+.mantine-Table-root tbody td {
+  border-color: #e3f2ff !important;
 }

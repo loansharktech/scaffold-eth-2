@@ -3,6 +3,9 @@ module.exports = {
   content: ["./pages/**/*.{js,ts,jsx,tsx}", "./components/**/*.{js,ts,jsx,tsx}", "./utils/**/*.{js,ts,jsx,tsx}"],
   plugins: [require("daisyui")],
   darkTheme: "scaffoldEthDark",
+  corePlugins: {
+    preflight: false,
+  },
   // DaisyUI theme colors
   daisyui: {
     themes: [
@@ -88,8 +91,18 @@ module.exports = {
     ],
   },
   theme: {
+    backgroundImage: {
+      leadingBg: "url('/assets/leading-bg.png')",
+    },
     // Extend Tailwind classes (e.g. font-bai-jamjuree, animate-grow)
     extend: {
+      colors: {
+        dark1: "#001910",
+        dark2: "#131C23",
+        blue: "#039DED",
+        bg_dark: "#131C23",
+        green: "#55CB30",
+      },
       fontFamily: {
         "bai-jamjuree": ["Bai Jamjuree", "sans-serif"],
       },
