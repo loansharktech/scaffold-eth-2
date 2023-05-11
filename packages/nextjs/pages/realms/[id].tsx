@@ -23,7 +23,7 @@ const RealmPage: NextPage = () => {
       </Head>
       <main className="bg-white h-[--main-height] flex flex-col sm:flex-row">
         <SideMenu></SideMenu>
-        <div className="flex-1 bg-leadingBg bg-no-repeat bg-cover sm:bg-[70%_auto] h-full overflow-y-scroll">
+        <div className="flex-1 bg-leadingBg bg-no-repeat bg-cover bg-center sm:bg-[70%_auto] h-full overflow-y-scroll">
           <div className="max-w-[1055px] mx-auto pt-[33px] px-4">
             {!realm ? (
               <div></div>
