@@ -7,15 +7,20 @@ const SideMenu: FunctionComponent = () => {
   const { query } = useRouter();
   const id = query.id as string;
   return (
-    <div className="w-[270px] p-[17px] border-r border-r-[#D7F0F]">
-      <div className="flex flex-col gap-y-2">
+    <div
+      className="px-4 sm:w-[270px] sm:p-[17px] border-r border-r-[#D7F0F] overflow-x-scroll scrollbar-hide"
+      style={{
+        boxShadow: "2px 4px 4px rgba(148, 148, 148, 0.1)",
+      }}
+    >
+      <div className="flex sm:flex-col gap-y-2">
         {realms.map(realm => {
           const isActive = id === realm.id;
           return (
             <Link href={`/realms/${realm.id}`} key={realm.id}>
               <div
-                className={`px-4 py-[10px] action transition-all ${
-                  isActive ? "bg-[#C6DFEC] rounded-lg font-semibold" : ""
+                className={`whitespace-nowrap px-4 py-[10px] action transition-all ${
+                  isActive ? "text-[#039DED] sm:bg-[#C6DFEC] rounded-lg font-semibold" : ""
                 }`}
               >
                 {realm.name}

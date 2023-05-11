@@ -11,19 +11,14 @@ const Home: NextPage = () => {
         <title>Leading</title>
         <meta name="description" content="Loanshark Scroll Alpha Testnet" />
       </Head>
-      <main
-        className="bg-white min-h-[--main-height] bg-leadingBg bg-contain bg-no-repeat bg-center flex flex-col items-center justify-between pt-[50px] pb-[60px]"
-        style={{
-          backgroundSize: "auto",
-        }}
-      >
+      <main className="w-screen bg-white h-[--main-height] overflow-y-scroll bg-cover sm:bg-[70%_auto] bg-leadingBg bg-no-repeat bg-center flex flex-col items-center justify-between pt-[50px] pb-[60px]">
         <div className="flex flex-col items-center">
           <ValueLocked></ValueLocked>
           <div className="mt-[73px]">
             <Pools></Pools>
           </div>
         </div>
-        <div className="mt-[178px]">
+        <div className="mt-20 sm:mt-[178px]">
           <Footer></Footer>
         </div>
       </main>

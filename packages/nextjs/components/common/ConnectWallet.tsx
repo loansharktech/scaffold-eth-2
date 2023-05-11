@@ -18,9 +18,9 @@ const ConnectWallet: FC = () => {
   const invalidNetwork = chain?.id !== targetNetwork.id;
 
   return (
-    <div className="flex gap-3">
+    <div className="flex gap-3 items-center">
       {!isLogin && (
-        <div className="py-[10px] px-5 rounded-lg bg-[#C6DFEC] action" onClick={login}>
+        <div className="py-[10px] px-5 rounded-lg bg-[#C6DFEC] action " onClick={login}>
           Connect Wallet
         </div>
       )}

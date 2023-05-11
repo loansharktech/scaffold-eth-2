@@ -21,17 +21,12 @@ const RealmPage: NextPage = () => {
         <title>Realm</title>
         <meta name="description" content="Loanshark Scroll Alpha Testnet" />
       </Head>
-      <main className="bg-white h-[--main-height] flex">
+      <main className="bg-white h-[--main-height] flex flex-col sm:flex-row">
         <SideMenu></SideMenu>
-        <div
-          className="flex-1 bg-leadingBg bg-cover bg-no-repeat bg-center h-full overflow-y-scroll"
-          style={{
-            backgroundSize: "70% auto",
-          }}
-        >
-          <div className="max-w-[955px] mx-auto pt-[33px] ">
+        <div className="flex-1 bg-leadingBg bg-no-repeat bg-cover sm:bg-[70%_auto] h-full overflow-y-scroll">
+          <div className="max-w-[1055px] mx-auto pt-[33px] px-4">
             {!realm ? (
-              <div>d</div>
+              <div></div>
             ) : (
               <>
                 <RealmHeader realm={realm}></RealmHeader>

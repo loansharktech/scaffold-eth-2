@@ -3,7 +3,7 @@ import Nav from "~~/components/common/Nav";
 
 const App: FunctionComponent<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="w-full text-dark1">
+    <div className="w-screen text-dark1 overflow-x-hidden">
       <Nav></Nav>
       {children}
     </div>

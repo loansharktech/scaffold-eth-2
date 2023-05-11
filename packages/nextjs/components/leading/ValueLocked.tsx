@@ -3,9 +3,9 @@ import { numberWithCommas } from "~~/utils/format";
 
 const ValueLocked: FunctionComponent = () => {
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center px-4">
       <div className="text-[#538EE4] font-semibold text-lg">Total Value Locked</div>
-      <div className="mt-1 text-dark2 font-bold text-5xl ">${numberWithCommas(10637355.93)}</div>
+      <div className="mt-1 text-dark2 font-bold text-4xl sm:text-5xl ">${numberWithCommas(10637355.93)}</div>
     </div>
   );
 };

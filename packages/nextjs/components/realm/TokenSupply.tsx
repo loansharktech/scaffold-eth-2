@@ -40,7 +40,7 @@ const TokenSupply: FunctionComponent<{
           ref={selectRef}
           rightSection={
             <div className="flex items-center">
-              <Image src={token.icon} width={32} height={32}></Image>
+              <Image alt={token.name} src={token.icon} width={32} height={32}></Image>
               <ChevronDownIcon className="h-6 w-4 ml-2 flex-shrink-0"></ChevronDownIcon>
             </div>
           }

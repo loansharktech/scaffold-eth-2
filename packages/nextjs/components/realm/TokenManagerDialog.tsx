@@ -3,6 +3,7 @@ import { Modal, Progress, SegmentedControl } from "@mantine/core";
 import Stepper from "~~/components/common/Stepper";
 import TokenSupply from "~~/components/realm/TokenSupply";
 import { Token, tokens } from "~~/configs/pool";
+import { useDevice } from "~~/hooks/useDevice";
 
 const TokenManagerDialog: FunctionComponent<{
   token: Token | null;
@@ -26,6 +27,7 @@ const TokenManagerDialog: FunctionComponent<{
   ];
   const [stepIndex] = useState(0);
   const [tab, setTab] = useState("Supply");
+  const { isMobile } = useDevice();
 
   if (!token) {
     return null;
@@ -33,7 +35,8 @@ const TokenManagerDialog: FunctionComponent<{
   return (
     <Modal
       classNames={{
-        content: "bg-transparent shadow-none",
+        content: "bg-transparent shadow-none scrollbar-hide",
+        root: "scrollbar-hide",
       }}
       size={"lg"}
       opened={opened}
@@ -54,7 +57,7 @@ const TokenManagerDialog: FunctionComponent<{
         <SegmentedControl
           value={tab}
           onChange={setTab}
-          size="xl"
+          size={isMobile ? "sm" : "xl"}
           color="blue"
           radius="md"
           classNames={{

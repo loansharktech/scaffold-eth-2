@@ -2,6 +2,8 @@ import { FunctionComponent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { ActionIcon, Menu } from "@mantine/core";
+import { BiMenu } from "react-icons/bi";
 import ConnectWallet from "~~/components/common/ConnectWallet";
 import { navTabs } from "~~/configs/app";
 
@@ -24,27 +26,74 @@ const Tab: FunctionComponent<{
   );
 };
 
+const NavMenu: FunctionComponent = () => {
+  const router = useRouter();
+  return (
+    <>
+      <Menu
+        shadow="md"
+        position="bottom-start"
+        offset={14}
+        width={200}
+        classNames={{
+          item: "p-3",
+        }}
+      >
+        <Menu.Target>
+          <ActionIcon className="block  sm:hidden mr-3">
+            <BiMenu className="h-6 w-6"></BiMenu>
+          </ActionIcon>
+        </Menu.Target>
+        <Menu.Dropdown>
+          {navTabs.map(tab => {
+            const isActive = router.asPath === tab.route;
+            const style = isActive
+              ? {
+                  color: "#039DED",
+                  fontWeight: "bold",
+                }
+              : {};
+            return (
+              <Menu.Item
+                style={style}
+                key={tab.id}
+                onClick={() => {
+                  router.push(tab.route);
+                }}
+              >
+                {tab.label}
+              </Menu.Item>
+            );
+          })}
+        </Menu.Dropdown>
+      </Menu>
+    </>
+  );
+};
+
 const Nav: FunctionComponent = () => {
+  const router = useRouter();
+  const hideNavShadow = router.route === "/realms/[id]";
   return (
     <div
       className="z-40 h-[68px] sticky top-0 left-0 backdrop-blur bg-white/60"
       style={{
-        boxShadow: "2px 4px 4px rgba(148, 148, 148, 0.1)",
+        boxShadow: hideNavShadow ? "" : "2px 4px 4px rgba(148, 148, 148, 0.1)",
       }}
     >
-      <div className="">
-        <div className="flex h-[60px] items-center px-6">
-          <Link href={"/"}>
-            <Image className="action flex-shrink-0" alt="logo" src="/logo.png" width={144} height={16}></Image>
-          </Link>
-          <div className="flex-1 ml-[117px] flex gap-[10px] items-center">
-            {navTabs.map(tab => {
-              return <Tab tab={tab} key={tab.id}></Tab>;
-            })}
-          </div>
-          <div className="flex-shrink-0 ml-8">
-            <ConnectWallet></ConnectWallet>
-          </div>
+      <div className="flex h-full items-center px-5 sm:px-6">
+        <NavMenu></NavMenu>
+        <Link href={"/"} className="hidden sm:block">
+          <Image className="action flex-shrink-0" alt="logo" src="/logo.png" width={144} height={16}></Image>
+        </Link>
+        <div className="flex-1 ml-[117px] hidden sm:flex gap-[10px] items-center">
+          {navTabs.map(tab => {
+            return <Tab tab={tab} key={tab.id}></Tab>;
+          })}
+        </div>
+        <div className="flex-1"></div>
+        <div className="flex-shrink-0 ml-8">
+          <ConnectWallet></ConnectWallet>
         </div>
       </div>
     </div>

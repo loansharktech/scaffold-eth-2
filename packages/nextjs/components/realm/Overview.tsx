@@ -8,7 +8,7 @@ const RealmOverview: FunctionComponent<{
 }> = ({ className }) => {
   return (
     <div
-      className={`rounded-lg  bg-white grid grid-cols-2 ${className}`}
+      className={`rounded-lg  bg-white grid grid-cols-1 sm:grid-cols-2 ${className}`}
       style={{
         boxShadow: "2px 4px 4px rgba(148, 148, 148, 0.1)",
       }}
