@@ -79,7 +79,7 @@ const Nav: FunctionComponent = () => {
   const hideNavShadow = router.route === "/realms/[id]" && isMobile;
   return (
     <div
-      className="z-40 h-[68px] sticky top-0 left-0 backdrop-blur bg-white/60"
+      className="z-40 h-[68px] sticky top-0 left-0 bg-white/60"
       style={{
         boxShadow: hideNavShadow ? "" : "2px 4px 4px rgba(148, 148, 148, 0.1)",
       }}
