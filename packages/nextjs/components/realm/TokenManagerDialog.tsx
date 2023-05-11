@@ -1,7 +1,10 @@
 import { FunctionComponent, useState } from "react";
-import { Modal, Progress, SegmentedControl } from "@mantine/core";
+import { CloseButton, Modal, Progress, SegmentedControl } from "@mantine/core";
 import Stepper from "~~/components/common/Stepper";
+import TokenBorrow from "~~/components/realm/TokenBorrow";
+import TokenRepay from "~~/components/realm/TokenRepay";
 import TokenSupply from "~~/components/realm/TokenSupply";
+import TokenWithdraw from "~~/components/realm/TokenWithdraw";
 import { Token, tokens } from "~~/configs/pool";
 import { useDevice } from "~~/hooks/useDevice";
 
@@ -36,6 +39,7 @@ const TokenManagerDialog: FunctionComponent<{
     <Modal
       classNames={{
         content: "bg-transparent shadow-none scrollbar-hide",
+        body: "px-0",
         root: "scrollbar-hide",
       }}
       size={"lg"}
@@ -49,7 +53,16 @@ const TokenManagerDialog: FunctionComponent<{
         blur: 3,
       }}
     >
-      <div className="text-white text-[32px] font-bold">{token.name.toUpperCase()}</div>
+      <div className="text-white text-[32px] font-bold flex items-center justify-between">
+        <span>{token.name.toUpperCase()}</span>
+        <CloseButton
+          size="lg"
+          className="text-white !bg-transparent action"
+          onClick={() => {
+            setOpened(false);
+          }}
+        ></CloseButton>
+      </div>
       <div className="mt-5">
         <Stepper steps={steps} active={stepIndex}></Stepper>
       </div>
@@ -83,6 +96,42 @@ const TokenManagerDialog: FunctionComponent<{
               );
             }}
           ></TokenSupply>
+        )}
+        {tab === "Borrow" && (
+          <TokenBorrow
+            token={token}
+            onChangeToken={(name: string) => {
+              onChangeToken(
+                tokens.find(token => {
+                  return token.name === name;
+                }),
+              );
+            }}
+          ></TokenBorrow>
+        )}
+        {tab === "Withdraw" && (
+          <TokenWithdraw
+            token={token}
+            onChangeToken={(name: string) => {
+              onChangeToken(
+                tokens.find(token => {
+                  return token.name === name;
+                }),
+              );
+            }}
+          ></TokenWithdraw>
+        )}
+        {tab === "Repay" && (
+          <TokenRepay
+            token={token}
+            onChangeToken={(name: string) => {
+              onChangeToken(
+                tokens.find(token => {
+                  return token.name === name;
+                }),
+              );
+            }}
+          ></TokenRepay>
         )}
       </div>
       <div className="bg-white rounded-md mt-5 p-5 rounded-r-lg flex">

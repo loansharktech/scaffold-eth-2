@@ -1,6 +1,6 @@
 import { FunctionComponent, useRef } from "react";
 import Image from "next/image";
-import { NumberInput, Select, Switch } from "@mantine/core";
+import { NumberInput, Select } from "@mantine/core";
 import { Token, tokens } from "~~/configs/pool";
 
 const tokenSelectList = tokens.map(token => {
@@ -11,7 +11,7 @@ const tokenSelectList = tokens.map(token => {
   };
 });
 
-const TokenSupply: FunctionComponent<{
+const TokenRepay: FunctionComponent<{
   token: Token;
   onChangeToken: any;
 }> = ({ token, onChangeToken }) => {
@@ -53,31 +53,29 @@ const TokenSupply: FunctionComponent<{
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ $0.00</div>}
         ></NumberInput>
       </div>
-      <div className="flex items-center justify-end mt-4">
-        <Switch size="lg"></Switch>
-        <div className="text-[#3481BD] ml-2">Use as collateral</div>
-      </div>
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>
       <div className="rounded-lg bg-[#F0F6FA] border border-[#E3F2FF] p-5">
         <div className="flex items-center justify-between">
-          <div>Amount Supplied</div>
-          <div>$0.00</div>
+          <div>Max Withdrawal</div>
+          <div className="text-end">
+            <div className="text-[#039DED] font-bold">29.51K NEAR</div>
+            <div className="text-xs">$48.61K</div>
+          </div>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div>LTV</div>
-          <div>85.00%</div>
+          <div>Amount Borrowed</div>
+          <div className="text-end">
+            <div>-.--</div>
+            <div className="text-xs">$0.00</div>
+          </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Limit</div>
-          <div className="text-[#039DED] font-bold">+$0</div>
+          <div className="text-[#039DED] font-bold">0.00% [+0.00%]</div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Supply APY</div>
-          <div className="text-[#039DED] font-bold">0.54%</div>
-        </div>
-        <div className="mt-7 text-[#6F8394]">
-          You are supplying without enabling the assets as collateral. You need to enable the asset as collateral to
-          borrow against it. <a className="action text-dark1">Learn more.</a>
+          <div className="text-[#039DED] font-bold">-13.03%</div>
         </div>
       </div>
 
@@ -88,4 +86,4 @@ const TokenSupply: FunctionComponent<{
   );
 };
 
-export default TokenSupply;
+export default TokenRepay;
