@@ -6,6 +6,7 @@ import { ActionIcon, Menu } from "@mantine/core";
 import { BiMenu } from "react-icons/bi";
 import ConnectWallet from "~~/components/common/ConnectWallet";
 import { navTabs } from "~~/configs/app";
+import { useDevice } from "~~/hooks/useDevice";
 
 const Tab: FunctionComponent<{
   tab: (typeof navTabs)[0];
@@ -28,6 +29,7 @@ const Tab: FunctionComponent<{
 
 const NavMenu: FunctionComponent = () => {
   const router = useRouter();
+
   return (
     <>
       <Menu
@@ -73,7 +75,8 @@ const NavMenu: FunctionComponent = () => {
 
 const Nav: FunctionComponent = () => {
   const router = useRouter();
-  const hideNavShadow = router.route === "/realms/[id]";
+  const { isMobile } = useDevice();
+  const hideNavShadow = router.route === "/realms/[id]" && isMobile;
   return (
     <div
       className="z-40 h-[68px] sticky top-0 left-0 backdrop-blur bg-white/60"

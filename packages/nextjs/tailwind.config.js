@@ -94,8 +94,10 @@ module.exports = {
     backgroundImage: {
       leadingBg: "url('/assets/leading-bg.png')",
     },
-    // Extend Tailwind classes (e.g. font-bai-jamjuree, animate-grow)
     extend: {
+      boxShadow: {
+        block: "2px 4px 4px rgba(148, 148, 148, 0.1)",
+      },
       colors: {
         dark1: "#001910",
         dark2: "#131C23",
