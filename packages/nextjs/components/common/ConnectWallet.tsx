@@ -1,19 +1,19 @@
 import type { FC } from "react";
 import Image from "next/image";
-import { Menu } from "@mantine/core";
+import { useAccountModal } from "@rainbow-me/rainbowkit";
 import { useSwitchNetwork } from "wagmi";
-import { ArrowLeftOnRectangleIcon, ArrowsRightLeftIcon } from "@heroicons/react/24/solid";
 import { useAccountBalance } from "~~/hooks/scaffold-eth";
 import { useAccount } from "~~/hooks/useAccount";
 import { trimAddr } from "~~/utils/format";
 import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 const ConnectWallet: FC = () => {
-  const { isLogin, login, address, logout, chain } = useAccount();
+  const { isLogin, login, address, chain } = useAccount();
 
   const { balance } = useAccountBalance(address);
   const targetNetwork = getTargetNetwork();
   const { switchNetwork } = useSwitchNetwork();
+  const { openAccountModal } = useAccountModal();
 
   const invalidNetwork = chain?.id !== targetNetwork.id;
 
@@ -33,38 +33,20 @@ const ConnectWallet: FC = () => {
             </div>
           )}
 
-          <Menu shadow="md" position="bottom-end" width={200}>
-            <Menu.Target>
-              {invalidNetwork ? (
-                <div className="py-[10px] px-5 rounded-lg bg-red-500 text-white action">WRONG NETWORK</div>
-              ) : (
-                <div className="py-[10px] px-5 rounded-lg bg-bg_dark text-white action">
-                  {trimAddr(address as string, 4, 4)}
-                </div>
-              )}
-            </Menu.Target>
-            <Menu.Dropdown>
-              {invalidNetwork && (
-                <Menu.Item
-                  onClick={() => {
-                    switchNetwork?.(targetNetwork.id);
-                  }}
-                  icon={<ArrowsRightLeftIcon className="h-6 w-4"></ArrowsRightLeftIcon>}
-                >
-                  <div>
-                    <span>Switch to </span>
-                    <span>{targetNetwork.name}</span>
-                  </div>
-                </Menu.Item>
-              )}
-              <Menu.Item
-                icon={<ArrowLeftOnRectangleIcon className="h-6 w-4"></ArrowLeftOnRectangleIcon>}
-                onClick={logout}
-              >
-                Disconnect
-              </Menu.Item>
-            </Menu.Dropdown>
-          </Menu>
+          {invalidNetwork ? (
+            <div
+              className="py-[10px] px-5 rounded-lg bg-red-500 text-white action"
+              onClick={() => {
+                switchNetwork?.(targetNetwork.id);
+              }}
+            >
+              WRONG NETWORK
+            </div>
+          ) : (
+            <div className="py-[10px] px-5 rounded-lg bg-bg_dark text-white action" onClick={openAccountModal}>
+              {trimAddr(address as string, 4, 4)}
+            </div>
+          )}
         </>
       )}
     </div>
