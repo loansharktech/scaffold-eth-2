@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useConnectModal } from "@rainbow-me/rainbowkit";
 import { useDisconnect, useNetwork, useAccount as userWeb3Account } from "wagmi";
 
@@ -7,8 +7,11 @@ export function useAccount() {
   const { openConnectModal } = useConnectModal();
   const { disconnect } = useDisconnect();
   const { chain } = useNetwork();
+  const [isLogin, setLogin] = useState(false);
 
-  const isLogin = isConnected;
+  useEffect(() => {
+    setLogin(isConnected);
+  }, [isConnected]);
 
   const login = useCallback(async () => {
     if (!isLogin && openConnectModal) {
