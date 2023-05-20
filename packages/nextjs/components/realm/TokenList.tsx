@@ -9,47 +9,73 @@ import TotalSupplyColumn from "./table/TotalSupplyColumn";
 import WalletBalanceColumn from "./table/WalletBalanceColumn";
 import { Table } from "@mantine/core";
 import TokenManagerDialog from "~~/components/realm/TokenManagerDialog";
-import { Token, tokens } from "~~/configs/pool";
-import type { Realm } from "~~/configs/pool";
+import type { Market, Realm } from "~~/hooks/useRealm";
+import { useToken } from "~~/hooks/useToken";
+import { p18 } from "~~/utils/amount";
+
+const TokenItem: FunctionComponent<{
+  realm: Realm;
+  market: Market;
+  onClick: any;
+}> = ({ market, onClick, realm }) => {
+  const marketData = realm[market.address];
+  const token = realm.config!.tokens!.find(token => {
+    return token.name === market.token;
+  })!;
+  const tokenInfo = useToken(realm, market);
+  const price = marketData?.price?.toFormat(4);
+
+  const walletBalanceAmount = tokenInfo.balance?.div(p18);
+  const walletBalancePrice = walletBalanceAmount?.multipliedBy(marketData?.price || 0);
+
+  const supplyAmount = marketData?.totalSupply?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const supplyPrice = supplyAmount?.multipliedBy(marketData?.price || 0);
+
+  const supplyBalanceAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const supplyBalancePrice = supplyBalanceAmount?.multipliedBy(marketData?.price || 0);
+
+  const supplyRatePerBlock = marketData?.supplyRatePerBlock?.div(p18)?.toNumber();
+  const supplyAPY = supplyRatePerBlock ? supplyRatePerBlock ^ 365 : 0;
+
+  const borrowAmount = marketData?.borrowBalanceStored?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
+  const borrowRatePerBlock = marketData?.borrowRatePerBlock?.div(p18).toNumber();
+  const borrowAPY = borrowRatePerBlock ? borrowRatePerBlock ^ 365 : 0;
+
+  return (
+    <tr className="transition-all action hover:bg-[#CFE7FC]" onClick={onClick}>
+      <td>
+        <TokenColumn token={token} price={price}></TokenColumn>
+      </td>
+      <td>
+        <WalletBalanceColumn amount={walletBalanceAmount} price={walletBalancePrice}></WalletBalanceColumn>
+      </td>
+      <td>
+        <TotalSupplyColumn token={token} amount={supplyAmount} price={supplyPrice}></TotalSupplyColumn>
+      </td>
+      <td>
+        <SupplyBalanceColumn amount={supplyBalanceAmount} price={supplyBalancePrice}></SupplyBalanceColumn>
+      </td>
+      <td>
+        <SupplyApyColumn value={supplyAPY}></SupplyApyColumn>
+      </td>
+      <td>
+        <BorrowBalanceColumn amount={borrowAmount} price={borrowPrice}></BorrowBalanceColumn>
+      </td>
+      <td>
+        <BorrowApyColumn value={borrowAPY}></BorrowApyColumn>
+      </td>
+    </tr>
+  );
+};
 
 const TokenList: FunctionComponent<{
   className: string;
   realm: Realm;
-}> = ({ className }) => {
+}> = ({ className, realm }) => {
   const [opened, setOpened] = useState(false);
-  const [token, setToken] = useState<Token | null>(null);
-  const rows = tokens.map((token, index) => (
-    <tr
-      key={index}
-      className="transition-all action hover:bg-[#CFE7FC]"
-      onClick={() => {
-        setToken(token);
-        setOpened(true);
-      }}
-    >
-      <td>
-        <TokenColumn token={token}></TokenColumn>
-      </td>
-      <td>
-        <WalletBalanceColumn></WalletBalanceColumn>
-      </td>
-      <td>
-        <TotalSupplyColumn token={token}></TotalSupplyColumn>
-      </td>
-      <td>
-        <SupplyBalanceColumn></SupplyBalanceColumn>
-      </td>
-      <td>
-        <SupplyApyColumn></SupplyApyColumn>
-      </td>
-      <td>
-        <BorrowBalanceColumn></BorrowBalanceColumn>
-      </td>
-      <td>
-        <BorrowApyColumn></BorrowApyColumn>
-      </td>
-    </tr>
-  ));
+  const [market, setMarket] = useState<Market | null>(null);
+  const markets = realm.markets || [];
   return (
     <div className={`bg-white/80 border border-[#E3F2FF] rounded-lg ${className} overflow-x-scroll`}>
       <Table horizontalSpacing="xl">
@@ -64,13 +90,35 @@ const TokenList: FunctionComponent<{
             <th>Borrow APY</th>
           </tr>
         </thead>
-        <tbody>{rows}</tbody>
+        <tbody>
+          {realm.markets?.map(market => {
+            return (
+              <TokenItem
+                key={market.address}
+                realm={realm}
+                market={market}
+                onClick={() => {
+                  setMarket(market);
+                  setOpened(true);
+                }}
+              ></TokenItem>
+            );
+          })}
+        </tbody>
       </Table>
       <TokenManagerDialog
         opened={opened}
         setOpened={setOpened}
-        token={token}
-        onChangeToken={setToken}
+        realm={realm}
+        market={market}
+        // @ts-ignore
+        onChangeMarket={address => {
+          setMarket(
+            markets.find(m => {
+              return m.address === address;
+            })!,
+          );
+        }}
       ></TokenManagerDialog>
     </div>
   );

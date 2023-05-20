@@ -2,10 +2,18 @@ import type { FunctionComponent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowRightIcon } from "~~/components/common/icons";
-import { realms, tokens } from "~~/configs/pool";
+import { realms } from "~~/configs/pool";
+import { useRealm } from "~~/hooks/useRealm";
+import { amountDesc } from "~~/utils/amount";
 
 const Pools: FunctionComponent = () => {
   const defaultPool = realms[0];
+  const realm = useRealm(defaultPool.id);
+
+  const netAPY = realm.netAPY ? realm.netAPY.multipliedBy(100).toNumber().toFixed(2) : 0;
+  const deposit = realm.deposit ? realm.deposit.toNumber().toFixed(2) : 0;
+  const totalSupply = amountDesc(realm.totalSupply, 0);
+  const totalBorrow = amountDesc(realm.totalBorrow, 0);
 
   return (
     <div className="flex flex-col items-center mx-4">
@@ -26,31 +34,32 @@ const Pools: FunctionComponent = () => {
             <div className="flex flex-col ml-2 gap-6">
               <div>
                 <div>Your Net APY</div>
-                <div className="text-[28px] font-bold text-green mt-1">0.00%</div>
+                <div className="text-[28px] font-bold text-green mt-1">{netAPY}%</div>
               </div>
               <div>
                 <div>Amount Deposited</div>
-                <div className="text-[28px] font-bold mt-1">0.00%</div>
+                <div className="text-[28px] font-bold mt-1">${deposit}</div>
               </div>
             </div>
             <div className="flex flex-col gap-y-6 sm:gap-y-[57px] items-center">
               <div className="flex flex-col sm:flex-row">
                 <span>Total Supply</span>
-                <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">$8M</div>
+                <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">${totalSupply}</div>
               </div>
               <div className="flex flex-col sm:flex-row">
                 <span>Total borrow</span>
-                <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">$2M</div>
+                <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">${totalBorrow}</div>
               </div>
             </div>
             <div className="flex sm:mr-[50px] sm:flex-row flex-col sm:items-start items-center">
               <div className="sm:mr-[17px]">Assets</div>
               <div className="flex flex-col gap-2 w-fit">
-                {tokens.map(token => {
+                {realm?.markets?.map(market => {
+                  const cToken = realm[market.address];
                   return (
-                    <div key={token.name} className="flex gap-[10px] items-center text-[28px]">
-                      <img className="w-7 h-auto object-contain" src={token.icon} alt="Img" />
-                      <span className="font-bold">$4.51M</span>
+                    <div key={market.address} className="flex gap-[10px] items-center text-[28px]">
+                      <img className="w-7 h-auto object-contain" src={cToken?.token?.icon} alt="Img" />
+                      <span className="font-bold">${amountDesc(cToken?.value, 2)}</span>
                     </div>
                   );
                 })}

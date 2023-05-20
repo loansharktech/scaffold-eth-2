@@ -1,19 +1,24 @@
-import { FunctionComponent, useState } from "react";
+import { FunctionComponent } from "react";
 import { CloseButton, Modal, Progress, SegmentedControl } from "@mantine/core";
+import BigNumber from "bignumber.js";
 import Stepper from "~~/components/common/Stepper";
 import TokenBorrow from "~~/components/realm/TokenBorrow";
 import TokenRepay from "~~/components/realm/TokenRepay";
 import TokenSupply from "~~/components/realm/TokenSupply";
 import TokenWithdraw from "~~/components/realm/TokenWithdraw";
-import { Token, tokens } from "~~/configs/pool";
 import { useDevice } from "~~/hooks/useDevice";
+import { Market, Realm } from "~~/hooks/useRealm";
+import store, { actions, useTypedSelector } from "~~/stores";
+import { TradeType } from "~~/stores/reducers/trade";
+import { amountDesc } from "~~/utils/amount";
 
 const TokenManagerDialog: FunctionComponent<{
-  token: Token | null;
-  onChangeToken: any;
+  market: Market | null;
+  onChangeMarket: any;
   opened: boolean;
+  realm: Realm;
   setOpened: any;
-}> = ({ token, opened, setOpened, onChangeToken }) => {
+}> = ({ market, realm, opened, setOpened, onChangeMarket }) => {
   const steps = [
     {
       label: "Enter Amount",
@@ -28,13 +33,24 @@ const TokenManagerDialog: FunctionComponent<{
       className: "-ml-[40px]",
     },
   ];
-  const [stepIndex] = useState(0);
-  const [tab, setTab] = useState("Supply");
   const { isMobile } = useDevice();
+  const trade = useTypedSelector(state => {
+    return state.trade;
+  });
 
-  if (!token) {
+  const tradeType = trade.tradeType;
+
+  const tradeData = trade[tradeType];
+
+  const borrowed = amountDesc(realm.totalUserBorrowed, 2);
+  const limit = amountDesc(realm.totalUserLimit, 2);
+  const collateral = realm.deposit ? realm.deposit.toNumber().toFixed(2) : (0).toFixed(2);
+  const userBorrowLimit = realm.userBorrowLimit ? realm.userBorrowLimit.multipliedBy(100) : new BigNumber(0);
+
+  if (!market) {
     return null;
   }
+
   return (
     <Modal
       classNames={{
@@ -54,7 +70,7 @@ const TokenManagerDialog: FunctionComponent<{
       }}
     >
       <div className="text-white text-[32px] font-bold flex items-center justify-between">
-        <span>{token.name.toUpperCase()}</span>
+        <span>{market.token.toUpperCase()}</span>
         <CloseButton
           size="lg"
           className="text-white !bg-transparent action"
@@ -64,12 +80,14 @@ const TokenManagerDialog: FunctionComponent<{
         ></CloseButton>
       </div>
       <div className="mt-5">
-        <Stepper steps={steps} active={stepIndex}></Stepper>
+        <Stepper steps={steps} active={tradeData.stepIndex}></Stepper>
       </div>
       <div className="mt-12 w-full">
         <SegmentedControl
-          value={tab}
-          onChange={setTab}
+          value={tradeType}
+          onChange={type => {
+            store.dispatch(actions.trade.changeTradeType(type as TradeType));
+          }}
           size={isMobile ? "sm" : "xl"}
           color="blue"
           radius="md"
@@ -77,71 +95,35 @@ const TokenManagerDialog: FunctionComponent<{
             root: "w-full",
           }}
           data={[
-            { label: "Supply", value: "Supply" },
-            { label: "Borrow", value: "Borrow" },
-            { label: "Withdraw", value: "Withdraw" },
-            { label: "Repay", value: "Repay" },
+            { label: "Supply", value: TradeType.Supply },
+            { label: "Borrow", value: TradeType.Borrow },
+            { label: "Withdraw", value: TradeType.Withdraw },
+            { label: "Repay", value: TradeType.Repay },
           ]}
         />
       </div>
       <div className="bg-white mt-5 rounded-md p-5">
-        {tab === "Supply" && (
-          <TokenSupply
-            token={token}
-            onChangeToken={(name: string) => {
-              onChangeToken(
-                tokens.find(token => {
-                  return token.name === name;
-                }),
-              );
-            }}
-          ></TokenSupply>
+        {tradeType === TradeType.Supply && (
+          <TokenSupply market={market} realm={realm} onChangeMarket={onChangeMarket}></TokenSupply>
         )}
-        {tab === "Borrow" && (
-          <TokenBorrow
-            token={token}
-            onChangeToken={(name: string) => {
-              onChangeToken(
-                tokens.find(token => {
-                  return token.name === name;
-                }),
-              );
-            }}
-          ></TokenBorrow>
+        {tradeType === TradeType.Borrow && (
+          <TokenBorrow market={market} realm={realm} onChangeMarket={onChangeMarket}></TokenBorrow>
         )}
-        {tab === "Withdraw" && (
-          <TokenWithdraw
-            token={token}
-            onChangeToken={(name: string) => {
-              onChangeToken(
-                tokens.find(token => {
-                  return token.name === name;
-                }),
-              );
-            }}
-          ></TokenWithdraw>
+        {tradeType === TradeType.Withdraw && (
+          <TokenWithdraw market={market} realm={realm} onChangeMarket={onChangeMarket}></TokenWithdraw>
         )}
-        {tab === "Repay" && (
-          <TokenRepay
-            token={token}
-            onChangeToken={(name: string) => {
-              onChangeToken(
-                tokens.find(token => {
-                  return token.name === name;
-                }),
-              );
-            }}
-          ></TokenRepay>
+        {tradeType === TradeType.Repay && (
+          <TokenRepay market={market} realm={realm} onChangeMarket={onChangeMarket}></TokenRepay>
         )}
       </div>
       <div className="bg-white rounded-md mt-5 p-5 rounded-r-lg flex">
         <div className="flex-1">
           <div>Your Borrow Limit</div>
           <div className="mt-[11px] flex items-center">
-            <div className="font-bold text-[22px] flex-shrink-0">0.00%</div>
+            <div className="font-bold text-[22px] flex-shrink-0">{amountDesc(userBorrowLimit, 2)}%</div>
             <div className="ml-3 flex-1">
               <Progress
-                value={50}
+                value={userBorrowLimit.toNumber()}
                 classNames={{
                   root: "bg-[#CFE7FC]",
                   bar: "bg-blue",
@@ -153,15 +135,15 @@ const TokenManagerDialog: FunctionComponent<{
         <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-col gap-1 ml-10 flex-shrink-0">
           <div className="flex justify-end">
             <span>Borrowed</span>
-            <span className="text-[#2679B8] ml-[6px]">$0.00</span>
+            <span className="text-[#2679B8] ml-[6px]">${borrowed}</span>
           </div>
           <div className="flex justify-end">
             <span>Limit</span>
-            <span className="text-[#2679B8] ml-[6px]">$0.00</span>
+            <span className="text-[#2679B8] ml-[6px]">${limit}</span>
           </div>
           <div className="flex justify-end">
             <span>Collateral</span>
-            <span className="text-[#2679B8] ml-[6px]">$0.00</span>
+            <span className="text-[#2679B8] ml-[6px]">${collateral}</span>
           </div>
         </div>
       </div>

@@ -6,8 +6,8 @@ const Stepper: FunctionComponent<{
     className: string;
   }[];
   active: number;
-}> = ({ steps, active = 1 }) => {
-  const currentIndex = Math.min(Math.max(1, active), steps.length);
+}> = ({ steps, active }) => {
+  const currentIndex = Math.min(Math.max(0, active), steps.length - 1);
 
   const total = steps.length;
 
@@ -16,7 +16,7 @@ const Stepper: FunctionComponent<{
       <div className="flex items-center">
         {steps.map((step, index) => {
           const isLast = index === total - 1;
-          const isActive = currentIndex > index;
+          const isActive = currentIndex >= index;
           return [
             <div key={`dot-${index}`} className="relative">
               <div
@@ -29,7 +29,7 @@ const Stepper: FunctionComponent<{
             !isLast && (
               <div
                 key={`line-${index}`}
-                className={`h-[2px] bg-white flex-1 ${currentIndex > index + 1 ? "bg-[#039DED]" : ""}`}
+                className={`h-[2px] bg-white flex-1 ${currentIndex >= index + 1 ? "!bg-[#039DED]" : ""}`}
               ></div>
             ),
           ];

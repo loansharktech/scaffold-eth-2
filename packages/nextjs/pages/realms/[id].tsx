@@ -7,13 +7,16 @@ import RealmOverview from "~~/components/realm/Overview";
 import SideMenu from "~~/components/realm/SideMenu";
 import TokenList from "~~/components/realm/TokenList";
 import { realms } from "~~/configs/pool";
+import { useRealm } from "~~/hooks/useRealm";
 
 const RealmPage: NextPage = () => {
   const { query } = useRouter();
   const { id } = query;
-  const realm = realms.find(item => {
+  const realmInfo = realms.find(item => {
     return item.id === id;
   });
+
+  const realm = useRealm(realmInfo?.id || "main");
 
   return (
     <>

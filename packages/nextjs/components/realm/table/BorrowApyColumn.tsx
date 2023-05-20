@@ -1,7 +1,9 @@
 import type { FunctionComponent } from "react";
 
-const BorrowApyColumn: FunctionComponent = () => {
-  return <div className="text-[#36965D]">−10.25%</div>;
+const BorrowApyColumn: FunctionComponent<{
+  value: number;
+}> = ({ value }) => {
+  return <div className="text-[#36965D]">{value}%</div>;
 };
 
 export default BorrowApyColumn;

@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 import { ActionIcon } from "@mantine/core";
 import { NavBackIcon } from "~~/components/common/icons";
-import type { Realm } from "~~/configs/pool";
+import type { Realm } from "~~/hooks/useRealm";
 
 const RealmHeader: FunctionComponent<{
   realm: Realm;
@@ -20,8 +20,8 @@ const RealmHeader: FunctionComponent<{
         <NavBackIcon></NavBackIcon>
       </ActionIcon>
 
-      <Image className="ml-5" alt="pool icon" src={realm.icon} width={47} height={47}></Image>
-      <div className="ml-3 text-2xl font-bold text-dark2">{realm.name}</div>
+      <Image className="ml-5" alt="pool icon" src={realm.config?.icon || ""} width={47} height={47}></Image>
+      <div className="ml-3 text-2xl font-bold text-dark2">{realm.config?.name}</div>
     </div>
   );
 };

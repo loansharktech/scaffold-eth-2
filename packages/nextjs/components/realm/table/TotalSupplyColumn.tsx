@@ -1,13 +1,19 @@
 import type { FunctionComponent } from "react";
+import BigNumber from "bignumber.js";
 import type { Token } from "~~/configs/pool";
+import { amountDesc } from "~~/utils/amount";
 
 const TotalSupplyColumn: FunctionComponent<{
   token: Token;
-}> = ({ token }) => {
+  amount?: BigNumber;
+  price?: BigNumber;
+}> = ({ token, amount, price }) => {
   return (
     <div>
-      <div>$4,762,857.84</div>
-      <div className="text-xs text-[#6E788C]">2.49M {token.name.toUpperCase()}</div>
+      <div className="font-semibold">{amount ? `$${amountDesc(price, 2)}` : "-.--"}</div>
+      <div className="text-xs text-[#6E788C]">
+        {amountDesc(amount, 2)} {token.name.toUpperCase()}
+      </div>
     </div>
   );
 };

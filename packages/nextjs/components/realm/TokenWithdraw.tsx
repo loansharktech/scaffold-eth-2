@@ -1,21 +1,28 @@
 import { FunctionComponent, useRef } from "react";
 import Image from "next/image";
 import { NumberInput, Select } from "@mantine/core";
-import { Token, tokens } from "~~/configs/pool";
-
-const tokenSelectList = tokens.map(token => {
-  return {
-    icon: token.icon,
-    value: token.name,
-    label: token.name.toUpperCase(),
-  };
-});
+import type { Market, Realm } from "~~/hooks/useRealm";
 
 const TokenWithdraw: FunctionComponent<{
-  token: Token;
-  onChangeToken: any;
-}> = ({ token, onChangeToken }) => {
+  market: Market;
+  onChangeMarket: any;
+  realm: Realm;
+}> = ({ market, onChangeMarket, realm }) => {
   const selectRef = useRef<any>();
+  const marketData = realm[market.address];
+  const tokenSelectList =
+    realm.markets?.map(market => {
+      const marketData = realm[market.address];
+      return {
+        icon: marketData!.token.icon,
+        value: market.address,
+        label: market.token.toUpperCase(),
+      };
+    }) || [];
+
+  if (!marketData) {
+    return null;
+  }
   return (
     <div className="">
       <div className="flex items-center justify-between">
@@ -33,12 +40,12 @@ const TokenWithdraw: FunctionComponent<{
             root: "sm:w-[145px]",
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
-          value={token.name}
+          value={market.address}
           data={tokenSelectList}
-          onChange={onChangeToken}
+          onChange={onChangeMarket}
           rightSectionWidth={70}
           ref={selectRef}
-          rightSection={<Image alt={token.name} src={token.icon} width={32} height={32}></Image>}
+          rightSection={<Image alt={marketData.token.name} src={marketData.token.icon} width={32} height={32}></Image>}
         />
         <NumberInput
           hideControls

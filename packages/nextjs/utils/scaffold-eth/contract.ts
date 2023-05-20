@@ -28,6 +28,8 @@ type SelectedChainId = IsContractsFileMissing<number, (typeof scaffoldConfig)["t
 
 type Contracts = ContractsDeclaration[SelectedChainId][0]["contracts"];
 
+export type RealmContract = ContractsDeclaration[SelectedChainId][0];
+
 export type ContractName = keyof Contracts;
 
 export type Contract<TContractName extends ContractName> = Contracts[TContractName];

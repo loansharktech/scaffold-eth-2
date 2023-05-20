@@ -1,7 +1,9 @@
 import type { FunctionComponent } from "react";
 
-const SupplyApyColumn: FunctionComponent = () => {
-  return <div className="">0.02%</div>;
+const SupplyApyColumn: FunctionComponent<{
+  value: number;
+}> = ({ value }) => {
+  return <div className="">{value}%</div>;
 };
 
 export default SupplyApyColumn;

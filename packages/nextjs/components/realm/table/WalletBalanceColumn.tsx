@@ -1,10 +1,15 @@
 import type { FunctionComponent } from "react";
+import BigNumber from "bignumber.js";
+import { amountDesc } from "~~/utils/amount";
 
-const WalletBalanceColumn: FunctionComponent = () => {
+const WalletBalanceColumn: FunctionComponent<{
+  amount?: BigNumber;
+  price?: BigNumber;
+}> = ({ amount, price }) => {
   return (
     <div>
-      <div>-.--</div>
-      <div className="text-xs">$0.00</div>
+      <div className="font-semibold">{amount?.toString() !== "0" ? amount?.toFormat(2) : "-.--"}</div>
+      <div className="text-xs">${amountDesc(price, 2)}</div>
     </div>
   );
 };
