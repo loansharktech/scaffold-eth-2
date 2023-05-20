@@ -7,12 +7,12 @@ import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 
-export function useSupplyToken(realm: Realm, market: Market) {
+export function useRepayToken(realm: Realm, market: Market) {
   const marketData = realm[market.address];
   const { isLogin, login } = useAccount();
 
   const tradeData = useTypedSelector(state => {
-    return state.trade.supply;
+    return state.trade.repay;
   });
 
   const tokenContract = realm.contract.contracts[market.token as ContractName];
@@ -31,62 +31,10 @@ export function useSupplyToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
   });
 
-  const approveToken = useCallback(async () => {
-    if (!isLogin) {
-      return login();
-    }
-    if (!_tokenApprove) {
-      return;
-    }
-    if (!tradeData.amount) {
-      return;
-    }
-    if (!tokenContract) {
-      await mint();
-      return;
-    }
-    try {
-      store.dispatch(
-        actions.trade.updateSupply({
-          approving: true,
-          approveError: undefined,
-          approveTx: undefined,
-          stepIndex: TradeStep.APPROVE,
-        }),
-      );
-      const res = await _tokenApprove();
-      actions.trade.updateSupply({
-        approveTx: res.hash,
-      });
-      const transReceipt = await res.wait();
-      if (transReceipt.status === 0) {
-        throw new Error("Approve fail");
-      }
-      store.dispatch(
-        actions.trade.updateSupply({
-          stepIndex: TradeStep.EXECUTE,
-        }),
-      );
-    } catch (e: any) {
-      store.dispatch(
-        actions.trade.updateSupply({
-          approveError: e.message,
-          stepIndex: TradeStep.ENTER_AMOUNT,
-        }),
-      );
-    } finally {
-      store.dispatch(
-        actions.trade.updateSupply({
-          approving: false,
-        }),
-      );
-    }
-  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount]);
-
   const { writeAsync: _mint } = useContractWrite({
     mode: "recklesslyUnprepared",
     ...cTokenContract,
-    functionName: "mint",
+    functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
     args: tokenContract ? [tradeData.amount] : [],
     overrides: {
@@ -99,7 +47,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
   });
 
-  const mint = useCallback(async () => {
+  const repay = useCallback(async () => {
     if (!isLogin) {
       return login();
     }
@@ -109,7 +57,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
     }
     try {
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           executing: true,
           executeError: undefined,
           executeTx: undefined,
@@ -119,7 +67,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
       const res = await _mint();
 
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           executeTx: res.hash,
         }),
       );
@@ -128,50 +76,102 @@ export function useSupplyToken(realm: Realm, market: Market) {
         throw new Error("Execute fail");
       }
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
     } catch (e: any) {
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           executeError: e.message,
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
     } finally {
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           executing: false,
         }),
       );
     }
   }, [isLogin, _mint, login]);
 
+  const approveToken = useCallback(async () => {
+    if (!isLogin) {
+      return login();
+    }
+    if (!_tokenApprove) {
+      return;
+    }
+    if (!tradeData.amount) {
+      return;
+    }
+    if (!tokenContract) {
+      await repay();
+      return;
+    }
+    try {
+      store.dispatch(
+        actions.trade.updateRepay({
+          approving: true,
+          approveError: undefined,
+          approveTx: undefined,
+          stepIndex: TradeStep.APPROVE,
+        }),
+      );
+      const res = await _tokenApprove();
+      actions.trade.updateRepay({
+        approveTx: res.hash,
+      });
+      const transReceipt = await res.wait();
+      if (transReceipt.status === 0) {
+        throw new Error("Approve fail");
+      }
+      store.dispatch(
+        actions.trade.updateRepay({
+          stepIndex: TradeStep.EXECUTE,
+        }),
+      );
+    } catch (e: any) {
+      store.dispatch(
+        actions.trade.updateRepay({
+          approveError: e.message,
+          stepIndex: TradeStep.ENTER_AMOUNT,
+        }),
+      );
+    } finally {
+      store.dispatch(
+        actions.trade.updateRepay({
+          approving: false,
+        }),
+      );
+    }
+  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, repay]);
+
   useEffect(() => {
     if (approveTransStatus === "error") {
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           approveError: "Approve fail",
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
     } else if (approveTransStatus === "success") {
-      mint();
+      repay();
     }
-  }, [approveTransStatus, mint]);
+  }, [approveTransStatus, repay]);
 
   useEffect(() => {
     if (minteTransStatus === "error") {
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           approveError: "Execute fail",
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
     } else if (minteTransStatus === "success") {
       store.dispatch(
-        actions.trade.updateSupply({
+        actions.trade.updateRepay({
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
@@ -181,6 +181,6 @@ export function useSupplyToken(realm: Realm, market: Market) {
   return {
     ...tradeData,
     approveToken,
-    mint,
+    repay,
   };
 }

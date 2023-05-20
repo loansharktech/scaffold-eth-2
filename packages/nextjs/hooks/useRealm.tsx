@@ -36,6 +36,7 @@ export type MarketData = {
   userLimit?: BigNumber;
   token: Token;
   address: string;
+  borrowCaps?: BigNumber;
 };
 
 export type Realm = {
@@ -168,6 +169,12 @@ export function useRealm(realmType: RealmType) {
       chainId: parseInt(realmContracts.chainId),
       args: [marketContract.address],
     });
+    calls.push({
+      ...ComptrollerContract,
+      functionName: "borrowCaps",
+      chainId: parseInt(realmContracts.chainId),
+      args: [marketContract.address],
+    });
   });
 
   const { data } = useContractReads({
@@ -187,6 +194,7 @@ export function useRealm(realmType: RealmType) {
     "borrowBalanceStored",
     "borrowRatePerBlock",
     "markets",
+    "borrowCaps",
   ] as (
     | "cash"
     | "price"
@@ -198,6 +206,7 @@ export function useRealm(realmType: RealmType) {
     | "borrowBalanceStored"
     | "borrowRatePerBlock"
     | "markets"
+    | "borrowCaps"
   )[];
 
   useEffect(() => {

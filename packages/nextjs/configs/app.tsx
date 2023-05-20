@@ -7,11 +7,6 @@ export const navTabs = [
     route: "/",
   },
   {
-    id: "automation",
-    label: "Automation",
-    route: "/automation",
-  },
-  {
     id: "contract",
     label: "Contract",
     route: "/lending",

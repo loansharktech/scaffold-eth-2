@@ -10,9 +10,9 @@ export const amountDesc = (amount?: BigNumber, decimal?: number) => {
   if (!amount) {
     return (0).toFixed(decimal);
   }
-  if (amount.gt(M)) {
+  if (amount.gte(M)) {
     return amount.div(M).toFormat(decimal) + "M";
-  } else if (amount.gt(K)) {
+  } else if (amount.gte(K)) {
     return amount.div(K).toFormat(decimal) + "K";
   } else {
     return amount.toFormat(decimal);

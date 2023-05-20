@@ -68,19 +68,19 @@ const slice = createSlice({
     },
     updateBorrow(state, action: PayloadAction<Partial<TradeData>>) {
       state.borrow = {
-        ...state.supply,
+        ...state.borrow,
         ...action.payload,
       };
     },
     updateWithdraw(state, action: PayloadAction<Partial<TradeData>>) {
       state.withdraw = {
-        ...state.supply,
+        ...state.withdraw,
         ...action.payload,
       };
     },
     updateRepay(state, action: PayloadAction<Partial<TradeData>>) {
       state.repay = {
-        ...state.supply,
+        ...state.repay,
         ...action.payload,
       };
     },
