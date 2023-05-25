@@ -129,7 +129,7 @@ const TokenBorrow: FunctionComponent<{
           )}
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div>Borrow Limit</div>
+          <div>Borrow Cap</div>
           <div>{borrowCaps.isEqualTo(0) ? "Unlimited" : amountDesc(borrowCaps.multipliedBy(100), 2)}</div>
         </div>
         <div className="flex items-center justify-between mt-4">

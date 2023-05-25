@@ -116,7 +116,7 @@ const TokenRepay: FunctionComponent<{
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>
       <div className="rounded-lg bg-[#F0F6FA] border border-[#E3F2FF] p-5">
         <div className="flex items-center justify-between">
-          <div>Max Withdrawal</div>
+          <div>Wallet Balance</div>
           <div className="text-end">
             <div className="text-[#039DED] font-bold">
               {amountDesc(maxWithdrawAmount, 2)} {market.token}
@@ -139,7 +139,7 @@ const TokenRepay: FunctionComponent<{
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div>Supply APY</div>
+          <div>Borrow APY</div>
           <div className="text-[#039DED] font-bold">{supplyAPY}%</div>
         </div>
       </div>
