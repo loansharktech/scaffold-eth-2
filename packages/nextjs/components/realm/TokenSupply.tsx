@@ -1,7 +1,8 @@
 import { FunctionComponent, useCallback, useEffect, useRef } from "react";
 import Image from "next/image";
-import { Button, LoadingOverlay, NumberInput, Select, Switch } from "@mantine/core";
+import { Button, Loader, LoadingOverlay, NumberInput, Select, Switch } from "@mantine/core";
 import BigNumber from "bignumber.js";
+import { useCollateral } from "~~/hooks/useCollateral";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useSupplyToken } from "~~/hooks/useSupplyToken";
 import { useToken } from "~~/hooks/useToken";
@@ -18,6 +19,7 @@ const TokenSupply: FunctionComponent<{
   const selectRef = useRef<any>();
   const marketData = realm[market.address];
   const tokenInfo = useToken(realm, market);
+  const { isMember, enterMarkets, exitMarket, loading } = useCollateral(realm, market);
 
   const suppyToken = useSupplyToken(realm, market);
 
@@ -113,7 +115,22 @@ const TokenSupply: FunctionComponent<{
         ></NumberInput>
       </div>
       <div className="flex items-center justify-end mt-4">
-        <Switch size="lg"></Switch>
+        <Switch
+          size="lg"
+          checked={isMember}
+          disabled={loading}
+          classNames={{
+            track: "cursor-pointer",
+          }}
+          thumbIcon={loading && <Loader size="sm"></Loader>}
+          onChange={e => {
+            if (e.currentTarget.checked) {
+              enterMarkets();
+            } else {
+              exitMarket();
+            }
+          }}
+        ></Switch>
         <div className="text-[#3481BD] ml-2">Use as collateral</div>
       </div>
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>

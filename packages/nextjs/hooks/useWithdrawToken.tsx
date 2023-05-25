@@ -3,6 +3,7 @@ import { ethers } from "ethers";
 import { useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
+import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
@@ -72,6 +73,7 @@ export function useWithdrawToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
+      toast.error(e.message);
     } finally {
       store.dispatch(
         actions.trade.updateWithdraw({
