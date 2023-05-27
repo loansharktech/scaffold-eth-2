@@ -183,9 +183,7 @@ export function useRealm(realmType: RealmType) {
   const { data, refetch } = useContractReads({
     scopeKey: "market",
     contracts: calls,
-    cacheTime: 1000,
-    cacheOnBlock: true,
-    watch: true,
+    cacheTime: 2000,
   });
 
   const props = [

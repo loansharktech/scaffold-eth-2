@@ -15,7 +15,7 @@ const RealmOverview: FunctionComponent<{
   const limit = amountDesc(realm.totalUserLimit, 2);
   const collateral = realm.deposit ? realm.deposit.toNumber().toFixed(2) : (0).toFixed(2);
   const userBorrowLimit =
-    realm.totalUserBorrowed && realm.totalUserLimit
+    realm.totalUserBorrowed && realm.totalUserLimit && !realm.totalUserLimit?.eq(0)
       ? realm.totalUserBorrowed.div(realm?.totalUserLimit).multipliedBy(100)
       : new BigNumber(0);
 
