@@ -16,12 +16,12 @@ const RealmPage: NextPage = () => {
     return item.id === id;
   });
 
-  const realm = useRealm(realmInfo?.id || "main");
+  const { realm } = useRealm(realmInfo?.id || "main");
 
   return (
     <>
       <Head>
-        <title>Realm</title>
+        <title>{realmInfo?.name}</title>
         <meta name="description" content="Loanshark Scroll Alpha Testnet" />
       </Head>
       <main className="bg-white h-[--main-height] flex flex-col sm:flex-row">

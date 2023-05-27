@@ -34,13 +34,11 @@ const TokenItem: FunctionComponent<{
   const supplyBalanceAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
   const supplyBalancePrice = supplyBalanceAmount?.multipliedBy(marketData?.price || 0);
 
-  const supplyRatePerBlock = marketData?.supplyRatePerBlock?.div(p18)?.toNumber();
-  const supplyAPY = supplyRatePerBlock ? supplyRatePerBlock ^ 365 : 0;
+  const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
-  const borrowAmount = marketData?.borrowBalanceStored?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const borrowAmount = marketData?.borrowBalanceStored?.div(p18);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
-  const borrowRatePerBlock = marketData?.borrowRatePerBlock?.div(p18).toNumber();
-  const borrowAPY = borrowRatePerBlock ? borrowRatePerBlock ^ 365 : 0;
+  const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 
   return (
     <tr className="transition-all action hover:bg-[#CFE7FC]" onClick={onClick}>

@@ -3,7 +3,7 @@ import BigNumber from "bignumber.js";
 import { useRealm } from "~~/hooks/useRealm";
 
 const ValueLocked: FunctionComponent = () => {
-  const realm = useRealm("main");
+  const { realm } = useRealm("main");
 
   const value = new BigNumber(realm.totalValueLocked ? realm.totalValueLocked.toString() : 0);
 

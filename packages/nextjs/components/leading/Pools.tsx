@@ -8,9 +8,9 @@ import { amountDesc } from "~~/utils/amount";
 
 const Pools: FunctionComponent = () => {
   const defaultPool = realms[0];
-  const realm = useRealm(defaultPool.id);
+  const { realm } = useRealm(defaultPool.id);
 
-  const netAPY = realm.netAPY ? realm.netAPY.multipliedBy(100).toNumber().toFixed(2) : 0;
+  const netAPY = realm.netAPY ? realm.netAPY.multipliedBy(100).toNumber() : 0;
   const deposit = realm.deposit ? realm.deposit.toNumber().toFixed(2) : 0;
   const totalSupply = amountDesc(realm.totalSupply, 0);
   const totalBorrow = amountDesc(realm.totalBorrow, 0);
@@ -34,7 +34,9 @@ const Pools: FunctionComponent = () => {
             <div className="flex flex-col ml-2 gap-6">
               <div>
                 <div>Your Net APY</div>
-                <div className="text-[28px] font-bold text-green mt-1">{netAPY}%</div>
+                <div className={`text-[28px] font-bold  mt-1 ${netAPY <= 0 ? "text-green" : ""}`}>
+                  {netAPY.toFixed(2)}%
+                </div>
               </div>
               <div>
                 <div>Amount Deposited</div>
@@ -58,7 +60,9 @@ const Pools: FunctionComponent = () => {
                   const cToken = realm[market.address];
                   return (
                     <div key={market.address} className="flex gap-[10px] items-center text-[28px]">
-                      <img className="w-7 h-auto object-contain" src={cToken?.token?.icon} alt="Img" />
+                      {cToken?.token?.icon && (
+                        <img className="w-7 h-auto object-contain" src={cToken?.token?.icon} alt="Img" />
+                      )}
                       <span className="font-bold">${amountDesc(cToken?.value, 2)}</span>
                     </div>
                   );

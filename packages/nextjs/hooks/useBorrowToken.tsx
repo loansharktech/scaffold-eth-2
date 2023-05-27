@@ -66,6 +66,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
+      toast.success("Borrow success");
     } catch (e: any) {
       store.dispatch(
         actions.trade.updateBorrow({

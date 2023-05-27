@@ -66,6 +66,7 @@ export function useWithdrawToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
+      toast.success("Withdraw success");
     } catch (e: any) {
       store.dispatch(
         actions.trade.updateWithdraw({

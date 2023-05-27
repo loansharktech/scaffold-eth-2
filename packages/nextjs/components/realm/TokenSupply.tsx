@@ -39,14 +39,13 @@ const TokenSupply: FunctionComponent<{
   const suppliedPrice = supplied?.multipliedBy(marketData?.price || 0);
   const LTV = marketData?.markets?.[1].div(p18).toNumber() || 0;
   const borrowLimit = new BigNumber(suppyToken.amount || 0)
-    .multipliedBy(LTV)
+    .multipliedBy(marketData?.markets?.[1] || 0)
     .div(p18)
     .multipliedBy(marketData?.price || 0)
-    .multipliedBy(LTV)
+    .multipliedBy(marketData?.markets?.[1] || 0)
     .div(p18);
 
-  const supplyRatePerBlock = marketData?.supplyRatePerBlock?.div(p18)?.toNumber();
-  const supplyAPY = supplyRatePerBlock ? supplyRatePerBlock ^ 365 : 0;
+  const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -71,11 +70,11 @@ const TokenSupply: FunctionComponent<{
       <div className="flex items-center justify-between">
         <div className="font-bold text-xl">Enter a value</div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Balance: {amountDesc(balance, 2)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(balance?.toNumber());
+              changeAmount(parseFloat(balance?.toFixed(2, BigNumber.ROUND_FLOOR) || "0"));
             }}
           >
             MAX
@@ -145,11 +144,11 @@ const TokenSupply: FunctionComponent<{
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Limit</div>
-          <div className="text-[#039DED] font-bold">+${amountDesc(borrowLimit)}</div>
+          <div className="text-[#039DED] font-bold">+${amountDesc(borrowLimit, 2)}</div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Supply APY</div>
-          <div className="text-[#039DED] font-bold">{supplyAPY * 100}%</div>
+          <div className="text-[#039DED] font-bold">{supplyAPY.toFixed(2)}%</div>
         </div>
         <div className="mt-7 text-[#6F8394]">
           You are supplying without enabling the assets as collateral. You need to enable the asset as collateral to

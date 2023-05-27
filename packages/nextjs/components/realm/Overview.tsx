@@ -8,13 +8,16 @@ const RealmOverview: FunctionComponent<{
   className: string;
   realm: Realm;
 }> = ({ className, realm }) => {
-  const netAPY = realm.netAPY ? realm.netAPY.toNumber().toFixed(2) : (0).toFixed(2);
+  const netAPY = realm.netAPY ? realm.netAPY.multipliedBy(100).toNumber().toFixed(2) : (0).toFixed(2);
   const totalSupply = amountDesc(realm.totalSupply, 2);
   const totalBorrow = amountDesc(realm.totalBorrow, 2);
   const borrowed = amountDesc(realm.totalUserBorrowed, 2);
   const limit = amountDesc(realm.totalUserLimit, 2);
   const collateral = realm.deposit ? realm.deposit.toNumber().toFixed(2) : (0).toFixed(2);
-  const userBorrowLimit = realm.userBorrowLimit ? realm.userBorrowLimit.multipliedBy(100) : new BigNumber(0);
+  const userBorrowLimit =
+    realm.totalUserBorrowed && realm.totalUserLimit
+      ? realm.totalUserBorrowed.div(realm?.totalUserLimit).multipliedBy(100)
+      : new BigNumber(0);
 
   return (
     <div
@@ -41,7 +44,7 @@ const RealmOverview: FunctionComponent<{
         <div className="flex-1">
           <div>Your Borrow Limit</div>
           <div className="mt-[11px] flex items-center">
-            <div className="font-bold text-[22px] flex-shrink-0">{amountDesc(userBorrowLimit, 2)}%</div>
+            <div className="font-bold text-[22px] flex-shrink-0">{userBorrowLimit.toFixed(2)}%</div>
             <div className="ml-3 flex-1">
               <Progress
                 value={userBorrowLimit.toNumber()}

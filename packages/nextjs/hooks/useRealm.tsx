@@ -27,13 +27,16 @@ export type MarketData = {
   supplyRatePerBlock?: BigNumber;
   supplyAPY?: BigNumber;
   borrowAPY?: BigNumber;
+  tokenSupplyAPY?: BigNumber;
+  tokenBorrowAPY?: BigNumber;
   netAPY?: BigNumber;
   borrowBalanceStored?: BigNumber;
   borrowRatePerBlock?: BigNumber;
   deposit?: BigNumber;
   userBorrowed?: BigNumber;
   markets?: [boolean, BigNumber, boolean];
-  userLimit?: BigNumber;
+  borrowLimit?: BigNumber;
+  borrowLimitPrice?: BigNumber;
   token: Token;
   address: string;
   borrowCaps?: BigNumber;
@@ -177,10 +180,12 @@ export function useRealm(realmType: RealmType) {
     });
   });
 
-  const { data } = useContractReads({
+  const { data, refetch } = useContractReads({
     scopeKey: "market",
     contracts: calls,
-    cacheTime: 2000,
+    cacheTime: 1000,
+    cacheOnBlock: true,
+    watch: true,
   });
 
   const props = [
@@ -216,6 +221,7 @@ export function useRealm(realmType: RealmType) {
       const propIndex = index % props.length;
       const marketContract = marketContracts[marketIndex]!;
       const prop = props[propIndex];
+
       if (!result[marketContract.address]) {
         const market = realmInfo!.markets.find(market => {
           return market.cToken === contractAddressName[marketContract.address];
@@ -249,10 +255,13 @@ export function useRealm(realmType: RealmType) {
     let marketTotalValueLocked = new BigNumber(0);
     let marketTotalSupply = new BigNumber(0);
     let marketTotalBorrow = new BigNumber(0);
-    let marketNetAPY = new BigNumber(0);
     let marketDeposit = new BigNumber(0);
     let totalUserBorrowed = new BigNumber(0);
     let totalUserLimit = new BigNumber(0);
+
+    let netAPYSUM = new BigNumber(0);
+    let supplyAmountSUM = new BigNumber(0);
+    let borrowAmountSUM = new BigNumber(0);
 
     marketContracts.forEach(marketContract => {
       const marketAddress = marketContract!.address;
@@ -280,40 +289,74 @@ export function useRealm(realmType: RealmType) {
         marketTotalSupply = marketTotalSupply.plus(result[marketAddress]!.supply!);
       }
       if (totalBorrows && exchangeRate && price) {
-        result[marketAddress]!.borrow = totalBorrows.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+        result[marketAddress]!.borrow = totalBorrows.div(p18).multipliedBy(price);
         marketTotalBorrow = marketTotalBorrow.plus(result[marketAddress]!.borrow!);
       }
-      if (balance && supplyRatePerBlock) {
-        const _v = balance.div(p18).multipliedBy(supplyRatePerBlock);
-        result[marketAddress]!.supplyAPY = new BigNumber(_v.toNumber() ^ 365);
+      if (balance && supplyRatePerBlock && exchangeRate && price) {
+        const supplyAmount = balance.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+        result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
+          supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
+        );
+        supplyAmountSUM = supplyAmountSUM.plus(supplyAmount);
       }
-      if (borrowBalanceStored && borrowRatePerBlock) {
-        const _v = borrowBalanceStored.div(p18).multipliedBy(borrowRatePerBlock);
-        result[marketAddress]!.borrowAPY = new BigNumber(_v.toNumber() ^ 365);
+
+      if (supplyRatePerBlock) {
+        result[marketAddress]!.tokenSupplyAPY = supplyRatePerBlock
+          ?.div(p18)
+          .multipliedBy(7200)
+          .plus(1)
+          .pow(365)
+          .minus(1);
+      }
+      if (borrowRatePerBlock) {
+        result[marketAddress]!.tokenBorrowAPY = borrowRatePerBlock
+          ?.div(p18)
+          .multipliedBy(7200)
+          .plus(1)
+          .pow(365)
+          .minus(1);
+      }
+      if (borrowBalanceStored && borrowRatePerBlock && exchangeRate && price) {
+        const borrowAmount = borrowBalanceStored.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+        result[marketAddress]!.borrowAPY = borrowAmount.multipliedBy(
+          borrowRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
+        );
+        borrowAmountSUM = borrowAmountSUM.plus(borrowAmount);
       }
       if (result[marketAddress]!.borrowAPY && result[marketAddress]!.supplyAPY) {
         result[marketAddress]!.netAPY = result[marketAddress]!.supplyAPY?.minus(
           result[marketAddress]!.borrowAPY as any,
         );
-        marketNetAPY = marketNetAPY.plus(result[marketAddress]!.netAPY!);
+        netAPYSUM = netAPYSUM.plus(result[marketAddress]!.netAPY!);
       }
       if (balance && exchangeRate && price) {
-        result[marketAddress]!.deposit = balance.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+        result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price);
         marketDeposit = marketDeposit.plus(result[marketAddress]!.deposit!);
       }
-      if (exchangeRate && borrowBalanceStored) {
-        result[marketAddress]!.userBorrowed = borrowBalanceStored.div(p18).multipliedBy(exchangeRate);
+      if (exchangeRate && borrowBalanceStored && price) {
+        result[marketAddress]!.userBorrowed = borrowBalanceStored.div(p18).multipliedBy(price);
         totalUserBorrowed = totalUserBorrowed.plus(result[marketAddress]!.userBorrowed!);
       }
-      if (markets && balance && price) {
-        result[marketAddress]!.userLimit = markets[1].div(p18).multipliedBy(balance).div(p18).multipliedBy(price);
-        totalUserLimit = totalUserLimit.plus(result[marketAddress]!.userLimit!);
+      if (markets && balance && price && exchangeRate) {
+        result[marketAddress]!.borrowLimit = markets[1]
+          .div(p18)
+          .multipliedBy(balance)
+          .div(p18)
+          .multipliedBy(exchangeRate);
+        result[marketAddress]!.borrowLimitPrice = result[marketAddress]!.borrowLimit?.multipliedBy(price);
+        totalUserLimit = totalUserLimit.plus(result[marketAddress]!.borrowLimitPrice!);
       }
     });
 
     result.totalValueLocked = marketTotalValueLocked;
     result.deposit = marketDeposit;
-    result.netAPY = marketNetAPY;
+
+    result.netAPY = new BigNumber(0);
+    if (netAPYSUM.gt(0)) {
+      result.netAPY = netAPYSUM.div(supplyAmountSUM);
+    } else if (netAPYSUM.lt(0)) {
+      result.netAPY = netAPYSUM.div(borrowAmountSUM);
+    }
     result.totalBorrow = marketTotalBorrow;
     result.totalSupply = marketTotalSupply;
     result.totalUserBorrowed = totalUserBorrowed;
@@ -328,5 +371,8 @@ export function useRealm(realmType: RealmType) {
     setRealm(result);
   }, [data]);
 
-  return realm;
+  return {
+    realm,
+    refetch,
+  };
 }

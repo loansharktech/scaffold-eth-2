@@ -40,22 +40,21 @@ const TokenWithdraw: FunctionComponent<{
 
   const borrowCaps = marketData?.borrowCaps?.div(p18) || new BigNumber(0);
 
-  const borrowLimitPrice = marketData?.markets?.[1]
-    .div(p18)
-    .multipliedBy(marketData.balance || 0)
-    .div(p18)
-    .multipliedBy(marketData.price || 0);
+  const borrowLimitPrice = marketData?.borrowLimitPrice;
 
-  const borrowAmount =
-    marketData?.borrowBalanceStored?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
+  const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
-  const borrowUtilization1 = !borrowLimitPrice?.isEqualTo(0)
-    ? amountPrice.plus(borrowPrice || 0).div(borrowLimitPrice || 0)
-    : new BigNumber(0);
+  const _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
+  const borrowUtilization1 = borrowLimitPrice
+    ? _C
+        .plus(borrowPrice || 0)
+        .div(borrowLimitPrice)
+        .multipliedBy(100)
+        .toNumber()
+    : 0;
 
-  const supplyRatePerBlock = marketData?.supplyRatePerBlock?.div(p18)?.toNumber();
-  const supplyAPY = supplyRatePerBlock ? supplyRatePerBlock ^ 365 : 0;
+  const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyPrice = supplyAmount.multipliedBy(marketData?.price || 0);
@@ -80,8 +79,15 @@ const TokenWithdraw: FunctionComponent<{
       <div className="flex items-center justify-between">
         <div className="font-bold text-xl">Enter a value</div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Balance: {amountDesc(balance, 2)}</span>
-          <div className="action font-extrabold text-[#3481BD]">MAX</div>
+          <span className="text-sm text-[#3481BD] mr-2">Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <div
+            className="action font-extrabold text-[#3481BD]"
+            onClick={() => {
+              changeAmount(maxWithdrawAmount?.toNumber());
+            }}
+          >
+            MAX
+          </div>
         </div>
       </div>
       <div className="mt-2 flex gap-1 flex-col sm:flex-row sm:items-center">
@@ -107,6 +113,7 @@ const TokenWithdraw: FunctionComponent<{
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
+          max={maxWithdrawAmount.toNumber()}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
           precision={2}
@@ -139,11 +146,11 @@ const TokenWithdraw: FunctionComponent<{
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
-          <div className="">{borrowUtilization1.multipliedBy(100).toFormat(2)}%</div>
+          <div className="">{borrowUtilization1.toFixed(2)}%</div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Supply APY</div>
-          <div className="text-[#039DED] font-bold">{supplyAPY}%</div>
+          <div className="text-[#039DED] font-bold">{supplyAPY.toFixed(2)}%</div>
         </div>
       </div>
 

@@ -134,6 +134,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
+      toast.success("Supply success");
     } catch (e: any) {
       store.dispatch(
         actions.trade.updateSupply({

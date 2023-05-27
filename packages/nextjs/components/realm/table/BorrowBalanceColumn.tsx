@@ -8,7 +8,7 @@ const BorrowBalanceColumn: FunctionComponent<{
 }> = ({ amount, price }) => {
   return (
     <div>
-      <div>{amount ? `$${amountDesc(amount, 2)}` : "-.--"}</div>
+      <div>{amount?.toString() !== "0" ? `${amountDesc(amount, 2)}` : "-.--"}</div>
       <div className="text-xs text-[#6E788C]">${amountDesc(price, 2)}</div>
     </div>
   );
