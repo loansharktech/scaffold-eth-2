@@ -4,7 +4,6 @@ import { Button, LoadingOverlay, NumberInput, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
 import { useBorrowToken } from "~~/hooks/useBorrowToken";
 import type { Market, Realm } from "~~/hooks/useRealm";
-import { useToken } from "~~/hooks/useToken";
 import store, { actions } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { amountDesc } from "~~/utils/amount";
@@ -27,11 +26,8 @@ const TokenBorrow: FunctionComponent<{
       };
     }) || [];
 
-  const tokenInfo = useToken(realm, market);
-
   const borrowToken = useBorrowToken(realm, market);
 
-  const balance = tokenInfo.balance?.div(p18);
   const amountPrice = new BigNumber(borrowToken.amount || 0)?.multipliedBy(marketData?.price || 0);
   const borrowLimitPrice = marketData?.borrowLimitPrice || new BigNumber(0);
 
@@ -52,6 +48,8 @@ const TokenBorrow: FunctionComponent<{
 
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 
+  const maxAmount = marketData?.borrowLimit?.minus(borrowAmount || 0) || new BigNumber(0);
+
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
       actions.trade.updateBorrow({
@@ -70,11 +68,11 @@ const TokenBorrow: FunctionComponent<{
       <div className="flex items-center justify-between">
         <div className="font-bold text-xl">Enter a value</div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">Max: {maxAmount?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount((balance?.toNumber() || 0) * 0.8);
+              changeAmount((maxAmount?.toNumber() || 0) * 0.8);
             }}
           >
             80%
@@ -108,7 +106,7 @@ const TokenBorrow: FunctionComponent<{
           precision={2}
           value={borrowToken.amount}
           onChange={changeAmount}
-          max={marketData.borrowLimit?.toNumber()}
+          max={maxAmount?.toNumber()}
           rightSectionWidth={70}
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ ${amountDesc(amountPrice, 2)}</div>}
         ></NumberInput>
@@ -122,14 +120,14 @@ const TokenBorrow: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Amount Borrowed</div>
           <div className="text-end">
-            <div>{borrowAmount?.toFormat() !== "0" ? amountDesc(borrowAmount, 2) : "-.--"}</div>
+            <div>{borrowAmount?.toFormat() !== "0" ? `${amountDesc(borrowAmount, 2)} ${market.token}` : "-.--"}</div>
             <div className="text-xs">${amountDesc(borrowPrice, 2)}</div>
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
           <div className="text-end text-[#039DED] font-bold">
-            {borrowUtilization1.toFixed(2)}% [{borrowUtilization2.toFixed(2)}]%
+            {borrowUtilization1.toFixed(2)}% [+{borrowUtilization2.toFixed(2)}%]
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">

@@ -183,7 +183,10 @@ export function useRealm(realmType: RealmType) {
   const { data, refetch } = useContractReads({
     scopeKey: "market",
     contracts: calls,
-    cacheTime: 2000,
+    cacheTime: 1000,
+    watch: true,
+    cacheOnBlock: true,
+    keepPreviousData: true,
   });
 
   const props = [
@@ -291,7 +294,7 @@ export function useRealm(realmType: RealmType) {
         marketTotalBorrow = marketTotalBorrow.plus(result[marketAddress]!.borrow!);
       }
       if (balance && supplyRatePerBlock && exchangeRate && price) {
-        const supplyAmount = balance.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+        const supplyAmount = balance.div(p18).multipliedBy(price);
         result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
           supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
         );
@@ -327,8 +330,8 @@ export function useRealm(realmType: RealmType) {
         );
         netAPYSUM = netAPYSUM.plus(result[marketAddress]!.netAPY!);
       }
-      if (balance && exchangeRate && price) {
-        result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price);
+      if (balance && price && exchangeRate) {
+        result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
         marketDeposit = marketDeposit.plus(result[marketAddress]!.deposit!);
       }
       if (exchangeRate && borrowBalanceStored && price) {

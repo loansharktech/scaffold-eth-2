@@ -41,9 +41,7 @@ const TokenSupply: FunctionComponent<{
   const borrowLimit = new BigNumber(suppyToken.amount || 0)
     .multipliedBy(marketData?.markets?.[1] || 0)
     .div(p18)
-    .multipliedBy(marketData?.price || 0)
-    .multipliedBy(marketData?.markets?.[1] || 0)
-    .div(p18);
+    .multipliedBy(marketData?.price || 0);
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 

@@ -32,16 +32,11 @@ const TokenRepay: FunctionComponent<{
   const repayToken = useRepayToken(realm, market);
 
   const balance = tokenInfo.balance?.div(p18);
+  const balancePrice = balance?.multipliedBy(marketData?.price || 0);
   const amountPrice = new BigNumber(repayToken.amount || 0)?.multipliedBy(marketData?.price || 0);
 
   const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
-
-  const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
-  const supplyPrice = supplyAmount.multipliedBy(marketData?.price || 0);
-
-  const maxWithdrawAmount = supplyAmount.minus(borrowAmount || 0);
-  const maxWithdrawPrice = supplyPrice.minus(borrowPrice);
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
@@ -54,6 +49,8 @@ const TokenRepay: FunctionComponent<{
     : new BigNumber(0);
 
   const borrowUtilization2 = borrowLimitPrice?.isEqualTo(0) ? new BigNumber(0) : repayPrice.div(borrowLimitPrice || 0);
+
+  const maxAmount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount.toNumber() || 0));
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -72,13 +69,11 @@ const TokenRepay: FunctionComponent<{
       <div className="flex items-center justify-between">
         <div className="font-bold text-xl">Enter a value</div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">Max: {maxAmount.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(
-                Math.min(parseFloat(balance?.toFixed(2, BigNumber.ROUND_FLOOR) || "0"), maxWithdrawAmount.toNumber()),
-              );
+              changeAmount(parseFloat(maxAmount.toFormat(2, BigNumber.ROUND_FLOOR)));
             }}
           >
             MAX
@@ -111,6 +106,7 @@ const TokenRepay: FunctionComponent<{
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
           precision={2}
+          max={parseFloat(maxAmount.toFormat(2, BigNumber.ROUND_FLOOR))}
           value={repayToken.amount}
           onChange={changeAmount}
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ ${amountDesc(amountPrice, 2)}</div>}
@@ -119,12 +115,12 @@ const TokenRepay: FunctionComponent<{
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>
       <div className="rounded-lg bg-[#F0F6FA] border border-[#E3F2FF] p-5">
         <div className="flex items-center justify-between">
-          <div>Max Withdrawal</div>
+          <div>Wallet Balance</div>
           <div className="text-end">
             <div className="text-[#039DED] font-bold">
-              {amountDesc(maxWithdrawAmount, 2)} {market.token}
+              {balance?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
             </div>
-            <div className="text-xs">${amountDesc(maxWithdrawPrice, 2)}</div>
+            <div className="text-xs">${amountDesc(balancePrice, 2)}</div>
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">

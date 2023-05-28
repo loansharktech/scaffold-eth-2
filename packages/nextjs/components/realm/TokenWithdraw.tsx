@@ -3,7 +3,6 @@ import Image from "next/image";
 import { Button, LoadingOverlay, NumberInput, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
 import type { Market, Realm } from "~~/hooks/useRealm";
-import { useToken } from "~~/hooks/useToken";
 import { useWithdrawToken } from "~~/hooks/useWithdrawToken";
 import store, { actions } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
@@ -27,40 +26,42 @@ const TokenWithdraw: FunctionComponent<{
       };
     }) || [];
 
-  const tokenInfo = useToken(realm, market);
-
   const withdrawToken = useWithdrawToken(realm, market);
 
-  const balance = tokenInfo.balance?.div(p18) || new BigNumber(0);
   const amountPrice = new BigNumber(withdrawToken.amount || 0)?.multipliedBy(marketData?.price || 0);
 
   const supplyBalanceAmount =
     marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyBalancePrice = supplyBalanceAmount.multipliedBy(marketData?.price || 0);
 
-  const borrowCaps = marketData?.borrowCaps?.div(p18) || new BigNumber(0);
-
-  const borrowLimitPrice = marketData?.borrowLimitPrice;
+  const borrowLimitPrice = marketData?.borrowLimitPrice || new BigNumber(0);
 
   const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
   const _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
-  const borrowUtilization1 = borrowLimitPrice
+  const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? _C
         .plus(borrowPrice || 0)
         .div(borrowLimitPrice)
         .multipliedBy(100)
         .toNumber()
     : 0;
+  const borrowUtilization2 = !borrowLimitPrice.eq(0) ? _C.div(borrowLimitPrice).multipliedBy(100).toNumber() : 0;
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyPrice = supplyAmount.multipliedBy(marketData?.price || 0);
 
-  const maxWithdrawAmount = supplyAmount.minus(borrowAmount || 0);
-  const maxWithdrawPrice = supplyPrice.minus(borrowPrice);
+  let maxWithdrawAmount = supplyAmount.minus(borrowAmount || 0);
+  if (maxWithdrawAmount.lt(0)) {
+    maxWithdrawAmount = new BigNumber(0);
+  }
+  let maxWithdrawPrice = supplyPrice.minus(borrowPrice);
+  if (maxWithdrawPrice.lt(0)) {
+    maxWithdrawPrice = new BigNumber(0);
+  }
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -79,7 +80,9 @@ const TokenWithdraw: FunctionComponent<{
       <div className="flex items-center justify-between">
         <div className="font-bold text-xl">Enter a value</div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">
+            Max: {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)}
+          </span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
@@ -136,17 +139,21 @@ const TokenWithdraw: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Amount Supplied</div>
           <div className="text-end">
-            <div>{supplyBalanceAmount.isEqualTo(0) ? "-.--" : amountDesc(supplyBalanceAmount, 2)}</div>
+            <div>
+              {supplyBalanceAmount.isEqualTo(0) ? "-.--" : `${amountDesc(supplyBalanceAmount, 2)} ${market.token}`}
+            </div>
             <div className="text-xs">${amountDesc(supplyBalancePrice, 2)}</div>
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Limit</div>
-          <div className="">{borrowCaps.isEqualTo(0) ? "Unlimited" : amountDesc(borrowCaps.multipliedBy(100), 2)}</div>
+          <div className="">${amountDesc(borrowLimitPrice, 2)}</div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
-          <div className="">{borrowUtilization1.toFixed(2)}%</div>
+          <div className="">
+            {borrowUtilization1.toFixed(2)}% [+{borrowUtilization2.toFixed(2)}%]
+          </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Supply APY</div>
