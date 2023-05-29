@@ -1,13 +1,12 @@
-import { FunctionComponent, useCallback, useEffect, useRef } from "react";
+import { FunctionComponent, useCallback, useRef } from "react";
 import Image from "next/image";
-import { Button, Loader, LoadingOverlay, NumberInput, Select, Switch } from "@mantine/core";
+import { Button, Input, Loader, LoadingOverlay, Select, Switch } from "@mantine/core";
 import BigNumber from "bignumber.js";
 import { useCollateral } from "~~/hooks/useCollateral";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useSupplyToken } from "~~/hooks/useSupplyToken";
 import { useToken } from "~~/hooks/useToken";
 import store, { actions } from "~~/stores";
-import { TradeStep } from "~~/stores/reducers/trade";
 import { amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
@@ -53,11 +52,8 @@ const TokenSupply: FunctionComponent<{
     );
   }, []);
 
-  useEffect(() => {
-    if ((suppyToken.amount || 0) > (balance?.toNumber() || 0)) {
-      changeAmount(balance?.toNumber());
-    }
-  }, [balance, suppyToken.amount]);
+  const isInsufficientBalance = (suppyToken.amount || 0) > (balance?.toNumber() || 0);
+  const needApprove = !suppyToken.isNativeToken && suppyToken.approveAllowanceAmount.isLessThan(suppyToken.amount || 0);
 
   if (!marketData) {
     return null;
@@ -94,22 +90,23 @@ const TokenSupply: FunctionComponent<{
           ref={selectRef}
           rightSection={<Image alt={marketData.token.name} src={marketData.token.icon} width={32} height={32}></Image>}
         />
-        <NumberInput
-          hideControls
+        <Input
           placeholder="0.00"
           classNames={{
-            root: "flex-1",
+            wrapper: "flex-1",
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
           max={balance?.toNumber()}
-          precision={2}
           value={suppyToken.amount}
-          onChange={changeAmount}
+          type="number"
+          onChange={e => {
+            changeAmount(parseFloat(e.currentTarget.value));
+          }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ ${amountDesc(amountPrice, 2)}</div>}
-        ></NumberInput>
+        ></Input>
       </div>
       <div className="flex items-center justify-end mt-4">
         <Switch
@@ -154,36 +151,37 @@ const TokenSupply: FunctionComponent<{
         </div>
       </div>
 
-      {suppyToken.stepIndex === TradeStep.ENTER_AMOUNT && (
+      {typeof suppyToken.amount === "undefined" ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
-            suppyToken.approveToken();
-          }}
+          disabled
         >
-          Select token
+          Enter a Value
         </Button>
-      )}
-      {suppyToken.stepIndex === TradeStep.APPROVE && (
+      ) : isInsufficientBalance ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Insufficient Balance
+        </Button>
+      ) : needApprove ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
             suppyToken.approveToken();
           }}
-          loading={suppyToken.approving}
         >
           Approve
         </Button>
-      )}
-      {suppyToken.stepIndex === TradeStep.EXECUTE && (
+      ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
             suppyToken.mint();
           }}
-          loading={suppyToken.executing}
         >
-          Execute
+          Supply
         </Button>
       )}
     </div>

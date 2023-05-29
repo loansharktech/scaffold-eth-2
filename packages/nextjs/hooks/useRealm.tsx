@@ -353,9 +353,9 @@ export function useRealm(realmType: RealmType) {
     result.deposit = marketDeposit;
 
     result.netAPY = new BigNumber(0);
-    if (netAPYSUM.gt(0)) {
+    if (netAPYSUM.isGreaterThan(0)) {
       result.netAPY = netAPYSUM.div(supplyAmountSUM);
-    } else if (netAPYSUM.lt(0)) {
+    } else if (netAPYSUM.isLessThan(0)) {
       result.netAPY = netAPYSUM.div(borrowAmountSUM);
     }
     result.totalBorrow = marketTotalBorrow;

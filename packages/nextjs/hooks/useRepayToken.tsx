@@ -1,16 +1,18 @@
 import { useCallback, useEffect } from "react";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
+import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 
 export function useRepayToken(realm: Realm, market: Market) {
   const marketData = realm[market.address];
-  const { isLogin, login } = useAccount();
+  const { isLogin, login, address } = useAccount();
 
   const tradeData = useTypedSelector(state => {
     return state.trade.repay;
@@ -19,12 +21,22 @@ export function useRepayToken(realm: Realm, market: Market) {
   const tokenContract = realm.contract.contracts[market.token as ContractName];
   const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
 
+  const { data: approveAllowance, refetch } = useContractRead({
+    ...tokenContract,
+    functionName: "allowance",
+    chainId: parseInt(realm.contract.chainId),
+    args: [address, marketData?.address],
+    watch: true,
+  } as any);
+
+  const approveAllowanceAmount = new BigNumber((approveAllowance as any)?.toString() || 0).div(p18);
+
   const { writeAsync: _tokenApprove } = useContractWrite({
     mode: "recklesslyUnprepared",
     ...tokenContract,
     functionName: "approve",
     chainId: parseInt(realm.contract.chainId),
-    args: [marketData?.address, tradeData.amount],
+    args: [marketData?.address, ethers.utils.parseUnits(String(tradeData.amount || "0"), 18)],
   } as any);
 
   const { status: approveTransStatus } = useWaitForTransaction({
@@ -37,7 +49,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [tradeData.amount] : [],
+    args: tokenContract ? [ethers.utils.parseUnits(String(tradeData.amount || "0"), 18)] : [],
     overrides: {
       value: tokenContract ? 0 : ethers.utils.parseEther(tradeData?.amount ? String(tradeData.amount) : "0"),
     },
@@ -109,10 +121,6 @@ export function useRepayToken(realm: Realm, market: Market) {
     if (!tradeData.amount) {
       return;
     }
-    if (!tokenContract) {
-      await repay();
-      return;
-    }
     try {
       store.dispatch(
         actions.trade.updateRepay({
@@ -135,6 +143,7 @@ export function useRepayToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.EXECUTE,
         }),
       );
+      await refetch();
     } catch (e: any) {
       store.dispatch(
         actions.trade.updateRepay({
@@ -150,7 +159,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         }),
       );
     }
-  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, repay]);
+  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, refetch]);
 
   useEffect(() => {
     if (approveTransStatus === "error") {
@@ -186,5 +195,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...tradeData,
     approveToken,
     repay,
+    approveAllowanceAmount,
+    isNativeToken: !tokenContract,
   };
 }

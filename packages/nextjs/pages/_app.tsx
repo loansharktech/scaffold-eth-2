@@ -3,6 +3,7 @@ import type { AppProps } from "next/app";
 import { MantineProvider } from "@mantine/core";
 import { RainbowKitProvider, lightTheme } from "@rainbow-me/rainbowkit";
 import "@rainbow-me/rainbowkit/styles.css";
+import "animate.css";
 import NextNProgress from "nextjs-progressbar";
 import { Toaster } from "react-hot-toast";
 import { Provider } from "react-redux";

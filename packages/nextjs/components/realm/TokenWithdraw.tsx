@@ -1,11 +1,10 @@
 import { FunctionComponent, useCallback, useRef } from "react";
 import Image from "next/image";
-import { Button, LoadingOverlay, NumberInput, Select } from "@mantine/core";
+import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useWithdrawToken } from "~~/hooks/useWithdrawToken";
 import store, { actions } from "~~/stores";
-import { TradeStep } from "~~/stores/reducers/trade";
 import { amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
@@ -34,7 +33,8 @@ const TokenWithdraw: FunctionComponent<{
     marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyBalancePrice = supplyBalanceAmount.multipliedBy(marketData?.price || 0);
 
-  const borrowLimitPrice = marketData?.borrowLimitPrice || new BigNumber(0);
+  const borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
+  const borrowLimitPrice = marketData?.borrowLimitPrice?.minus(borrowLimitChangedPrice) || new BigNumber(0);
 
   const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
@@ -70,6 +70,8 @@ const TokenWithdraw: FunctionComponent<{
       }),
     );
   }, []);
+
+  const isInsufficientBalance = (withdrawToken.amount || 0) > (maxWithdrawAmount?.toNumber() || 0);
 
   if (!marketData) {
     return null;
@@ -108,22 +110,23 @@ const TokenWithdraw: FunctionComponent<{
           ref={selectRef}
           rightSection={<Image alt={marketData.token.name} src={marketData.token.icon} width={32} height={32}></Image>}
         />
-        <NumberInput
-          hideControls
+        <Input
           placeholder="0.00"
           classNames={{
-            root: "flex-1",
+            wrapper: "flex-1",
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
           max={maxWithdrawAmount.toNumber()}
+          value={withdrawToken.amount}
+          type="number"
+          onChange={e => {
+            changeAmount(parseFloat(e.currentTarget.value));
+          }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
-          precision={2}
-          value={withdrawToken.amount}
-          onChange={changeAmount}
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ ${amountDesc(amountPrice, 2)}</div>}
-        ></NumberInput>
+        ></Input>
       </div>
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>
       <div className="rounded-lg bg-[#F0F6FA] border border-[#E3F2FF] p-5">
@@ -131,7 +134,7 @@ const TokenWithdraw: FunctionComponent<{
           <div>Max Withdrawal</div>
           <div className="text-end">
             <div className="text-[#039DED] font-bold">
-              {amountDesc(maxWithdrawAmount, 2)} {market.token}
+              {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
             </div>
             <div className="text-xs">${amountDesc(maxWithdrawPrice, 2)}</div>
           </div>
@@ -147,7 +150,9 @@ const TokenWithdraw: FunctionComponent<{
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Limit</div>
-          <div className="">${amountDesc(borrowLimitPrice, 2)}</div>
+          <div className="">
+            ${amountDesc(borrowLimitPrice, 2)} [-${amountDesc(borrowLimitChangedPrice, 2)}]
+          </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
@@ -161,26 +166,28 @@ const TokenWithdraw: FunctionComponent<{
         </div>
       </div>
 
-      {withdrawToken.stepIndex === TradeStep.ENTER_AMOUNT && (
+      {typeof withdrawToken.amount === "undefined" ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
-            withdrawToken.withdraw();
-          }}
+          disabled
         >
-          Select token
+          Enter a Value
         </Button>
-      )}
-
-      {withdrawToken.stepIndex === TradeStep.EXECUTE && (
+      ) : isInsufficientBalance ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Exceeded Max Withdrawal
+        </Button>
+      ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
             withdrawToken.withdraw();
           }}
-          loading={withdrawToken.executing}
         >
-          Execute
+          Withdraw
         </Button>
       )}
     </div>

@@ -1,11 +1,10 @@
 import { FunctionComponent, useCallback, useRef } from "react";
 import Image from "next/image";
-import { Button, LoadingOverlay, NumberInput, Select } from "@mantine/core";
+import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
 import { useBorrowToken } from "~~/hooks/useBorrowToken";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import store, { actions } from "~~/stores";
-import { TradeStep } from "~~/stores/reducers/trade";
 import { amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
@@ -58,6 +57,8 @@ const TokenBorrow: FunctionComponent<{
     );
   }, []);
 
+  const isInsufficientBalance = (borrowToken.amount || 0) > (maxAmount?.toNumber() || 0);
+
   if (!marketData) {
     return null;
   }
@@ -94,22 +95,23 @@ const TokenBorrow: FunctionComponent<{
           ref={selectRef}
           rightSection={<Image alt={marketData.token.name} src={marketData.token.icon} width={32} height={32}></Image>}
         />
-        <NumberInput
-          hideControls
+        <Input
           placeholder="0.00"
           classNames={{
-            root: "flex-1",
+            wrapper: "flex-1",
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
-          styles={{ rightSection: { pointerEvents: "none" } }}
-          precision={2}
-          value={borrowToken.amount}
-          onChange={changeAmount}
           max={maxAmount?.toNumber()}
+          value={borrowToken.amount}
+          type="number"
+          onChange={e => {
+            changeAmount(parseFloat(e.currentTarget.value));
+          }}
+          styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ ${amountDesc(amountPrice, 2)}</div>}
-        ></NumberInput>
+        ></Input>
       </div>
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>
       <div className="rounded-lg bg-[#F0F6FA] border border-[#E3F2FF] p-5">
@@ -149,26 +151,28 @@ const TokenBorrow: FunctionComponent<{
         </div>
       </div>
 
-      {borrowToken.stepIndex === TradeStep.ENTER_AMOUNT && (
+      {typeof borrowToken.amount === "undefined" ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
-            borrowToken.borrow();
-          }}
+          disabled
         >
-          Select token
+          Enter a Value
         </Button>
-      )}
-
-      {borrowToken.stepIndex === TradeStep.EXECUTE && (
+      ) : isInsufficientBalance ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Exceeded Borrow Limit
+        </Button>
+      ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
             borrowToken.borrow();
           }}
-          loading={borrowToken.executing}
         >
-          Execute
+          Borrow
         </Button>
       )}
     </div>

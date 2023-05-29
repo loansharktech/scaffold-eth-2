@@ -1,12 +1,11 @@
 import { FunctionComponent, useCallback, useRef } from "react";
 import Image from "next/image";
-import { Button, LoadingOverlay, NumberInput, Select } from "@mantine/core";
+import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useRepayToken } from "~~/hooks/useRepayToken";
 import { useToken } from "~~/hooks/useToken";
 import store, { actions } from "~~/stores";
-import { TradeStep } from "~~/stores/reducers/trade";
 import { amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
@@ -60,6 +59,10 @@ const TokenRepay: FunctionComponent<{
     );
   }, []);
 
+  const isInsufficientBalance = (repayToken.amount || 0) > (balance?.toNumber() || 0);
+  const isExceededAmountBorrowed = (repayToken.amount || 0) > (borrowAmount?.toNumber() || 0);
+  const needApprove = !repayToken.isNativeToken && repayToken.approveAllowanceAmount.isLessThan(repayToken.amount || 0);
+
   if (!marketData) {
     return null;
   }
@@ -73,7 +76,7 @@ const TokenRepay: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(parseFloat(maxAmount.toFormat(2, BigNumber.ROUND_FLOOR)));
+              changeAmount(maxAmount.toNumber());
             }}
           >
             MAX
@@ -95,22 +98,23 @@ const TokenRepay: FunctionComponent<{
           ref={selectRef}
           rightSection={<Image alt={marketData.token.name} src={marketData.token.icon} width={32} height={32}></Image>}
         />
-        <NumberInput
-          hideControls
+        <Input
           placeholder="0.00"
           classNames={{
-            root: "flex-1",
+            wrapper: "flex-1",
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
+          max={maxAmount.toNumber()}
+          value={repayToken.amount}
+          type="number"
+          onChange={e => {
+            changeAmount(parseFloat(e.currentTarget.value));
+          }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
-          precision={2}
-          max={parseFloat(maxAmount.toFormat(2, BigNumber.ROUND_FLOOR))}
-          value={repayToken.amount}
-          onChange={changeAmount}
           rightSection={<div className="flex items-center text-xs text-[#4E4E4E]">≈ ${amountDesc(amountPrice, 2)}</div>}
-        ></NumberInput>
+        ></Input>
       </div>
       <div className="h-[1px] bg-[#B1D2FE] mb-[10px] mt-6 "></div>
       <div className="rounded-lg bg-[#F0F6FA] border border-[#E3F2FF] p-5">
@@ -131,10 +135,10 @@ const TokenRepay: FunctionComponent<{
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div>Borrow Limit</div>
+          <div>Borrow Utilization</div>
           <div className="text-[#039DED] font-bold">
-            {amountDesc(borrowUtilization1.multipliedBy(100), 2)}% [+
-            {amountDesc(borrowUtilization2.multipliedBy(100), 2)}%]
+            {amountDesc(borrowUtilization1.multipliedBy(100), 2)}% [
+            {-amountDesc(borrowUtilization2.multipliedBy(100), 2)}%]
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
@@ -143,36 +147,44 @@ const TokenRepay: FunctionComponent<{
         </div>
       </div>
 
-      {repayToken.stepIndex === TradeStep.ENTER_AMOUNT && (
+      {typeof repayToken.amount === "undefined" ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
-            repayToken.approveToken();
-          }}
+          disabled
         >
-          Select token
+          Enter a Value
         </Button>
-      )}
-      {repayToken.stepIndex === TradeStep.APPROVE && (
+      ) : isInsufficientBalance ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Insufficient Balance
+        </Button>
+      ) : isExceededAmountBorrowed ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Exceeded Amount Borrowed
+        </Button>
+      ) : needApprove ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
             repayToken.approveToken();
           }}
-          loading={repayToken.approving}
         >
           Approve
         </Button>
-      )}
-      {repayToken.stepIndex === TradeStep.EXECUTE && (
+      ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
             repayToken.repay();
           }}
-          loading={repayToken.executing}
         >
-          Execute
+          Repay
         </Button>
       )}
     </div>
