@@ -2,6 +2,7 @@ import type { FunctionComponent } from "react";
 import { useState } from "react";
 import BorrowApyColumn from "./table/BorrowApyColumn";
 import BorrowBalanceColumn from "./table/BorrowBalanceColumn";
+import CollateralColumn from "./table/CollateralColumn";
 import SupplyApyColumn from "./table/SupplyApyColumn";
 import SupplyBalanceColumn from "./table/SupplyBalanceColumn";
 import TokenColumn from "./table/TokenColumn";
@@ -56,6 +57,9 @@ const TokenItem: FunctionComponent<{
         <TotalSupplyColumn token={token} amount={supplyAmount} price={supplyPrice}></TotalSupplyColumn>
       </td>
       <td>
+        <CollateralColumn realm={realm} market={market}></CollateralColumn>
+      </td>
+      <td>
         <SupplyBalanceColumn
           token={token}
           amount={supplyBalanceAmount}
@@ -90,6 +94,7 @@ const TokenList: FunctionComponent<{
             <th className="columns-2 ">Token</th>
             <th>Wallet Balance</th>
             <th>Total Supply</th>
+            <th>Collateral</th>
             <th>Supply Balance</th>
             <th>Supply APY</th>
             <th>Borrow Balance</th>
