@@ -1,14 +1,18 @@
 import type { FunctionComponent } from "react";
 import BigNumber from "bignumber.js";
+import type { Token } from "~~/configs/pool";
 import { amountDesc } from "~~/utils/amount";
 
 const BorrowBalanceColumn: FunctionComponent<{
   amount?: BigNumber;
   price?: BigNumber;
-}> = ({ amount, price }) => {
+  token: Token;
+}> = ({ amount, price, token }) => {
   return (
     <div>
-      <div>{amount?.toString() !== "0" ? `${amountDesc(amount, 2)}` : "-.--"}</div>
+      <div className="font-bold">
+        {amount?.toString() !== "0" ? `${amountDesc(amount, 2)} ${token.name.toUpperCase()}` : "-.--"}
+      </div>
       <div className="text-xs text-[#6E788C]">${amountDesc(price, 2)}</div>
     </div>
   );

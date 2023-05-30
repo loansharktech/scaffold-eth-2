@@ -46,19 +46,27 @@ const TokenItem: FunctionComponent<{
         <TokenColumn token={token} price={price}></TokenColumn>
       </td>
       <td>
-        <WalletBalanceColumn amount={walletBalanceAmount} price={walletBalancePrice}></WalletBalanceColumn>
+        <WalletBalanceColumn
+          token={token}
+          amount={walletBalanceAmount}
+          price={walletBalancePrice}
+        ></WalletBalanceColumn>
       </td>
       <td>
         <TotalSupplyColumn token={token} amount={supplyAmount} price={supplyPrice}></TotalSupplyColumn>
       </td>
       <td>
-        <SupplyBalanceColumn amount={supplyBalanceAmount} price={supplyBalancePrice}></SupplyBalanceColumn>
+        <SupplyBalanceColumn
+          token={token}
+          amount={supplyBalanceAmount}
+          price={supplyBalancePrice}
+        ></SupplyBalanceColumn>
       </td>
       <td>
         <SupplyApyColumn value={supplyAPY}></SupplyApyColumn>
       </td>
       <td>
-        <BorrowBalanceColumn amount={borrowAmount} price={borrowPrice}></BorrowBalanceColumn>
+        <BorrowBalanceColumn token={token} amount={borrowAmount} price={borrowPrice}></BorrowBalanceColumn>
       </td>
       <td>
         <BorrowApyColumn value={borrowAPY}></BorrowApyColumn>

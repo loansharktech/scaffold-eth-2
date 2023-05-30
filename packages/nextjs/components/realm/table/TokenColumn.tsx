@@ -10,7 +10,7 @@ const TokenColumn: FunctionComponent<{
     <div className="flex items-center">
       <Image alt={token.name} src={token.icon} width={30} height={30}></Image>
       <div className="ml-3">
-        <div className="font-semibold">{token.name.toUpperCase()}</div>
+        <div className="font-bold">{token.name.toUpperCase()}</div>
         <div className="text-xs">{price ? `$${price}` : "-.--"}</div>
       </div>
     </div>

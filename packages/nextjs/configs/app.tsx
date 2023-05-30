@@ -2,8 +2,8 @@ import { DiscordIcon, GitbookIcon, GithubIcon, TwitterIcon, UnionIcon } from "~~
 
 export const navTabs = [
   {
-    id: "leading",
-    label: "Leading",
+    id: "lending",
+    label: "Lending",
     route: "/",
   },
   {
