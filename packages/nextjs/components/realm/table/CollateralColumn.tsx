@@ -10,6 +10,7 @@ const CollateralColumn: FunctionComponent<{
   const { isMember, enterMarkets, exitMarket, loading } = useCollateral(realm, market);
   return (
     <div
+      className="flex justify-center"
       onClick={e => {
         e.stopPropagation();
       }}
@@ -21,7 +22,7 @@ const CollateralColumn: FunctionComponent<{
         size="md"
         checked={isMember}
         disabled={loading}
-        thumbIcon={loading && <Loader size="sm"></Loader>}
+        thumbIcon={loading && <Loader size={17}></Loader>}
         onChange={e => {
           if (e.currentTarget.checked) {
             enterMarkets();

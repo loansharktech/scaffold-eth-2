@@ -62,13 +62,15 @@ const TokenSupply: FunctionComponent<{
     <div className="relative">
       <LoadingOverlay visible={suppyToken.approving || suppyToken.executing} overlayBlur={2}></LoadingOverlay>
       <div className="flex items-center justify-between">
-        <div className="font-bold text-xl">Enter a value</div>
+        <div className="font-bold text-xl"></div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">
+            Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+          </span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(parseFloat(balance?.toFixed(2, BigNumber.ROUND_FLOOR) || "0"));
+              changeAmount(balance?.toNumber());
             }}
           >
             MAX
@@ -144,10 +146,6 @@ const TokenSupply: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Supply APY</div>
           <div className="text-[#039DED] font-bold">{supplyAPY.toFixed(2)}%</div>
-        </div>
-        <div className="mt-7 text-[#6F8394]">
-          You are supplying without enabling the assets as collateral. You need to enable the asset as collateral to
-          borrow against it. <a className="action text-dark1 font-semibold">Learn more.</a>
         </div>
       </div>
 

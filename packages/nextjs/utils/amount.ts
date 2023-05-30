@@ -12,13 +12,18 @@ export const amountDesc = (amount?: BigNumber, decimal?: number) => {
   if (!amount) {
     return (0).toFixed(decimal);
   }
+  let rtn;
   if (amount.gte(B)) {
-    return amount.div(B).toFormat(decimal) + "B";
+    rtn = amount.div(B).toFormat(decimal) + "B";
   } else if (amount.gte(M)) {
-    return amount.div(M).toFormat(decimal) + "M";
+    rtn = amount.div(M).toFormat(decimal) + "M";
   } else if (amount.gte(K)) {
-    return amount.div(K).toFormat(decimal) + "K";
+    rtn = amount.div(K).toFormat(decimal) + "K";
   } else {
-    return amount.toFormat(decimal);
+    rtn = amount.toFormat(decimal);
   }
+  if (rtn === "-0.00") {
+    rtn = "0.00";
+  }
+  return rtn;
 };

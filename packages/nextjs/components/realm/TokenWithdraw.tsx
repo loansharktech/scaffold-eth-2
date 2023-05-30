@@ -80,10 +80,10 @@ const TokenWithdraw: FunctionComponent<{
     <div className="relative">
       <LoadingOverlay visible={withdrawToken.executing} overlayBlur={2}></LoadingOverlay>
       <div className="flex items-center justify-between">
-        <div className="font-bold text-xl">Enter a value</div>
+        <div className="font-bold text-xl"></div>
         <div className="flex items-center">
           <span className="text-sm text-[#3481BD] mr-2">
-            Max: {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)}
+            Max: {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
           </span>
           <div
             className="action font-extrabold text-[#3481BD]"
@@ -133,7 +133,7 @@ const TokenWithdraw: FunctionComponent<{
         <div className="flex items-center justify-between">
           <div>Max Withdrawal</div>
           <div className="text-end">
-            <div className="text-[#039DED] font-bold">
+            <div className="">
               {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
             </div>
             <div className="text-xs">${amountDesc(maxWithdrawPrice, 2)}</div>
@@ -150,13 +150,13 @@ const TokenWithdraw: FunctionComponent<{
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Limit</div>
-          <div className="">
+          <div className="text-[#039DED] font-bold">
             ${amountDesc(borrowLimitPrice, 2)} [-${amountDesc(borrowLimitChangedPrice, 2)}]
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
-          <div className="">
+          <div className="text-[#039DED] font-bold">
             {borrowUtilization1.toFixed(2)}% [+{borrowUtilization2.toFixed(2)}%]
           </div>
         </div>

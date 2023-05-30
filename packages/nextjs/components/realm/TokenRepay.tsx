@@ -70,9 +70,11 @@ const TokenRepay: FunctionComponent<{
     <div className="relative">
       <LoadingOverlay visible={repayToken.approving || repayToken.executing} overlayBlur={2}></LoadingOverlay>
       <div className="flex items-center justify-between">
-        <div className="font-bold text-xl">Enter a value</div>
+        <div className="font-bold text-xl"></div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Max: {maxAmount.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">
+            Max: {maxAmount.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+          </span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
@@ -121,7 +123,7 @@ const TokenRepay: FunctionComponent<{
         <div className="flex items-center justify-between">
           <div>Wallet Balance</div>
           <div className="text-end">
-            <div className="text-[#039DED] font-bold">
+            <div className="">
               {balance?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
             </div>
             <div className="text-xs">${amountDesc(balancePrice, 2)}</div>

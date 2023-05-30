@@ -47,6 +47,9 @@ const TokenItem: FunctionComponent<{
         <TokenColumn token={token} price={price}></TokenColumn>
       </td>
       <td>
+        <CollateralColumn realm={realm} market={market}></CollateralColumn>
+      </td>
+      <td>
         <WalletBalanceColumn
           token={token}
           amount={walletBalanceAmount}
@@ -55,9 +58,6 @@ const TokenItem: FunctionComponent<{
       </td>
       <td>
         <TotalSupplyColumn token={token} amount={supplyAmount} price={supplyPrice}></TotalSupplyColumn>
-      </td>
-      <td>
-        <CollateralColumn realm={realm} market={market}></CollateralColumn>
       </td>
       <td>
         <SupplyBalanceColumn
@@ -92,9 +92,9 @@ const TokenList: FunctionComponent<{
         <thead>
           <tr>
             <th className="columns-2 ">Token</th>
+            <th>Collateral</th>
             <th>Wallet Balance</th>
             <th>Total Supply</th>
-            <th>Collateral</th>
             <th>Supply Balance</th>
             <th>Supply APY</th>
             <th>Borrow Balance</th>

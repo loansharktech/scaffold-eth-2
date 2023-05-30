@@ -33,6 +33,9 @@ const TokenBorrow: FunctionComponent<{
   const borrowAmount = marketData?.borrowBalanceStored?.div(p18);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
+  const totalBorrow = marketData?.totalBorrows?.div(p18);
+  const totalBorrowPrice = totalBorrow?.multipliedBy(marketData?.price || 0);
+
   const _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? _C
@@ -67,9 +70,11 @@ const TokenBorrow: FunctionComponent<{
     <div className="relative">
       <LoadingOverlay visible={borrowToken.executing} overlayBlur={2}></LoadingOverlay>
       <div className="flex items-center justify-between">
-        <div className="font-bold text-xl">Enter a value</div>
+        <div className="font-bold text-xl"></div>
         <div className="flex items-center">
-          <span className="text-sm text-[#3481BD] mr-2">Max: {maxAmount?.toFormat(2, BigNumber.ROUND_FLOOR)}</span>
+          <span className="text-sm text-[#3481BD] mr-2">
+            Max: {maxAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+          </span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
@@ -139,10 +144,10 @@ const TokenBorrow: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Total Borrow</div>
           <div className="text-end">
-            <div className="text-[#039DED] font-bold">
-              {amountDesc(borrowAmount, 2)} {market.token}
+            <div className="">
+              {amountDesc(totalBorrow, 2)} {market.token}
             </div>
-            <div className="text-xs">${amountDesc(borrowPrice, 2)}</div>
+            <div className="text-xs">${amountDesc(totalBorrowPrice, 2)}</div>
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
