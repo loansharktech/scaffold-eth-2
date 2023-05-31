@@ -39,12 +39,13 @@ const TokenRepay: FunctionComponent<{
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
-  const borrowLimitPrice = marketData?.borrowLimitPrice;
+  const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
+  const globalBorrowPrice = realm.totalUserBorrowed || new BigNumber(0);
 
   const repayPrice = new BigNumber(repayToken.amount || 0).multipliedBy(marketData?.price || 0);
 
   const borrowUtilization1 = !borrowLimitPrice?.isEqualTo(0)
-    ? borrowPrice.minus(repayPrice).div(borrowLimitPrice || 0)
+    ? globalBorrowPrice.minus(repayPrice).div(borrowLimitPrice || 0)
     : new BigNumber(0);
 
   const borrowUtilization2 = borrowLimitPrice?.isEqualTo(0) ? new BigNumber(0) : repayPrice.div(borrowLimitPrice || 0);

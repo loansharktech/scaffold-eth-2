@@ -37,10 +37,14 @@ const TokenSupply: FunctionComponent<{
   const supplied = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
   const suppliedPrice = supplied?.multipliedBy(marketData?.price || 0);
   const LTV = marketData?.markets?.[1].div(p18).toNumber() || 0;
-  const borrowLimit = new BigNumber(suppyToken.amount || 0)
+  let borrowLimit = new BigNumber(suppyToken.amount || 0)
     .multipliedBy(marketData?.markets?.[1] || 0)
     .div(p18)
     .multipliedBy(marketData?.price || 0);
+
+  if (isMember) {
+    borrowLimit = new BigNumber(0);
+  }
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 

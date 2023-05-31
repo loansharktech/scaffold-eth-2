@@ -37,20 +37,25 @@ const TokenWithdraw: FunctionComponent<{
   const supplyBalancePrice = supplyBalanceAmount.multipliedBy(marketData?.price || 0);
 
   const borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
-  const borrowLimitPrice = marketData?.borrowLimitPrice?.minus(borrowLimitChangedPrice) || new BigNumber(0);
+  // if (!isMember) {
+  //   borrowLimitChangedPrice = new BigNumber(0);
+  // }
+  const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
 
-  const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
-  const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
+  const globalBorrowPrice = realm.totalUserBorrowed;
 
   const _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? _C
-        .plus(borrowPrice || 0)
+        .plus(globalBorrowPrice || 0)
         .div(borrowLimitPrice)
         .multipliedBy(100)
         .toNumber()
     : 0;
   const borrowUtilization2 = !borrowLimitPrice.eq(0) ? _C.div(borrowLimitPrice).multipliedBy(100).toNumber() : 0;
+  // if (!isMember) {
+  //   borrowUtilization2 = 0;
+  // }
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
@@ -63,8 +68,6 @@ const TokenWithdraw: FunctionComponent<{
   if (isMember) {
     maxWithdrawAmount = new BigNumber(Math.min(supplyAmount.toNumber() || 0, globalWithdrawLimit?.toNumber() || 0));
   }
-  console.log("globalWithdrawLimit", globalWithdrawLimit?.toString());
-  console.log("supplyAmount", supplyAmount.toString());
   const maxWithdrawPrice = maxWithdrawAmount.multipliedBy(marketData?.price || 0);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
@@ -155,7 +158,8 @@ const TokenWithdraw: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Limit</div>
           <div className="text-[#039DED] font-bold">
-            ${amountDesc(borrowLimitPrice, 2)} [-${amountDesc(borrowLimitChangedPrice, 2)}]
+            ${amountDesc(borrowLimitPrice.minus(borrowLimitChangedPrice), 2)} [-$
+            {amountDesc(borrowLimitChangedPrice, 2)}]
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">

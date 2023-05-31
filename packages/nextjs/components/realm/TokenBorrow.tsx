@@ -28,18 +28,19 @@ const TokenBorrow: FunctionComponent<{
   const borrowToken = useBorrowToken(realm, market);
 
   const amountPrice = new BigNumber(borrowToken.amount || 0)?.multipliedBy(marketData?.price || 0);
-  const borrowLimitPrice = marketData?.borrowLimitPrice || new BigNumber(0);
+  const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
 
   const borrowAmount = marketData?.borrowBalanceStored?.div(p18);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
   const totalBorrow = marketData?.totalBorrows?.div(p18);
   const totalBorrowPrice = totalBorrow?.multipliedBy(marketData?.price || 0);
+  const globalBorrowPrice = realm.totalUserBorrowed;
 
   const _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? _C
-        .plus(borrowPrice || 0)
+        .plus(globalBorrowPrice || 0)
         .div(borrowLimitPrice)
         .multipliedBy(100)
         .toNumber()
@@ -133,7 +134,7 @@ const TokenBorrow: FunctionComponent<{
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
-          <div className="text-end text-[#039DED] font-bold">
+          <div className="text-[#039DED] font-bold">
             {borrowUtilization1.toFixed(2)}% [+{borrowUtilization2.toFixed(2)}%]
           </div>
         </div>
