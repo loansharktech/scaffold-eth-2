@@ -2,6 +2,7 @@ import { FunctionComponent, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
+import { useCollateral } from "~~/hooks/useCollateral";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useWithdrawToken } from "~~/hooks/useWithdrawToken";
 import store, { actions } from "~~/stores";
@@ -24,6 +25,8 @@ const TokenWithdraw: FunctionComponent<{
         label: market.token.toUpperCase(),
       };
     }) || [];
+
+  const { isMember } = useCollateral(realm, market);
 
   const withdrawToken = useWithdrawToken(realm, market);
 
@@ -52,16 +55,17 @@ const TokenWithdraw: FunctionComponent<{
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
-  const supplyPrice = supplyAmount.multipliedBy(marketData?.price || 0);
 
-  let maxWithdrawAmount = supplyAmount.minus(borrowAmount || 0);
-  if (maxWithdrawAmount.lt(0)) {
-    maxWithdrawAmount = new BigNumber(0);
+  const globalWithdrawPrice = realm.collateralPrice?.minus(realm.totalUserBorrowed || 0);
+  const globalWithdrawLimit = marketData?.price ? globalWithdrawPrice?.div(marketData.price) : new BigNumber(0);
+
+  let maxWithdrawAmount = supplyAmount;
+  if (isMember) {
+    maxWithdrawAmount = new BigNumber(Math.min(supplyAmount.toNumber() || 0, globalWithdrawLimit?.toNumber() || 0));
   }
-  let maxWithdrawPrice = supplyPrice.minus(borrowPrice);
-  if (maxWithdrawPrice.lt(0)) {
-    maxWithdrawPrice = new BigNumber(0);
-  }
+  console.log("globalWithdrawLimit", globalWithdrawLimit?.toString());
+  console.log("supplyAmount", supplyAmount.toString());
+  const maxWithdrawPrice = maxWithdrawAmount.multipliedBy(marketData?.price || 0);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(

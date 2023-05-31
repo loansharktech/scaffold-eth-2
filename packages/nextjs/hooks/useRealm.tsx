@@ -40,6 +40,9 @@ export type MarketData = {
   token: Token;
   address: string;
   borrowCaps?: BigNumber;
+  collateralBalance?: BigNumber;
+  collateralPrice?: BigNumber;
+  isMember?: boolean;
 };
 
 export type Realm = {
@@ -56,6 +59,8 @@ export type Realm = {
   markets?: Market[];
   config?: RealmConfig;
   contract: RealmContract;
+  collateralBalance?: BigNumber;
+  collateralPrice?: BigNumber;
 };
 
 function processContractValue(data: string | boolean | EBigNumber) {
@@ -178,12 +183,17 @@ export function useRealm(realmType: RealmType) {
       chainId: parseInt(realmContracts.chainId),
       args: [marketContract.address],
     });
+    calls.push({
+      ...ComptrollerContract,
+      functionName: "checkMembership",
+      chainId: parseInt(realmContracts.chainId),
+      args: [address, marketContract.address],
+    });
   });
 
   const { data, refetch } = useContractReads({
     scopeKey: "market",
     contracts: calls,
-    cacheTime: 1000,
     watch: true,
     cacheOnBlock: true,
     keepPreviousData: true,
@@ -201,6 +211,7 @@ export function useRealm(realmType: RealmType) {
     "borrowRatePerBlock",
     "markets",
     "borrowCaps",
+    "isMember",
   ] as (
     | "cash"
     | "price"
@@ -213,6 +224,7 @@ export function useRealm(realmType: RealmType) {
     | "borrowRatePerBlock"
     | "markets"
     | "borrowCaps"
+    | "isMember"
   )[];
 
   useEffect(() => {
@@ -259,6 +271,8 @@ export function useRealm(realmType: RealmType) {
     let marketDeposit = new BigNumber(0);
     let totalUserBorrowed = new BigNumber(0);
     let totalUserLimit = new BigNumber(0);
+    let totalCollateralBalance = new BigNumber(0);
+    let totalCollateralPrice = new BigNumber(0);
 
     let netAPYSUM = new BigNumber(0);
     let supplyAmountSUM = new BigNumber(0);
@@ -280,6 +294,7 @@ export function useRealm(realmType: RealmType) {
         borrowRatePerBlock,
         borrowBalanceStored,
         markets,
+        isMember,
       } = result[marketAddress]!;
       if (price && cash) {
         result[marketAddress]!.value = cash.div(p18).multipliedBy(price);
@@ -294,7 +309,7 @@ export function useRealm(realmType: RealmType) {
         marketTotalBorrow = marketTotalBorrow.plus(result[marketAddress]!.borrow!);
       }
       if (balance && supplyRatePerBlock && exchangeRate && price) {
-        const supplyAmount = balance.div(p18).multipliedBy(price);
+        const supplyAmount = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
         result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
           supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
         );
@@ -330,9 +345,15 @@ export function useRealm(realmType: RealmType) {
         );
         netAPYSUM = netAPYSUM.plus(result[marketAddress]!.netAPY!);
       }
-      if (balance && price && exchangeRate) {
+      if (balance && price && exchangeRate && typeof isMember !== "undefined") {
         result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
         marketDeposit = marketDeposit.plus(result[marketAddress]!.deposit!);
+        if (isMember) {
+          result[marketAddress]!.collateralBalance = balance.div(p18).multipliedBy(exchangeRate);
+          result[marketAddress]!.collateralPrice = result[marketAddress]!.collateralBalance?.multipliedBy(price);
+          totalCollateralBalance = totalCollateralBalance.plus(result[marketAddress]!.collateralBalance!);
+          totalCollateralPrice = totalCollateralPrice.plus(result[marketAddress]!.collateralPrice!);
+        }
       }
       if (exchangeRate && borrowBalanceStored && price) {
         result[marketAddress]!.userBorrowed = borrowBalanceStored.div(p18).multipliedBy(price);
@@ -369,6 +390,8 @@ export function useRealm(realmType: RealmType) {
     result.markets = avaliableMarkets;
     result.config = realmInfo;
     result.contract = realmContracts;
+    result.collateralBalance = totalCollateralBalance;
+    result.collateralPrice = totalCollateralPrice;
     setRealm(result);
   }, [data]);
 
