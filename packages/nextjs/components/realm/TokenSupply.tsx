@@ -42,7 +42,7 @@ const TokenSupply: FunctionComponent<{
     .div(p18)
     .multipliedBy(marketData?.price || 0);
 
-  if (isMember) {
+  if (!isMember) {
     borrowLimit = new BigNumber(0);
   }
 

@@ -42,7 +42,10 @@ const TokenRepay: FunctionComponent<{
   const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
   const globalBorrowPrice = realm.totalUserBorrowed || new BigNumber(0);
 
-  const repayPrice = new BigNumber(repayToken.amount || 0).multipliedBy(marketData?.price || 0);
+  let repayPrice = new BigNumber(repayToken.amount || 0).multipliedBy(marketData?.price || 0);
+  if (!marketData?.isMember) {
+    repayPrice = new BigNumber(0);
+  }
 
   const borrowUtilization1 = !borrowLimitPrice?.isEqualTo(0)
     ? globalBorrowPrice.minus(repayPrice).div(borrowLimitPrice || 0)
@@ -63,7 +66,6 @@ const TokenRepay: FunctionComponent<{
   const isInsufficientBalance = (repayToken.amount || 0) > (balance?.toNumber() || 0);
   const isExceededAmountBorrowed = (repayToken.amount || 0) > (borrowAmount?.toNumber() || 0);
   const needApprove = !repayToken.isNativeToken && repayToken.approveAllowanceAmount.isLessThan(repayToken.amount || 0);
-
   if (!marketData) {
     return null;
   }

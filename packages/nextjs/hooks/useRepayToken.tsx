@@ -36,7 +36,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...tokenContract,
     functionName: "approve",
     chainId: parseInt(realm.contract.chainId),
-    args: [marketData?.address, ethers.utils.parseUnits(String(tradeData.amount || "0"), 18)],
+    args: [marketData?.address, ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)],
   } as any);
 
   const { status: approveTransStatus } = useWaitForTransaction({
@@ -49,7 +49,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [ethers.utils.parseUnits(String(tradeData.amount || "0"), 18)] : [],
+    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
     overrides: {
       value: tokenContract ? 0 : ethers.utils.parseEther(tradeData?.amount ? String(tradeData.amount) : "0"),
     },

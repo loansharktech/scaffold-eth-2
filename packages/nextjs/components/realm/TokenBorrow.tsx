@@ -37,7 +37,10 @@ const TokenBorrow: FunctionComponent<{
   const totalBorrowPrice = totalBorrow?.multipliedBy(marketData?.price || 0);
   const globalBorrowPrice = realm.totalUserBorrowed;
 
-  const _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
+  let _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
+  if (!marketData?.isMember) {
+    _C = new BigNumber(0);
+  }
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? _C
         .plus(globalBorrowPrice || 0)
@@ -51,7 +54,9 @@ const TokenBorrow: FunctionComponent<{
 
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 
-  const maxAmount = marketData?.borrowLimit?.minus(borrowAmount || 0) || new BigNumber(0);
+  const maxAmount = marketData?.price
+    ? realm.totalUserLimit?.minus(realm.totalUserBorrowed || 0).div(marketData.price)
+    : new BigNumber(0);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(

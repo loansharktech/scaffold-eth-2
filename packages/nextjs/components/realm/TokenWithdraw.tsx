@@ -36,19 +36,21 @@ const TokenWithdraw: FunctionComponent<{
     marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyBalancePrice = supplyBalanceAmount.multipliedBy(marketData?.price || 0);
 
-  const borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
-  // if (!isMember) {
-  //   borrowLimitChangedPrice = new BigNumber(0);
-  // }
+  let borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
+  if (!isMember) {
+    borrowLimitChangedPrice = new BigNumber(0);
+  }
   const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
 
   const globalBorrowPrice = realm.totalUserBorrowed;
 
-  const _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
+  let _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
+  if (!marketData?.isMember) {
+    _C = new BigNumber(0);
+  }
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
-    ? _C
-        .plus(globalBorrowPrice || 0)
-        .div(borrowLimitPrice)
+    ? (globalBorrowPrice || new BigNumber(0))
+        .div(borrowLimitPrice.minus(borrowLimitChangedPrice))
         .multipliedBy(100)
         .toNumber()
     : 0;
@@ -61,8 +63,12 @@ const TokenWithdraw: FunctionComponent<{
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
 
-  const globalWithdrawPrice = realm.collateralPrice?.minus(realm.totalUserBorrowed || 0);
-  const globalWithdrawLimit = marketData?.price ? globalWithdrawPrice?.div(marketData.price) : new BigNumber(0);
+  const globalWithdrawPrice = realm.totalUserLimit?.minus(realm.totalUserBorrowed || 0);
+  const _v = marketData?.price?.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
+  const globalWithdrawLimit = _v ? globalWithdrawPrice?.div(_v) : new BigNumber(0);
+
+  console.log("globalWithdrawLimit", globalWithdrawLimit?.toString());
+  console.log("ltv", marketData?.markets?.[1].div(p18)?.toString());
 
   let maxWithdrawAmount = supplyAmount;
   if (isMember) {
