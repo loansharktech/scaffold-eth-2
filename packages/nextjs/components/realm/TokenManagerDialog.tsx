@@ -44,7 +44,7 @@ const TokenManagerDialog: FunctionComponent<{
 
   const borrowed = amountDesc(realm.totalUserBorrowed, 2);
   const limit = amountDesc(realm.totalUserLimit, 2);
-  const collateral = realm.deposit ? realm.deposit.toNumber().toFixed(2) : (0).toFixed(2);
+  const collateral = realm.deposit ? amountDesc(realm.deposit, 2) : (0).toFixed(2);
   const userBorrowLimit = realm.userBorrowLimit ? realm.userBorrowLimit.multipliedBy(100) : new BigNumber(0);
 
   if (!market) {
