@@ -11,8 +11,7 @@ const Pools: FunctionComponent = () => {
   const { realm } = useRealm(defaultPool.id);
 
   const netAPY = realm.netAPY ? realm.netAPY.multipliedBy(100).toNumber() : 0;
-  const deposit = realm.deposit ? realm.deposit.toNumber().toFixed(2) : 0;
-  console.log("deposit", deposit);
+  const deposit = realm.deposit ? amountDesc(realm.deposit, 2) : 0;
   const totalSupply = amountDesc(realm.totalSupply, 0);
   const totalBorrow = amountDesc(realm.totalBorrow, 0);
 
