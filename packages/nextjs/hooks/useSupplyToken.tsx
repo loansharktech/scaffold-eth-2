@@ -169,10 +169,8 @@ export function useSupplyToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
-    } else if (approveTransStatus === "success") {
-      mint();
     }
-  }, [approveTransStatus, mint]);
+  }, [approveTransStatus]);
 
   useEffect(() => {
     if (minteTransStatus === "error") {

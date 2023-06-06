@@ -84,9 +84,6 @@ export function useRepayToken(realm: Realm, market: Market) {
         let res;
         if (isMax) {
           res = await _mint({
-            recklesslySetUnpreparedOverrides: {
-              value: tokenContract ? 0 : MAX_VALUE,
-            },
             recklesslySetUnpreparedArgs: tokenContract ? [MAX_VALUE] : [],
           });
         } else {
@@ -185,10 +182,8 @@ export function useRepayToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
-    } else if (approveTransStatus === "success") {
-      repay();
     }
-  }, [approveTransStatus, repay]);
+  }, [approveTransStatus]);
 
   useEffect(() => {
     if (minteTransStatus === "error") {
