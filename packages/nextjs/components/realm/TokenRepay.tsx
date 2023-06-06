@@ -69,6 +69,7 @@ const TokenRepay: FunctionComponent<{
   if (!marketData) {
     return null;
   }
+
   return (
     <div className="relative">
       <LoadingOverlay visible={repayToken.approving || repayToken.executing} overlayBlur={2}></LoadingOverlay>
@@ -186,7 +187,7 @@ const TokenRepay: FunctionComponent<{
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
-            repayToken.repay();
+            repayToken.repay(maxAmount.toNumber() === repayToken.amount);
           }}
         >
           Repay

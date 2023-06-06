@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import BigNumber from "bignumber.js";
-import { ethers } from "ethers";
+import { BigNumber as _BigNumber, ethers } from "ethers";
 import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
@@ -9,6 +9,8 @@ import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
+
+const MAX_VALUE = _BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
 export function useRepayToken(realm: Realm, market: Market) {
   const marketData = realm[market.address];
@@ -51,7 +53,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
     args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
     overrides: {
-      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData?.amount ? String(tradeData.amount) : "0"),
+      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData?.amount ? tradeData.amount.toFixed(18) : "0"),
     },
   } as any);
 
@@ -60,56 +62,70 @@ export function useRepayToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
   });
 
-  const repay = useCallback(async () => {
-    if (!isLogin) {
-      return login();
-    }
-
-    if (!_mint) {
-      return;
-    }
-    try {
-      store.dispatch(
-        actions.trade.updateRepay({
-          executing: true,
-          executeError: undefined,
-          executeTx: undefined,
-          stepIndex: TradeStep.EXECUTE,
-        }),
-      );
-      const res = await _mint();
-
-      store.dispatch(
-        actions.trade.updateRepay({
-          executeTx: res.hash,
-        }),
-      );
-      const transReceipt = await res.wait();
-      if (transReceipt.status === 0) {
-        throw new Error("Execute fail");
+  const repay = useCallback(
+    async (isMax: boolean) => {
+      if (!isLogin) {
+        return login();
       }
-      store.dispatch(
-        actions.trade.updateRepay({
-          stepIndex: TradeStep.ENTER_AMOUNT,
-        }),
-      );
-      toast.success("Repay success");
-    } catch (e: any) {
-      store.dispatch(
-        actions.trade.updateRepay({
-          executeError: e.message,
-          stepIndex: TradeStep.ENTER_AMOUNT,
-        }),
-      );
-      toast.error(e.message);
-    } finally {
-      store.dispatch(
-        actions.trade.updateRepay({
-          executing: false,
-        }),
-      );
-    }
-  }, [isLogin, _mint, login]);
+
+      if (!_mint) {
+        return;
+      }
+      try {
+        store.dispatch(
+          actions.trade.updateRepay({
+            executing: true,
+            executeError: undefined,
+            executeTx: undefined,
+            stepIndex: TradeStep.EXECUTE,
+          }),
+        );
+
+        let res;
+        if (isMax) {
+          res = await _mint({
+            recklesslySetUnpreparedOverrides: {
+              value: tokenContract ? 0 : MAX_VALUE,
+            },
+            recklesslySetUnpreparedArgs: tokenContract ? [MAX_VALUE] : [],
+          });
+        } else {
+          res = await _mint();
+        }
+
+        store.dispatch(
+          actions.trade.updateRepay({
+            executeTx: res.hash,
+          }),
+        );
+        const transReceipt = await res.wait();
+        if (transReceipt.status === 0) {
+          throw new Error("Execute fail");
+        }
+        store.dispatch(
+          actions.trade.updateRepay({
+            stepIndex: TradeStep.ENTER_AMOUNT,
+          }),
+        );
+        toast.success("Repay success");
+      } catch (e: any) {
+        store.dispatch(
+          actions.trade.updateRepay({
+            executeError: e.message,
+            stepIndex: TradeStep.ENTER_AMOUNT,
+          }),
+        );
+        toast.error(e.message);
+      } finally {
+        store.dispatch(
+          actions.trade.updateRepay({
+            executing: false,
+          }),
+        );
+      }
+    },
+    [isLogin, _mint, login, tokenContract],
+  );
 
   const approveToken = useCallback(async () => {
     if (!isLogin) {

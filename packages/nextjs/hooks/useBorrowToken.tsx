@@ -22,7 +22,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "borrow",
     chainId: parseInt(realm.contract.chainId),
-    args: [ethers.utils.parseEther(tradeData.amount ? String(tradeData.amount) : "0")],
+    args: [ethers.utils.parseEther(tradeData.amount ? tradeData.amount.toFixed(18) : "0")],
   } as any);
 
   const { status: borrowTransStatus } = useWaitForTransaction({
