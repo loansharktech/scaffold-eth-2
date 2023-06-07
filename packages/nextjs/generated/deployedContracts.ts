@@ -4,6 +4,10 @@ const contracts = {
       name: "scrollAlphaTestnet",
       chainId: "534353",
       contracts: {
+        Maximillion: {
+          address: "0x3eb7ACf2cCC6F42679B3413BdFdb0b7cE9145A8d",
+          abi: [{"type":"constructor","inputs":[{"type":"address","name":"cEther_","internalType":"contract CEther"}]},{"type":"function","stateMutability":"view","outputs":[{"type":"address","name":"","internalType":"contract CEther"}],"name":"cEther","inputs":[],"constant":true},{"type":"function","stateMutability":"payable","outputs":[],"name":"repayBehalf","inputs":[{"type":"address","name":"borrower","internalType":"address"}],"constant":false},{"type":"function","stateMutability":"payable","outputs":[],"name":"repayBehalfExplicit","inputs":[{"type":"address","name":"borrower","internalType":"address"},{"type":"address","name":"cEther_","internalType":"contract CEther"}],"constant":false}]
+        },
         USDC: {
           address: "0xA0D71B9877f44C744546D649147E3F1e70a93760",
           abi: [
