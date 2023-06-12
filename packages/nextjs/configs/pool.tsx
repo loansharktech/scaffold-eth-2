@@ -31,7 +31,7 @@ export const realms: RealmConfig[] = [
     markets: [
       {
         cToken: "cUSDC",
-        token: "WETH",
+        token: "USDC",
       },
       {
         cToken: "cWETH",
@@ -40,14 +40,6 @@ export const realms: RealmConfig[] = [
       {
         cToken: "cETH",
         token: "ETH",
-      },
-      {
-        cToken: "LcEther",
-        token: "ETH",
-      },
-      {
-        cToken: "cUSDC2",
-        token: "USDC",
       },
     ],
     tokens: [
