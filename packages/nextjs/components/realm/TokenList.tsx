@@ -24,7 +24,7 @@ const TokenItem: FunctionComponent<{
     return token.name === market.token;
   })!;
   const tokenInfo = useToken(realm, market);
-  const price = marketData?.price?.toFormat(4);
+  const price = marketData?.price?.toFixed(2);
 
   const walletBalanceAmount = tokenInfo.balance?.div(p18);
   const walletBalancePrice = walletBalanceAmount?.multipliedBy(marketData?.price || 0);

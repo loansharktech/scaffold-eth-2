@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
-import { BigNumber as EBigNumber } from "ethers";
+import { BigNumber as EBigNumber, ethers } from "ethers";
 import { useContractRead, useContractReads } from "wagmi";
 import { RealmConfig, RealmType, Token, realms } from "~~/configs/pool";
 import contracts from "~~/generated/deployedContracts";
 import { useAccount } from "~~/hooks/useAccount";
 import { p18 } from "~~/utils/amount";
 import { ContractName, RealmContract } from "~~/utils/scaffold-eth/contract";
+import redstone from 'redstone-api';
 
 export type Market = {
   address: string;
@@ -228,171 +229,189 @@ export function useRealm(realmType: RealmType) {
   )[];
 
   useEffect(() => {
-    const result = {} as Realm;
-    data?.forEach((item, index) => {
-      const marketIndex = Math.floor(index / props.length);
-      const propIndex = index % props.length;
-      const marketContract = marketContracts[marketIndex]!;
-      const prop = props[propIndex];
 
-      if (!result[marketContract.address]) {
-        const market = realmInfo!.markets.find(market => {
-          return market.cToken === contractAddressName[marketContract.address];
-        })!;
-        result[marketContract.address] = {
-          token: realmInfo!.tokens.find(token => {
-            return token.name === market.token;
-          })!,
-          address: marketContract.address,
-        };
-      }
-      if (!item) {
-        result[marketContract.address]![prop] = undefined;
-      } else if (prop === "price") {
-        // @ts-ignore
-        result[marketContract.address].price = processContractValue(item)?.div(p18);
-      } else if (prop === "exchangeRate") {
-        // @ts-ignore
-        result[marketContract.address].exchangeRate = processContractValue(item)?.div(p18);
-      } else if (Array.isArray(item)) {
-        // @ts-ignore
-        result[marketContract.address][prop] = item.map(value => {
-          return processContractValue(value);
-        });
-      } else {
-        // @ts-ignore
-        result[marketContract.address][prop] = processContractValue(item);
-      }
-    });
+    async function fetchMyAPI() {
+      const price1 = await redstone.getPrice("USDC");
+      const price2 = await redstone.getPrice("WETH");
+      const price3 = await redstone.getPrice("ETH");
+      const priceArray = new Map();
+      priceArray.set("USDC", ethers.utils.parseUnits(price1.value.toString()));
+      priceArray.set("WETH", ethers.utils.parseUnits(price2.value.toString()));
+      priceArray.set("ETH", ethers.utils.parseUnits(price3.value.toString()));
 
-    let marketTotalValueLocked = new BigNumber(0);
-    let marketTotalSupply = new BigNumber(0);
-    let marketTotalBorrow = new BigNumber(0);
-    let marketDeposit = new BigNumber(0);
-    let totalUserBorrowed = new BigNumber(0);
-    let totalUserLimit = new BigNumber(0);
-    let totalCollateralBalance = new BigNumber(0);
-    let totalCollateralPrice = new BigNumber(0);
+      const result = {} as Realm;
+      data?.forEach((item, index) => {
+        const marketIndex = Math.floor(index / props.length);
+        const propIndex = index % props.length;
+        const marketContract = marketContracts[marketIndex]!;
+        const prop = props[propIndex];
 
-    let netAPYSUM = new BigNumber(0);
-    let supplyAmountSUM = new BigNumber(0);
-    let borrowAmountSUM = new BigNumber(0);
-
-    marketContracts.forEach(marketContract => {
-      const marketAddress = marketContract!.address;
-      if (!result || !result[marketAddress]) {
-        return;
-      }
-      const {
-        cash,
-        price,
-        exchangeRate,
-        totalSupply,
-        totalBorrows,
-        balance,
-        supplyRatePerBlock,
-        borrowRatePerBlock,
-        borrowBalanceStored,
-        markets,
-        isMember,
-      } = result[marketAddress]!;
-      if (price && cash) {
-        result[marketAddress]!.value = cash.div(p18).multipliedBy(price);
-        marketTotalValueLocked = marketTotalValueLocked.plus(result[marketAddress]!.value!);
-      }
-      if (totalSupply && exchangeRate && price) {
-        result[marketAddress]!.supply = totalSupply.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
-        marketTotalSupply = marketTotalSupply.plus(result[marketAddress]!.supply!);
-      }
-      if (totalBorrows && exchangeRate && price) {
-        result[marketAddress]!.borrow = totalBorrows.div(p18).multipliedBy(price);
-        marketTotalBorrow = marketTotalBorrow.plus(result[marketAddress]!.borrow!);
-      }
-      if (balance && supplyRatePerBlock && exchangeRate && price) {
-        const supplyAmount = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
-        result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
-          supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
-        );
-        supplyAmountSUM = supplyAmountSUM.plus(supplyAmount);
-      }
-
-      if (supplyRatePerBlock) {
-        result[marketAddress]!.tokenSupplyAPY = supplyRatePerBlock
-          ?.div(p18)
-          .multipliedBy(7200)
-          .plus(1)
-          .pow(365)
-          .minus(1);
-      }
-      if (borrowRatePerBlock) {
-        result[marketAddress]!.tokenBorrowAPY = borrowRatePerBlock
-          ?.div(p18)
-          .multipliedBy(7200)
-          .plus(1)
-          .pow(365)
-          .minus(1);
-      }
-      if (borrowBalanceStored && borrowRatePerBlock && exchangeRate && price) {
-        const borrowAmount = borrowBalanceStored.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
-        result[marketAddress]!.borrowAPY = borrowAmount.multipliedBy(
-          borrowRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
-        );
-        borrowAmountSUM = borrowAmountSUM.plus(borrowAmount);
-      }
-      if (result[marketAddress]!.borrowAPY && result[marketAddress]!.supplyAPY) {
-        result[marketAddress]!.netAPY = result[marketAddress]!.supplyAPY?.minus(
-          result[marketAddress]!.borrowAPY as any,
-        );
-        netAPYSUM = netAPYSUM.plus(result[marketAddress]!.netAPY!);
-      }
-      if (balance && price && exchangeRate && typeof isMember !== "undefined") {
-        result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
-        marketDeposit = marketDeposit.plus(result[marketAddress]!.deposit!);
-        if (isMember) {
-          result[marketAddress]!.collateralBalance = balance.div(p18).multipliedBy(exchangeRate);
-          result[marketAddress]!.collateralPrice = result[marketAddress]!.collateralBalance?.multipliedBy(price);
-          totalCollateralBalance = totalCollateralBalance.plus(result[marketAddress]!.collateralBalance!);
-          totalCollateralPrice = totalCollateralPrice.plus(result[marketAddress]!.collateralPrice!);
+        if (!result[marketContract.address]) {
+          const market = realmInfo!.markets.find(market => {
+            return market.cToken === contractAddressName[marketContract.address];
+          })!;
+          result[marketContract.address] = {
+            token: realmInfo!.tokens.find(token => {
+              return token.name === market.token;
+            })!,
+            address: marketContract.address,
+          };
         }
-      }
-      if (exchangeRate && borrowBalanceStored && price) {
-        result[marketAddress]!.userBorrowed = borrowBalanceStored.div(p18).multipliedBy(price);
-        totalUserBorrowed = totalUserBorrowed.plus(result[marketAddress]!.userBorrowed!);
-      }
-      if (markets && balance && price && exchangeRate) {
-        result[marketAddress]!.borrowLimit = markets[1]
-          .div(p18)
-          .multipliedBy(balance)
-          .div(p18)
-          .multipliedBy(exchangeRate);
-        result[marketAddress]!.borrowLimitPrice = result[marketAddress]!.borrowLimit?.multipliedBy(price);
-        totalUserLimit = totalUserLimit.plus(result[marketAddress]!.borrowLimitPrice!);
-      }
-    });
+        if (!item) {
+          result[marketContract.address]![prop] = undefined;
+        } else if (prop === "price") {
+          const market = realmInfo!.markets.find(market => {
+            return market.cToken === contractAddressName[marketContract.address];
+          })!;
 
-    result.totalValueLocked = marketTotalValueLocked;
-    result.deposit = marketDeposit;
+          // @ts-ignore
+          result[marketContract.address].price = processContractValue(priceArray.get(market.token))?.div(p18);
+        } else if (prop === "exchangeRate") {
+          // @ts-ignore
+          result[marketContract.address].exchangeRate = processContractValue(item)?.div(p18);
+        } else if (Array.isArray(item)) {
+          // @ts-ignore
+          result[marketContract.address][prop] = item.map(value => {
+            return processContractValue(value);
+          });
+        } else {
+          // @ts-ignore
+          result[marketContract.address][prop] = processContractValue(item);
+        }
+      });
 
-    result.netAPY = new BigNumber(0);
-    if (netAPYSUM.isGreaterThan(0)) {
-      result.netAPY = netAPYSUM.div(supplyAmountSUM);
-    } else if (netAPYSUM.isLessThan(0)) {
-      result.netAPY = netAPYSUM.div(borrowAmountSUM);
+      let marketTotalValueLocked = new BigNumber(0);
+      let marketTotalSupply = new BigNumber(0);
+      let marketTotalBorrow = new BigNumber(0);
+      let marketDeposit = new BigNumber(0);
+      let totalUserBorrowed = new BigNumber(0);
+      let totalUserLimit = new BigNumber(0);
+      let totalCollateralBalance = new BigNumber(0);
+      let totalCollateralPrice = new BigNumber(0);
+
+      let netAPYSUM = new BigNumber(0);
+      let supplyAmountSUM = new BigNumber(0);
+      let borrowAmountSUM = new BigNumber(0);
+
+      marketContracts.forEach(marketContract => {
+        const marketAddress = marketContract!.address;
+        if (!result || !result[marketAddress]) {
+          return;
+        }
+        const {
+          cash,
+          price,
+          exchangeRate,
+          totalSupply,
+          totalBorrows,
+          balance,
+          supplyRatePerBlock,
+          borrowRatePerBlock,
+          borrowBalanceStored,
+          markets,
+          isMember,
+        } = result[marketAddress]!;
+        if (price && cash) {
+          result[marketAddress]!.value = cash.div(p18).multipliedBy(price);
+          marketTotalValueLocked = marketTotalValueLocked.plus(result[marketAddress]!.value!);
+        }
+        if (totalSupply && exchangeRate && price) {
+          result[marketAddress]!.supply = totalSupply.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+          marketTotalSupply = marketTotalSupply.plus(result[marketAddress]!.supply!);
+        }
+        if (totalBorrows && exchangeRate && price) {
+          result[marketAddress]!.borrow = totalBorrows.div(p18).multipliedBy(price);
+          marketTotalBorrow = marketTotalBorrow.plus(result[marketAddress]!.borrow!);
+        }
+        if (balance && supplyRatePerBlock && exchangeRate && price) {
+          const supplyAmount = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
+          result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
+            supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
+          );
+          supplyAmountSUM = supplyAmountSUM.plus(supplyAmount);
+        }
+
+        if (supplyRatePerBlock) {
+          result[marketAddress]!.tokenSupplyAPY = supplyRatePerBlock
+            ?.div(p18)
+            .multipliedBy(7200)
+            .plus(1)
+            .pow(365)
+            .minus(1);
+        }
+        if (borrowRatePerBlock) {
+          result[marketAddress]!.tokenBorrowAPY = borrowRatePerBlock
+            ?.div(p18)
+            .multipliedBy(7200)
+            .plus(1)
+            .pow(365)
+            .minus(1);
+        }
+        if (borrowBalanceStored && borrowRatePerBlock && exchangeRate && price) {
+          const borrowAmount = borrowBalanceStored.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+          result[marketAddress]!.borrowAPY = borrowAmount.multipliedBy(
+            borrowRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
+          );
+          borrowAmountSUM = borrowAmountSUM.plus(borrowAmount);
+        }
+        if (result[marketAddress]!.borrowAPY && result[marketAddress]!.supplyAPY) {
+          result[marketAddress]!.netAPY = result[marketAddress]!.supplyAPY?.minus(
+            result[marketAddress]!.borrowAPY as any,
+          );
+          netAPYSUM = netAPYSUM.plus(result[marketAddress]!.netAPY!);
+        }
+        if (balance && price && exchangeRate && typeof isMember !== "undefined") {
+          result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
+          marketDeposit = marketDeposit.plus(result[marketAddress]!.deposit!);
+          if (isMember) {
+            result[marketAddress]!.collateralBalance = balance.div(p18).multipliedBy(exchangeRate);
+            result[marketAddress]!.collateralPrice = result[marketAddress]!.collateralBalance?.multipliedBy(price);
+            totalCollateralBalance = totalCollateralBalance.plus(result[marketAddress]!.collateralBalance!);
+            totalCollateralPrice = totalCollateralPrice.plus(result[marketAddress]!.collateralPrice!);
+          }
+        }
+        if (exchangeRate && borrowBalanceStored && price) {
+          result[marketAddress]!.userBorrowed = borrowBalanceStored.div(p18).multipliedBy(price);
+          totalUserBorrowed = totalUserBorrowed.plus(result[marketAddress]!.userBorrowed!);
+        }
+        if (markets && balance && price && exchangeRate) {
+          result[marketAddress]!.borrowLimit = markets[1]
+            .div(p18)
+            .multipliedBy(balance)
+            .div(p18)
+            .multipliedBy(exchangeRate);
+          result[marketAddress]!.borrowLimitPrice = result[marketAddress]!.borrowLimit?.multipliedBy(price);
+          totalUserLimit = totalUserLimit.plus(result[marketAddress]!.borrowLimitPrice!);
+        }
+      });
+
+      result.totalValueLocked = marketTotalValueLocked;
+      result.deposit = marketDeposit;
+
+      result.netAPY = new BigNumber(0);
+      if (netAPYSUM.isGreaterThan(0)) {
+        result.netAPY = netAPYSUM.div(supplyAmountSUM);
+      } else if (netAPYSUM.isLessThan(0)) {
+        result.netAPY = netAPYSUM.div(borrowAmountSUM);
+      }
+      result.totalBorrow = marketTotalBorrow;
+      result.totalSupply = marketTotalSupply;
+      result.totalUserBorrowed = totalUserBorrowed;
+      result.totalUserLimit = totalUserLimit;
+      result.userBorrowLimit = totalUserBorrowed.div(totalUserLimit);
+      if (result.userBorrowLimit.isNaN()) {
+        result.userBorrowLimit = new BigNumber(0);
+      }
+      result.markets = avaliableMarkets;
+      result.config = realmInfo;
+      result.contract = realmContracts;
+      result.collateralBalance = totalCollateralBalance;
+      result.collateralPrice = totalCollateralPrice;
+      setRealm(result);
+
     }
-    result.totalBorrow = marketTotalBorrow;
-    result.totalSupply = marketTotalSupply;
-    result.totalUserBorrowed = totalUserBorrowed;
-    result.totalUserLimit = totalUserLimit;
-    result.userBorrowLimit = totalUserBorrowed.div(totalUserLimit);
-    if (result.userBorrowLimit.isNaN()) {
-      result.userBorrowLimit = new BigNumber(0);
-    }
-    result.markets = avaliableMarkets;
-    result.config = realmInfo;
-    result.contract = realmContracts;
-    result.collateralBalance = totalCollateralBalance;
-    result.collateralPrice = totalCollateralPrice;
-    setRealm(result);
+
+    fetchMyAPI();
   }, [data]);
 
   return {
