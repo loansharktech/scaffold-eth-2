@@ -22,12 +22,11 @@ export const ContractInteraction = () => {
 
     const provider = new ethers.providers.Web3Provider(ethereum)
     const walletAddress = accounts[0]    // first account in MetaMask
-    alert(walletAddress);
 
     const signer = provider.getSigner(walletAddress)
     const yourEthersContract = new EthersContract(
-      "0x3A905dfc169fd8C115F84F15c7eb7154f21993fb", 
-      abi, 
+      "0xe28e7A2d39301aa4695232bcf9E82765FAEF2b13", 
+      cUSDCabi, 
       signer);
       const redstoneCacheLayerUrls = [
         "https://d33trozg86ya9x.cloudfront.net",
@@ -35,13 +34,14 @@ export const ContractInteraction = () => {
       const test = {
         dataServiceId: "redstone-main-demo",
         uniqueSignersCount: 1,
-        dataFeeds: ["USDC", "ETH"]
+        dataFeeds: ["USDC", "ETH"],
+        urls: redstoneCacheLayerUrls
       };
       const wrappedContract = WrapperBuilder.wrap(yourEthersContract).usingDataService(
-        test, redstoneCacheLayerUrls
+        test
       );
 
-    const result = await wrappedContract.exitMarket("0xe28e7A2d39301aa4695232bcf9E82765FAEF2b13");
+    const result = await wrappedContract.redeemUnderlying("1000000000000");
     alert(result);
   };
 
