@@ -4106,6 +4106,7 @@ __metadata:
     "@mantine/hooks": ^6.0.10
     "@mantine/next": ^6.0.10
     "@rainbow-me/rainbowkit": ^0.11.0
+    "@redstone-finance/evm-connector": ^0.2.1
     "@reduxjs/toolkit": ^1.9.5
     "@trivago/prettier-plugin-sort-imports": ^4.1.1
     "@types/node": ^17.0.35
@@ -4136,6 +4137,7 @@ __metadata:
     react-hot-toast: ^2.4.0
     react-icons: ^4.8.0
     react-redux: ^8.0.5
+    redstone-api: ^0.4.11
     redux-logger: ^3.0.6
     tailwind-scrollbar-hide: ^1.1.7
     tailwindcss: ^3.1.8
@@ -17116,11 +17118,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "se-2@workspace:."
   dependencies:
-    "@redstone-finance/evm-connector": ^0.2.1
-    animate.css: ^4.1.1
     husky: ^8.0.1
     lint-staged: ^13.0.3
-    redstone-api: ^0.4.11
   languageName: unknown
   linkType: soft
 
