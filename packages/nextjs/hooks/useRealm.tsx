@@ -386,12 +386,7 @@ export function useRealm(realmType: RealmType) {
       result.totalValueLocked = marketTotalValueLocked;
       result.deposit = marketDeposit;
 
-      result.netAPY = new BigNumber(0);
-      if (netAPYSUM.isGreaterThan(0)) {
-        result.netAPY = netAPYSUM.div(supplyAmountSUM);
-      } else if (netAPYSUM.isLessThan(0)) {
-        result.netAPY = netAPYSUM.div(borrowAmountSUM);
-      }
+      result.netAPY = supplyAmountSUM.eq(0) ? new BigNumber(0) : netAPYSUM.div(supplyAmountSUM);
       result.totalBorrow = marketTotalBorrow;
       result.totalSupply = marketTotalSupply;
       result.totalUserBorrowed = totalUserBorrowed;
