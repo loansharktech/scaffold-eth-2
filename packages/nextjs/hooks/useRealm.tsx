@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import BigNumber from "bignumber.js";
 import { BigNumber as EBigNumber, ethers } from "ethers";
+import redstone from "redstone-api";
 import { useContractRead, useContractReads } from "wagmi";
 import { RealmConfig, RealmType, Token, realms } from "~~/configs/pool";
 import contracts from "~~/generated/deployedContracts";
 import { useAccount } from "~~/hooks/useAccount";
 import { p18 } from "~~/utils/amount";
 import { ContractName, RealmContract } from "~~/utils/scaffold-eth/contract";
-import redstone from 'redstone-api';
 
 export type Market = {
   address: string;
@@ -229,7 +229,6 @@ export function useRealm(realmType: RealmType) {
   )[];
 
   useEffect(() => {
-
     async function fetchMyAPI() {
       const price1 = await redstone.getPrice("USDC");
       const price2 = await redstone.getPrice("ETH");
@@ -407,11 +406,12 @@ export function useRealm(realmType: RealmType) {
       result.collateralBalance = totalCollateralBalance;
       result.collateralPrice = totalCollateralPrice;
       setRealm(result);
-
     }
 
     fetchMyAPI();
   }, [data]);
+
+  console.log("realm", realm);
 
   return {
     realm,

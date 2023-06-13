@@ -1,12 +1,13 @@
 import { useCallback, useEffect } from "react";
-import { ethers } from "ethers";
-import { useContractWrite, useWaitForTransaction } from "wagmi";
+import { WrapperBuilder } from "@redstone-finance/evm-connector";
+import { Contract as EthersContract, ethers } from "ethers";
+import { useWaitForTransaction } from "wagmi";
+import abi from "~~/abi/market.json";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
-import { ContractName } from "~~/utils/scaffold-eth/contract";
 
 export function useBorrowToken(realm: Realm, market: Market) {
   const { isLogin, login } = useAccount();
@@ -14,16 +15,6 @@ export function useBorrowToken(realm: Realm, market: Market) {
   const tradeData = useTypedSelector(state => {
     return state.trade.borrow;
   });
-
-  const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
-
-  const { writeAsync: _borrow } = useContractWrite({
-    mode: "recklesslyUnprepared",
-    ...cTokenContract,
-    functionName: "borrow",
-    chainId: parseInt(realm.contract.chainId),
-    args: [ethers.utils.parseEther(tradeData.amount ? tradeData.amount.toFixed(18) : "0")],
-  } as any);
 
   const { status: borrowTransStatus } = useWaitForTransaction({
     hash: tradeData.executeTx as any,
@@ -35,9 +26,6 @@ export function useBorrowToken(realm: Realm, market: Market) {
       return login();
     }
 
-    if (!_borrow) {
-      return;
-    }
     if (!tradeData.amount || tradeData.executing) {
       return;
     }
@@ -50,7 +38,28 @@ export function useBorrowToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.EXECUTE,
         }),
       );
-      const res = await _borrow();
+
+      const ethereum = (window as any).ethereum;
+      const accounts = await ethereum.request({
+        method: "eth_requestAccounts",
+      });
+
+      const provider = new ethers.providers.Web3Provider(ethereum);
+      const walletAddress = accounts[0]; // first account in MetaMask
+
+      const signer = provider.getSigner(walletAddress);
+      const yourEthersContract = new EthersContract(market.address, abi, signer);
+      const redstoneCacheLayerUrls = ["https://d33trozg86ya9x.cloudfront.net"];
+      const test = {
+        dataServiceId: "redstone-main-demo",
+        uniqueSignersCount: 1,
+        dataFeeds: ["USDC", "ETH"],
+        urls: redstoneCacheLayerUrls,
+      };
+      const wrappedContract = WrapperBuilder.wrap(yourEthersContract).usingDataService(test);
+
+      const amounts = ethers.utils.parseUnits(tradeData.amount.toString(), 18);
+      const res = await wrappedContract.borrow(amounts);
 
       store.dispatch(
         actions.trade.updateBorrow({
@@ -82,7 +91,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
         }),
       );
     }
-  }, [isLogin, _borrow, login, tradeData.amount, tradeData.executing]);
+  }, [isLogin, login, tradeData.amount, tradeData.executing, market]);
 
   useEffect(() => {
     if (borrowTransStatus === "error") {
