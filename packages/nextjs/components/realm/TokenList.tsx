@@ -47,7 +47,7 @@ const TokenItem: FunctionComponent<{
         <TokenColumn token={token} price={price}></TokenColumn>
       </td>
       <td>
-        <CollateralColumn realm={realm} market={market}></CollateralColumn>
+        <CollateralColumn realm={realm} market={market} borrowAmount={borrowAmount}></CollateralColumn>
       </td>
       <td>
         <WalletBalanceColumn

@@ -7,7 +7,7 @@ import type { Market, Realm } from "~~/hooks/useRealm";
 import { useSupplyToken } from "~~/hooks/useSupplyToken";
 import { useToken } from "~~/hooks/useToken";
 import store, { actions } from "~~/stores";
-import { amountDesc } from "~~/utils/amount";
+import { amountDecimal, amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
 const TokenSupply: FunctionComponent<{
@@ -37,14 +37,10 @@ const TokenSupply: FunctionComponent<{
   const supplied = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
   const suppliedPrice = supplied?.multipliedBy(marketData?.price || 0);
   const LTV = marketData?.markets?.[1].div(p18).toNumber() || 0;
-  let borrowLimit = new BigNumber(suppyToken.amount || 0)
+  const borrowLimit = new BigNumber(suppyToken.amount || 0)
     .multipliedBy(marketData?.markets?.[1] || 0)
     .div(p18)
     .multipliedBy(marketData?.price || 0);
-
-  if (!isMember) {
-    borrowLimit = new BigNumber(0);
-  }
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
@@ -69,7 +65,7 @@ const TokenSupply: FunctionComponent<{
         <div className="font-bold text-xl"></div>
         <div className="flex items-center">
           <span className="text-sm text-[#3481BD] mr-2">
-            Balance: {balance?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+            Balance: {balance?.toFormat(amountDecimal(balance), BigNumber.ROUND_FLOOR)} {market.token}
           </span>
           <div
             className="action font-extrabold text-[#3481BD]"

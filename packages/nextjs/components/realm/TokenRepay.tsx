@@ -6,7 +6,7 @@ import type { Market, Realm } from "~~/hooks/useRealm";
 import { useRepayToken } from "~~/hooks/useRepayToken";
 import { useToken } from "~~/hooks/useToken";
 import store, { actions } from "~~/stores";
-import { amountDesc } from "~~/utils/amount";
+import { amountDecimal, amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
 const TokenRepay: FunctionComponent<{
@@ -37,15 +37,12 @@ const TokenRepay: FunctionComponent<{
   const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
-  const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
+  const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 
   const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
   const globalBorrowPrice = realm.totalUserBorrowed || new BigNumber(0);
 
-  let repayPrice = new BigNumber(repayToken.amount || 0).multipliedBy(marketData?.price || 0);
-  if (!marketData?.isMember) {
-    repayPrice = new BigNumber(0);
-  }
+  const repayPrice = new BigNumber(repayToken.amount || 0).multipliedBy(marketData?.price || 0);
 
   const borrowUtilization1 = !borrowLimitPrice?.isEqualTo(0)
     ? globalBorrowPrice.minus(repayPrice).div(borrowLimitPrice || 0)
@@ -77,7 +74,7 @@ const TokenRepay: FunctionComponent<{
         <div className="font-bold text-xl"></div>
         <div className="flex items-center">
           <span className="text-sm text-[#3481BD] mr-2">
-            Max: {maxAmount.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+            Max: {maxAmount.toFormat(amountDecimal(maxAmount), BigNumber.ROUND_FLOOR)} {market.token}
           </span>
           <div
             className="action font-extrabold text-[#3481BD]"
@@ -136,20 +133,20 @@ const TokenRepay: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Amount Borrowed</div>
           <div className="text-end">
-            <div>{borrowAmount.isEqualTo(0) ? "-.--" : amountDesc(borrowAmount, 2)}</div>
+            <div>{borrowAmount.isEqualTo(0) ? "-.--" : `${amountDesc(borrowAmount, 2)}${market.token}`}</div>
             <div className="text-xs">${amountDesc(borrowPrice, 2)}</div>
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow Utilization</div>
           <div className="text-[#039DED] font-bold">
-            {amountDesc(borrowUtilization1.multipliedBy(100), 2)}% [
-            {-amountDesc(borrowUtilization2.multipliedBy(100), 2)}%]
+            {amountDesc(borrowUtilization1.multipliedBy(100), 2)}% [{borrowUtilization2.eq(0) ? "+" : "-"}
+            {borrowUtilization2.multipliedBy(100).toFixed(2)}%]
           </div>
         </div>
         <div className="flex items-center justify-between mt-4">
           <div>Borrow APY</div>
-          <div className="text-[#039DED] font-bold">{supplyAPY.toFixed(2)}%</div>
+          <div className="text-[#039DED] font-bold">{borrowAPY.toFixed(2)}%</div>
         </div>
       </div>
 

@@ -2,11 +2,10 @@ import { FunctionComponent, useCallback, useRef } from "react";
 import Image from "next/image";
 import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
-import { useCollateral } from "~~/hooks/useCollateral";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useWithdrawToken } from "~~/hooks/useWithdrawToken";
 import store, { actions } from "~~/stores";
-import { amountDesc } from "~~/utils/amount";
+import { amountDecimal, amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
 const TokenWithdraw: FunctionComponent<{
@@ -26,8 +25,6 @@ const TokenWithdraw: FunctionComponent<{
       };
     }) || [];
 
-  const { isMember } = useCollateral(realm, market);
-
   const withdrawToken = useWithdrawToken(realm, market);
 
   const amountPrice = new BigNumber(withdrawToken.amount || 0)?.multipliedBy(marketData?.price || 0);
@@ -36,18 +33,12 @@ const TokenWithdraw: FunctionComponent<{
     marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyBalancePrice = supplyBalanceAmount.multipliedBy(marketData?.price || 0);
 
-  let borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
-  if (!isMember) {
-    borrowLimitChangedPrice = new BigNumber(0);
-  }
+  const borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
   const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
 
   const globalBorrowPrice = realm.totalUserBorrowed;
 
-  let _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
-  if (!marketData?.isMember) {
-    _C = new BigNumber(0);
-  }
+  const _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? (globalBorrowPrice || new BigNumber(0))
         .div(borrowLimitPrice.minus(borrowLimitChangedPrice))
@@ -55,25 +46,12 @@ const TokenWithdraw: FunctionComponent<{
         .toNumber()
     : 0;
   const borrowUtilization2 = !borrowLimitPrice.eq(0) ? _C.div(borrowLimitPrice).multipliedBy(100).toNumber() : 0;
-  // if (!isMember) {
-  //   borrowUtilization2 = 0;
-  // }
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
 
-  const globalWithdrawPrice = realm.totalUserLimit?.minus(realm.totalUserBorrowed || 0);
-  const _v = marketData?.price?.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
-  const globalWithdrawLimit = _v ? globalWithdrawPrice?.div(_v) : new BigNumber(0);
-
-  console.log("globalWithdrawLimit", globalWithdrawLimit?.toString());
-  console.log("ltv", marketData?.markets?.[1].div(p18)?.toString());
-
-  let maxWithdrawAmount = supplyAmount;
-  if (isMember) {
-    maxWithdrawAmount = new BigNumber(Math.min(supplyAmount.toNumber() || 0, globalWithdrawLimit?.toNumber() || 0));
-  }
+  const maxWithdrawAmount = supplyAmount;
   const maxWithdrawPrice = maxWithdrawAmount.multipliedBy(marketData?.price || 0);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
@@ -96,7 +74,7 @@ const TokenWithdraw: FunctionComponent<{
         <div className="font-bold text-xl"></div>
         <div className="flex items-center">
           <span className="text-sm text-[#3481BD] mr-2">
-            Max: {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+            Max: {maxWithdrawAmount?.toFormat(amountDecimal(maxWithdrawAmount), BigNumber.ROUND_FLOOR)} {market.token}
           </span>
           <div
             className="action font-extrabold text-[#3481BD]"

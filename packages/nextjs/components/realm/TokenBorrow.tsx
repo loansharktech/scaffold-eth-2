@@ -5,7 +5,7 @@ import BigNumber from "bignumber.js";
 import { useBorrowToken } from "~~/hooks/useBorrowToken";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import store, { actions } from "~~/stores";
-import { amountDesc } from "~~/utils/amount";
+import { amountDecimal, amountDesc } from "~~/utils/amount";
 import { p18 } from "~~/utils/amount";
 
 const TokenBorrow: FunctionComponent<{
@@ -37,10 +37,8 @@ const TokenBorrow: FunctionComponent<{
   const totalBorrowPrice = totalBorrow?.multipliedBy(marketData?.price || 0);
   const globalBorrowPrice = realm.totalUserBorrowed;
 
-  let _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
-  if (!marketData?.isMember) {
-    _C = new BigNumber(0);
-  }
+  const _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
+
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? _C
         .plus(globalBorrowPrice || 0)
@@ -79,7 +77,7 @@ const TokenBorrow: FunctionComponent<{
         <div className="font-bold text-xl"></div>
         <div className="flex items-center">
           <span className="text-sm text-[#3481BD] mr-2">
-            Max: {maxAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+            Max: {maxAmount?.toFormat(amountDecimal(maxAmount), BigNumber.ROUND_FLOOR)} {market.token}
           </span>
           <div
             className="action font-extrabold text-[#3481BD]"

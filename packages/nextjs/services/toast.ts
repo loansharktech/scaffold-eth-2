@@ -4,6 +4,9 @@ export function error(msg: string) {
   if (msg === "User rejected request") {
     return;
   }
+  if (msg.includes("user rejected transaction")) {
+    return;
+  }
   toast.error(msg);
 }
 
