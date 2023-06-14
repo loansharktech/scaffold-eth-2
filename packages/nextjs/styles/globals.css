@@ -59,7 +59,8 @@ p {
 }
 
 .page-bg {
-  background-size: cover;
+  background-size: center;
+  background-repeat: no-repeat;
   background: radial-gradient(
       50% 50% at 50% 50%,
       rgba(189, 223, 223, 0.1) 0%,

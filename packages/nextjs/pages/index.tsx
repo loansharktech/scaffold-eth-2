@@ -11,7 +11,7 @@ const Home: NextPage = () => {
         <title>Leading</title>
         <meta name="description" content="Loanshark Scroll Alpha Testnet" />
       </Head>
-      <main className="w-screen bg-white h-[--main-height] overflow-y-scroll bg-cover sm:bg-[60%_auto] bg-leadingBg bg-no-repeat bg-center flex flex-col items-center justify-between pt-[50px] pb-[60px]">
+      <main className="w-screen bg-white h-[--main-height] overflow-y-scroll page-bg flex flex-col items-center justify-between pt-[50px] pb-[60px]">
         <div className="flex flex-col items-center">
           <ValueLocked></ValueLocked>
           <div className="mt-[73px]">
