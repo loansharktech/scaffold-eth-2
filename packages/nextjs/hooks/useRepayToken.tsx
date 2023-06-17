@@ -1,16 +1,15 @@
 import { useCallback, useEffect } from "react";
 import BigNumber from "bignumber.js";
-import { BigNumber as _BigNumber, ethers } from "ethers";
+import { BigNumber as EBigNumber, ethers } from "ethers";
 import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
+import { getContract } from "~~/services/redstone";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
-
-const MAX_VALUE = _BigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff");
 
 export function useRepayToken(realm: Realm, market: Market) {
   const marketData = realm[market.address];
@@ -46,14 +45,15 @@ export function useRepayToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
   });
 
-  const { writeAsync: _mint } = useContractWrite({
+  const { writeAsync: tokenRepay } = useContractWrite({
     mode: "recklesslyUnprepared",
     ...cTokenContract,
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
+    args: [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)],
     overrides: {
-      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData?.amount ? tradeData.amount.toFixed(18) : "0"),
+      // @ts-ignore
+      gasLimit: 300000 as any,
     },
   } as any);
 
@@ -63,12 +63,12 @@ export function useRepayToken(realm: Realm, market: Market) {
   });
 
   const repay = useCallback(
-    async (isMax: boolean) => {
+    async (amount: number) => {
       if (!isLogin) {
         return login();
       }
 
-      if (!_mint) {
+      if (!tokenRepay) {
         return;
       }
       try {
@@ -81,13 +81,24 @@ export function useRepayToken(realm: Realm, market: Market) {
           }),
         );
 
+        const wrappedContract = await getContract(
+          realm.contract.contracts.Maximillion.address,
+          realm.contract.contracts.Maximillion.abi,
+        );
+
         let res;
-        if (isMax) {
-          res = await _mint({
-            recklesslySetUnpreparedArgs: tokenContract ? [MAX_VALUE] : [],
+        if (tokenContract) {
+          res = await tokenRepay({
+            recklesslySetUnpreparedArgs: [
+              amount === -1
+                ? EBigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+                : ethers.utils.parseEther(amount.toFixed(18)),
+            ],
           });
         } else {
-          res = await _mint();
+          res = await wrappedContract.repayBehalfExplicit(address, market.address, {
+            value: ethers.utils.parseEther(amount.toFixed(18)),
+          });
         }
 
         store.dispatch(
@@ -121,7 +132,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         );
       }
     },
-    [isLogin, _mint, login, tokenContract],
+    [isLogin, tokenRepay, login, tokenContract, market],
   );
 
   const approveToken = useCallback(async () => {

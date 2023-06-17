@@ -50,7 +50,7 @@ const TokenRepay: FunctionComponent<{
 
   const borrowUtilization2 = borrowLimitPrice?.isEqualTo(0) ? new BigNumber(0) : repayPrice.div(borrowLimitPrice || 0);
 
-  const maxAmount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount.toNumber() || 0));
+  const maxAmount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount?.toNumber() || 0));
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -184,7 +184,17 @@ const TokenRepay: FunctionComponent<{
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={() => {
-            repayToken.repay(maxAmount.toNumber() === repayToken.amount);
+            const isETH = market.token === "ETH";
+            let amount = repayToken.amount;
+            if (!isETH && maxAmount.toNumber() === repayToken.amount) {
+              amount = -1;
+            } else if (isETH) {
+              amount = new BigNumber(
+                Math.min(balance?.toNumber() || 0, borrowAmount?.multipliedBy(1.01).toNumber() || 0),
+              ).toNumber();
+            }
+            console.log(amount);
+            repayToken.repay(amount as number);
           }}
         >
           Repay

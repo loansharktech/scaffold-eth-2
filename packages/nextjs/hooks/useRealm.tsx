@@ -3,9 +3,11 @@ import BigNumber from "bignumber.js";
 import { BigNumber as EBigNumber, ethers } from "ethers";
 import redstone from "redstone-api";
 import { useContractRead, useContractReads } from "wagmi";
+import abi from "~~/abi/comptroller.json";
 import { RealmConfig, RealmType, Token, realms } from "~~/configs/pool";
 import contracts from "~~/generated/deployedContracts";
 import { useAccount } from "~~/hooks/useAccount";
+import { getContract } from "~~/services/redstone";
 import { p18 } from "~~/utils/amount";
 import { ContractName, RealmContract } from "~~/utils/scaffold-eth/contract";
 
@@ -237,6 +239,11 @@ export function useRealm(realmType: RealmType) {
       priceArray.set("WETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
 
+      const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
+      const res = await wrappedContract.getAccountLiquidity(address);
+      console.log("fuck", res[1].toString());
+      console.log("fuck1", new BigNumber(res[1].toString()).div(p18).toString());
+
       const result = {} as Realm;
       data?.forEach((item, index) => {
         const marketIndex = Math.floor(index / props.length);
@@ -404,7 +411,7 @@ export function useRealm(realmType: RealmType) {
     }
 
     fetchMyAPI();
-  }, [data]);
+  }, [data, address]);
 
   console.log("realm", realm);
 

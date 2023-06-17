@@ -101,7 +101,9 @@ export function useSupplyToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
     args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
     overrides: {
-      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData.amount?.toFixed(18) || "0"),
+      value: tokenContract
+        ? 0
+        : ethers.utils.parseEther(new BigNumber(tradeData.amount || "0").toFixed(8, BigNumber.ROUND_DOWN)),
     },
   } as any);
 

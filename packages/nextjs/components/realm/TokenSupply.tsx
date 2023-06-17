@@ -70,6 +70,14 @@ const TokenSupply: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
+              let amount = balance?.toNumber() || 0;
+              if (market.token === "ETH") {
+                if (amount > 0.001) {
+                  amount = amount - 0.001;
+                } else {
+                  amount = 0;
+                }
+              }
               changeAmount(balance?.toNumber());
             }}
           >
