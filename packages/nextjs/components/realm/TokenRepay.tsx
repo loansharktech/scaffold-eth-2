@@ -193,7 +193,6 @@ const TokenRepay: FunctionComponent<{
                 Math.min(balance?.toNumber() || 0, borrowAmount?.multipliedBy(1.01).toNumber() || 0),
               ).toNumber();
             }
-            console.log(amount);
             repayToken.repay(amount as number);
           }}
         >

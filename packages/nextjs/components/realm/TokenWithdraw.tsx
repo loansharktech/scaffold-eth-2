@@ -51,7 +51,19 @@ const TokenWithdraw: FunctionComponent<{
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
 
-  const maxWithdrawAmount = supplyAmount;
+  let maxWithdrawAmount = new BigNumber(0);
+  const liquidityAmount = marketData?.price
+    ? (realm.accountLiquidity?.[1] || new BigNumber(0)).div(marketData.price)
+    : new BigNumber(0);
+  if (marketData?.isMember) {
+    maxWithdrawAmount = BigNumber.min(supplyAmount, liquidityAmount.multipliedBy(0.95));
+  } else {
+    maxWithdrawAmount = supplyAmount;
+  }
+  if (maxWithdrawAmount.isLessThan(0.0001)) {
+    maxWithdrawAmount = new BigNumber(0);
+  }
+  // const maxWithdrawAmount = supplyAmount;
   const maxWithdrawPrice = maxWithdrawAmount.multipliedBy(marketData?.price || 0);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {

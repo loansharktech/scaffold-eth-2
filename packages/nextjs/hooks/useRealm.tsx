@@ -64,6 +64,7 @@ export type Realm = {
   contract: RealmContract;
   collateralBalance?: BigNumber;
   collateralPrice?: BigNumber;
+  accountLiquidity?: [BigNumber, BigNumber, BigNumber];
 };
 
 function processContractValue(data: string | boolean | EBigNumber) {
@@ -240,9 +241,16 @@ export function useRealm(realmType: RealmType) {
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
 
       const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
-      const res = await wrappedContract.getAccountLiquidity(address);
-      console.log("fuck", res[1].toString());
-      console.log("fuck1", new BigNumber(res[1].toString()).div(p18).toString());
+      let accountLiquidtityResult = undefined;
+      try {
+        const res = await wrappedContract.getAccountLiquidity(address);
+        accountLiquidtityResult = res.map((item: any) => {
+          return processContractValue(item);
+        });
+        accountLiquidtityResult[1] = accountLiquidtityResult[1].div(p18);
+      } catch (e) {
+        console.error("fetch getAccountLiquidity fail");
+      }
 
       const result = {} as Realm;
       data?.forEach((item, index) => {
@@ -397,8 +405,9 @@ export function useRealm(realmType: RealmType) {
       result.totalBorrow = marketTotalBorrow;
       result.totalSupply = marketTotalSupply;
       result.totalUserBorrowed = totalUserBorrowed;
-      result.totalUserLimit = totalUserLimit;
-      result.userBorrowLimit = totalUserBorrowed.div(totalUserLimit);
+      result.accountLiquidity = accountLiquidtityResult;
+      result.totalUserLimit = (result.accountLiquidity?.[1] || new BigNumber(0)).plus(totalUserBorrowed);
+      result.userBorrowLimit = result.totalUserBorrowed.div(result.totalUserLimit);
       if (result.userBorrowLimit.isNaN()) {
         result.userBorrowLimit = new BigNumber(0);
       }
@@ -412,8 +421,6 @@ export function useRealm(realmType: RealmType) {
 
     fetchMyAPI();
   }, [data, address]);
-
-  console.log("realm", realm);
 
   return {
     realm,

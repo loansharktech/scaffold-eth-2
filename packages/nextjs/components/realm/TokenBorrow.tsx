@@ -52,9 +52,10 @@ const TokenBorrow: FunctionComponent<{
 
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 
-  const maxAmount = marketData?.price
-    ? realm.totalUserLimit?.minus(realm.totalUserBorrowed || 0).div(marketData.price)
-    : new BigNumber(0);
+  let maxAmount = marketData?.price ? realm.accountLiquidity?.[1]?.div(marketData.price) : new BigNumber(0);
+  if (maxAmount?.isLessThan(0.0001)) {
+    maxAmount = new BigNumber(0);
+  }
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
