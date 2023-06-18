@@ -5,7 +5,7 @@ const contracts = {
       chainId: "534353",
       contracts: {
         Maximillion: {
-          address: "0x3eb7ACf2cCC6F42679B3413BdFdb0b7cE9145A8d",
+          address: "0x67da46096Cb4b7be17B0E5d2E1Ca76f859F53711",
           abi: [
             { type: "constructor", inputs: [{ type: "address", name: "cEther_", internalType: "contract CEther" }] },
             {
