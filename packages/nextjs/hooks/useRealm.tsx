@@ -247,7 +247,7 @@ export function useRealm(realmType: RealmType) {
         accountLiquidtityResult = res.map((item: any) => {
           return processContractValue(item);
         });
-        accountLiquidtityResult[1] = accountLiquidtityResult[1].div(p18);
+        accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
       } catch (e) {
         console.error("fetch getAccountLiquidity fail");
       }

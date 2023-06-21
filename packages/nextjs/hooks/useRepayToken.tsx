@@ -21,6 +21,7 @@ export function useRepayToken(realm: Realm, market: Market) {
 
   const tokenContract = realm.contract.contracts[market.token as ContractName];
   const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
+  const maximillionContract = realm.contract.contracts.Maximillion;
 
   const { data: approveAllowance, refetch } = useContractRead({
     ...tokenContract,
@@ -51,10 +52,14 @@ export function useRepayToken(realm: Realm, market: Market) {
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
     args: [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)],
-    overrides: {
-      // @ts-ignore
-      gasLimit: 300000 as any,
-    },
+  } as any);
+
+  const { writeAsync: ethRepay } = useContractWrite({
+    mode: "recklesslyUnprepared",
+    ...maximillionContract,
+    functionName: "repayBehalfExplicit",
+    chainId: parseInt(realm.contract.chainId),
+    args: [address, market.address],
   } as any);
 
   const { status: minteTransStatus } = useWaitForTransaction({
@@ -68,7 +73,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         return login();
       }
 
-      if (!tokenRepay) {
+      if (!tokenRepay || !ethRepay) {
         return;
       }
       try {
@@ -81,11 +86,6 @@ export function useRepayToken(realm: Realm, market: Market) {
           }),
         );
 
-        const wrappedContract = await getContract(
-          realm.contract.contracts.Maximillion.address,
-          realm.contract.contracts.Maximillion.abi,
-        );
-
         let res;
         if (tokenContract) {
           res = await tokenRepay({
@@ -96,8 +96,10 @@ export function useRepayToken(realm: Realm, market: Market) {
             ],
           });
         } else {
-          res = await wrappedContract.repayBehalfExplicit(address, market.address, {
-            value: ethers.utils.parseEther(amount.toFixed(18)),
+          res = await ethRepay({
+            recklesslySetUnpreparedOverrides: {
+              value: ethers.utils.parseEther(amount.toFixed(18)),
+            },
           });
         }
 
@@ -132,7 +134,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         );
       }
     },
-    [isLogin, tokenRepay, login, tokenContract, market],
+    [isLogin, tokenRepay, login, tokenContract, market, ethRepay],
   );
 
   const approveToken = useCallback(async () => {

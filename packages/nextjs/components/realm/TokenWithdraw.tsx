@@ -50,11 +50,13 @@ const TokenWithdraw: FunctionComponent<{
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
-
+  console.log("marketData", marketData);
   let maxWithdrawAmount = new BigNumber(0);
   const liquidityAmount = marketData?.price
     ? (realm.accountLiquidity?.[1] || new BigNumber(0)).div(marketData.price)
     : new BigNumber(0);
+  console.log("liquidityAmount", liquidityAmount.toString());
+  console.log("supplyAmount", supplyAmount.toString());
   if (marketData?.isMember) {
     maxWithdrawAmount = BigNumber.min(supplyAmount, liquidityAmount.multipliedBy(0.95));
   } else {
