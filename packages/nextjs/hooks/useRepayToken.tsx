@@ -4,7 +4,7 @@ import { BigNumber as EBigNumber, ethers } from "ethers";
 import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
-import { getContract } from "~~/services/redstone";
+// import { getContract } from "~~/services/redstone";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
@@ -21,7 +21,7 @@ export function useRepayToken(realm: Realm, market: Market) {
 
   const tokenContract = realm.contract.contracts[market.token as ContractName];
   const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
-  const maximillionContract = realm.contract.contracts.Maximillion;
+  // const maximillionContract = realm.contract.contracts.Maximillion;
 
   const { data: approveAllowance, refetch } = useContractRead({
     ...tokenContract,
@@ -51,16 +51,16 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
-    args: [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)],
+    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
   } as any);
 
-  const { writeAsync: ethRepay } = useContractWrite({
-    mode: "recklesslyUnprepared",
-    ...maximillionContract,
-    functionName: "repayBehalfExplicit",
-    chainId: parseInt(realm.contract.chainId),
-    args: [address, market.address],
-  } as any);
+  // const { writeAsync: ethRepay } = useContractWrite({
+  //   mode: "recklesslyUnprepared",
+  //   ...maximillionContract,
+  //   functionName: "repayBehalfExplicit",
+  //   chainId: parseInt(realm.contract.chainId),
+  //   args: [address, market.address],
+  // } as any);
 
   const { status: minteTransStatus } = useWaitForTransaction({
     hash: tradeData.executeTx as any,
@@ -73,7 +73,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         return login();
       }
 
-      if (!tokenRepay || !ethRepay) {
+      if (!tokenRepay) {
         return;
       }
       try {
@@ -96,7 +96,7 @@ export function useRepayToken(realm: Realm, market: Market) {
             ],
           });
         } else {
-          res = await ethRepay({
+          res = await tokenRepay({
             recklesslySetUnpreparedOverrides: {
               value: ethers.utils.parseEther(amount.toFixed(18)),
             },
@@ -134,7 +134,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         );
       }
     },
-    [isLogin, tokenRepay, login, tokenContract, market, ethRepay],
+    [isLogin, tokenRepay, login, tokenContract, market],
   );
 
   const approveToken = useCallback(async () => {
