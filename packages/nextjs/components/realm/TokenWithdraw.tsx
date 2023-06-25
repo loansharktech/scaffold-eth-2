@@ -38,27 +38,33 @@ const TokenWithdraw: FunctionComponent<{
 
   const globalBorrowPrice = realm.totalUserBorrowed;
 
-  const _C = new BigNumber(withdrawToken.amount || 0).multipliedBy(marketData?.price || 0);
+  const baseBorrowUtilization = !borrowLimitPrice.eq(0)
+    ? (globalBorrowPrice || new BigNumber(0)).div(borrowLimitPrice).multipliedBy(100).toNumber()
+    : 0;
   const borrowUtilization1 = !borrowLimitPrice.eq(0)
     ? (globalBorrowPrice || new BigNumber(0))
         .div(borrowLimitPrice.minus(borrowLimitChangedPrice))
         .multipliedBy(100)
         .toNumber()
     : 0;
-  const borrowUtilization2 = !borrowLimitPrice.eq(0) ? _C.div(borrowLimitPrice).multipliedBy(100).toNumber() : 0;
+  const borrowUtilization2 = borrowUtilization1 - baseBorrowUtilization;
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
   const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
-  console.log("marketData", marketData);
   let maxWithdrawAmount = new BigNumber(0);
-  const liquidityAmount = marketData?.price
-    ? (realm.accountLiquidity?.[1] || new BigNumber(0)).div(marketData.price)
-    : new BigNumber(0);
-  console.log("liquidityAmount", liquidityAmount.toString());
-  console.log("supplyAmount", supplyAmount.toString());
+  const liquidity = realm.accountLiquidity?.[1] || new BigNumber(0);
   if (marketData?.isMember) {
-    maxWithdrawAmount = BigNumber.min(supplyAmount, liquidityAmount.multipliedBy(0.95));
+    const ltv = marketData?.markets?.[1].div(p18) || new BigNumber(0);
+    maxWithdrawAmount = marketData.price
+      ? BigNumber.min(
+          supplyAmount,
+          liquidity
+            .multipliedBy(0.95)
+            .minus(globalBorrowPrice?.multipliedBy(0.05) || new BigNumber(0))
+            .div(ltv.multipliedBy(0.95).multipliedBy(marketData.price)),
+        )
+      : new BigNumber(0);
   } else {
     maxWithdrawAmount = supplyAmount;
   }
