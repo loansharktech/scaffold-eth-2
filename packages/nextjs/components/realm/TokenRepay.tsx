@@ -190,9 +190,7 @@ const TokenRepay: FunctionComponent<{
               if (!isETH) {
                 amount = -1;
               } else {
-                amount = new BigNumber(
-                  Math.min(balance?.toNumber() || 0, borrowAmount?.multipliedBy(1.01).toNumber() || 0),
-                ).toNumber();
+                amount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount?.toNumber() || 0)).toNumber();
               }
             }
             repayToken.repay(amount as number);
