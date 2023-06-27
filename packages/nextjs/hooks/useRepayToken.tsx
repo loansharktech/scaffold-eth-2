@@ -4,7 +4,7 @@ import { BigNumber as EBigNumber, ethers } from "ethers";
 import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
-// import { getContract } from "~~/services/redstone";
+import { getContract } from "~~/services/redstone";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
@@ -86,6 +86,11 @@ export function useRepayToken(realm: Realm, market: Market) {
           }),
         );
 
+        const wrappedContract = await getContract(
+          realm.contract.contracts.Maximillion.address,
+          realm.contract.contracts.Maximillion.abi,
+        );
+
         let res;
         if (tokenContract) {
           res = await tokenRepay({
@@ -96,11 +101,15 @@ export function useRepayToken(realm: Realm, market: Market) {
             ],
           });
         } else {
-          res = await tokenRepay({
-            recklesslySetUnpreparedOverrides: {
-              value: ethers.utils.parseEther(amount.toFixed(18)),
-            },
+          console.log(amount);
+          res = await wrappedContract.repayBehalfExplicit(address, market.address, {
+            value: ethers.utils.parseEther(amount.toFixed(18)),
           });
+          // res = await tokenRepay({
+          //   recklesslySetUnpreparedOverrides: {
+          //     value: ethers.utils.parseEther(amount.toFixed(18)),
+          //   },
+          // });
         }
 
         store.dispatch(

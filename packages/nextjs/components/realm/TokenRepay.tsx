@@ -186,12 +186,14 @@ const TokenRepay: FunctionComponent<{
           onClick={() => {
             const isETH = market.token === "ETH";
             let amount = repayToken.amount;
-            if (!isETH && maxAmount.toNumber() === repayToken.amount) {
-              amount = -1;
-            } else if (isETH) {
-              amount = new BigNumber(
-                Math.min(balance?.toNumber() || 0, borrowAmount?.multipliedBy(1.01).toNumber() || 0),
-              ).toNumber();
+            if (maxAmount.toNumber() === repayToken.amount) {
+              if (!isETH) {
+                amount = -1;
+              } else {
+                amount = new BigNumber(
+                  Math.min(balance?.toNumber() || 0, borrowAmount?.multipliedBy(1.01).toNumber() || 0),
+                ).toNumber();
+              }
             }
             repayToken.repay(amount as number);
           }}
