@@ -4,8 +4,71 @@ const contracts = {
       name: "scrollAlphaTestnet",
       chainId: "534353",
       contracts: {
+        
+        SimplePriceOracle: {
+          address: "0x75BaFFD109B71b0854B54C2f597A81757232CD32",
+          abi: [
+            {
+              type: "function",
+              stateMutability: "view",
+              outputs: [{ type: "uint256", name: "", internalType: "uint256" }],
+              name: "assetPrices",
+              inputs: [{ type: "address", name: "asset", internalType: "address" }],
+              constant: true,
+            },
+            {
+              type: "function",
+              stateMutability: "view",
+              outputs: [{ type: "uint256", name: "", internalType: "uint256" }],
+              name: "getUnderlyingPrice",
+              inputs: [{ type: "address", name: "cToken", internalType: "contract CToken" }],
+              constant: true,
+            },
+            {
+              type: "function",
+              stateMutability: "view",
+              outputs: [{ type: "bool", name: "", internalType: "bool" }],
+              name: "isPriceOracle",
+              inputs: [],
+              constant: true,
+            },
+            {
+              type: "function",
+              stateMutability: "nonpayable",
+              outputs: [],
+              name: "setDirectPrice",
+              inputs: [
+                { type: "address", name: "asset", internalType: "address" },
+                { type: "uint256", name: "price", internalType: "uint256" },
+              ],
+              constant: false,
+            },
+            {
+              type: "function",
+              stateMutability: "nonpayable",
+              outputs: [],
+              name: "setUnderlyingPrice",
+              inputs: [
+                { type: "address", name: "cToken", internalType: "contract CToken" },
+                { type: "uint256", name: "underlyingPriceMantissa", internalType: "uint256" },
+              ],
+              constant: false,
+            },
+            {
+              type: "event",
+              name: "PricePosted",
+              inputs: [
+                { type: "address", name: "asset", indexed: false },
+                { type: "uint256", name: "previousPriceMantissa", indexed: false },
+                { type: "uint256", name: "requestedPriceMantissa", indexed: false },
+                { type: "uint256", name: "newPriceMantissa", indexed: false },
+              ],
+              anonymous: false,
+            },
+          ],
+        },
         Maximillion: {
-          address: "0x67da46096Cb4b7be17B0E5d2E1Ca76f859F53711",
+          address: "0xdF5BB49cfaFD670c3bfaD5D0db3b9367415C7525",
           abi: [
             { type: "constructor", inputs: [{ type: "address", name: "cEther_", internalType: "contract CEther" }] },
             {
@@ -338,68 +401,6 @@ const contracts = {
               inputs: [{ type: "uint256", name: "wad", internalType: "uint256" }],
             },
             { type: "receive", stateMutability: "payable" },
-          ],
-        },
-        SimplePriceOracle: {
-          address: "0x75BaFFD109B71b0854B54C2f597A81757232CD32",
-          abi: [
-            {
-              type: "function",
-              stateMutability: "view",
-              outputs: [{ type: "uint256", name: "", internalType: "uint256" }],
-              name: "assetPrices",
-              inputs: [{ type: "address", name: "asset", internalType: "address" }],
-              constant: true,
-            },
-            {
-              type: "function",
-              stateMutability: "view",
-              outputs: [{ type: "uint256", name: "", internalType: "uint256" }],
-              name: "getUnderlyingPrice",
-              inputs: [{ type: "address", name: "cToken", internalType: "contract CToken" }],
-              constant: true,
-            },
-            {
-              type: "function",
-              stateMutability: "view",
-              outputs: [{ type: "bool", name: "", internalType: "bool" }],
-              name: "isPriceOracle",
-              inputs: [],
-              constant: true,
-            },
-            {
-              type: "function",
-              stateMutability: "nonpayable",
-              outputs: [],
-              name: "setDirectPrice",
-              inputs: [
-                { type: "address", name: "asset", internalType: "address" },
-                { type: "uint256", name: "price", internalType: "uint256" },
-              ],
-              constant: false,
-            },
-            {
-              type: "function",
-              stateMutability: "nonpayable",
-              outputs: [],
-              name: "setUnderlyingPrice",
-              inputs: [
-                { type: "address", name: "cToken", internalType: "contract CToken" },
-                { type: "uint256", name: "underlyingPriceMantissa", internalType: "uint256" },
-              ],
-              constant: false,
-            },
-            {
-              type: "event",
-              name: "PricePosted",
-              inputs: [
-                { type: "address", name: "asset", indexed: false },
-                { type: "uint256", name: "previousPriceMantissa", indexed: false },
-                { type: "uint256", name: "requestedPriceMantissa", indexed: false },
-                { type: "uint256", name: "newPriceMantissa", indexed: false },
-              ],
-              anonymous: false,
-            },
           ],
         },
         cWETH: {
@@ -1761,7 +1762,7 @@ const contracts = {
           ],
         },
         cETH: {
-          address: "0xe28e7A2d39301aa4695232bcf9E82765FAEF2b13",
+          address: "0x785CDA8F401F06cb69680119aeF3EcD4Ce609A4e",
           abi: [
             {
               type: "constructor",
@@ -2401,7 +2402,7 @@ const contracts = {
           ],
         },
         Comptroller: {
-          address: "0xfa83427b4c6de91d7b0F074533876DBB0C6B982A",
+          address: "0x668937a29DCDd792C3802Bc29c7A3a1e1989af72",
           abi: [
             { type: "constructor", inputs: [] },
             {
