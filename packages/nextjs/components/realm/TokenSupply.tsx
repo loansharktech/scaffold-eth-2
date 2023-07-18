@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useRef } from "react";
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Button, Input, Loader, LoadingOverlay, Select, Switch } from "@mantine/core";
 import BigNumber from "bignumber.js";
@@ -31,8 +31,7 @@ const TokenSupply: FunctionComponent<{
         label: market.token.toUpperCase(),
       };
     }) || [];
-
-  const balance = tokenInfo.balance?.div(p18);
+  const [balance, setbalance] = useState(new BigNumber(0));
   const amountPrice = new BigNumber(suppyToken.amount || 0)?.multipliedBy(marketData?.price || 0);
   const supplied = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
   const suppliedPrice = supplied?.multipliedBy(marketData?.price || 0);
@@ -43,6 +42,10 @@ const TokenSupply: FunctionComponent<{
     .multipliedBy(marketData?.price || 0);
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
+
+  useEffect(() => {
+    setbalance(tokenInfo.balance?.div(p18) || new BigNumber(0));
+  }, [tokenInfo.balance?.toString()]);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -183,8 +186,9 @@ const TokenSupply: FunctionComponent<{
       ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
-            suppyToken.mint();
+          onClick={async () => {
+            await suppyToken.mint();
+            setbalance(balance.minus(suppyToken.amount || 0));
           }}
         >
           Supply

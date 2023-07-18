@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useRef } from "react";
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
@@ -52,10 +52,15 @@ const TokenBorrow: FunctionComponent<{
 
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 
-  let maxAmount = marketData?.price ? realm.accountLiquidity?.[1]?.div(marketData.price) : new BigNumber(0);
-  if (maxAmount?.isLessThan(0.0001)) {
-    maxAmount = new BigNumber(0);
-  }
+  const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
+
+  useEffect(() => {
+    let maxAmount = marketData?.price ? realm.accountLiquidity?.[1]?.div(marketData.price) : new BigNumber(0);
+    if (maxAmount?.isLessThan(0.0001)) {
+      maxAmount = new BigNumber(0);
+    }
+    setMaxAmount(maxAmount || new BigNumber(0));
+  }, [marketData?.price?.toString(), realm.accountLiquidity?.[1]?.toString()]);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -178,8 +183,9 @@ const TokenBorrow: FunctionComponent<{
       ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
-            borrowToken.borrow();
+          onClick={async () => {
+            await borrowToken.borrow();
+            setMaxAmount(maxAmount.minus(borrowToken.amount || 0));
           }}
         >
           Borrow

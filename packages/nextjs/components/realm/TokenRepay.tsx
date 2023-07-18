@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback, useRef } from "react";
+import { FunctionComponent, useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Button, Input, LoadingOverlay, Select } from "@mantine/core";
 import BigNumber from "bignumber.js";
@@ -50,10 +50,15 @@ const TokenRepay: FunctionComponent<{
 
   const borrowUtilization2 = borrowLimitPrice?.isEqualTo(0) ? new BigNumber(0) : repayPrice.div(borrowLimitPrice || 0);
 
-  let maxAmount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount?.toNumber() || 0));
-  if (maxAmount.lt(0.0001)) {
-    maxAmount = new BigNumber(0);
-  }
+  const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
+
+  useEffect(() => {
+    let maxAmount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount?.toNumber() || 0));
+    if (maxAmount.lt(0.0001)) {
+      maxAmount = new BigNumber(0);
+    }
+    setMaxAmount(maxAmount);
+  }, [balance?.toString(), borrowAmount?.toString()]);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -186,7 +191,7 @@ const TokenRepay: FunctionComponent<{
       ) : (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
-          onClick={() => {
+          onClick={async () => {
             const isETH = market.token === "ETH";
             let amount = repayToken.amount || 0;
             let isMax = false;
@@ -200,7 +205,8 @@ const TokenRepay: FunctionComponent<{
                 ).toNumber();
               }
             }
-            repayToken.repay(amount as number, isMax);
+            await repayToken.repay(amount as number, isMax);
+            setMaxAmount(amount === -1 ? new BigNumber(0) : maxAmount.minus(amount || 0));
           }}
         >
           Repay
