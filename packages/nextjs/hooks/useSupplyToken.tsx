@@ -145,6 +145,9 @@ export function useSupplyToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.ENTER_AMOUNT,
         }),
       );
+      await new Promise(resolve => {
+        setTimeout(resolve, 3000);
+      });
       toast.success("Supply success");
     } catch (e: any) {
       store.dispatch(

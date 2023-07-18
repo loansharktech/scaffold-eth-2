@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import Head from "next/head";
 import { useRouter } from "next/router";
 import type { NextPage } from "next";
@@ -8,6 +9,7 @@ import SideMenu from "~~/components/realm/SideMenu";
 import TokenList from "~~/components/realm/TokenList";
 import { realms } from "~~/configs/pool";
 import { useRealm } from "~~/hooks/useRealm";
+import { useTypedSelector } from "~~/stores";
 
 const RealmPage: NextPage = () => {
   const { query } = useRouter();
@@ -16,7 +18,20 @@ const RealmPage: NextPage = () => {
     return item.id === id;
   });
 
-  const { realm } = useRealm(realmInfo?.id || "main");
+  const { realm, refetch } = useRealm(realmInfo?.id || "main");
+
+  const stepIndexTrack = useTypedSelector(state => {
+    return (
+      state.trade.borrow.stepIndex +
+      state.trade.repay.stepIndex +
+      state.trade.supply.stepIndex +
+      state.trade.withdraw.stepIndex
+    );
+  });
+
+  useEffect(() => {
+    refetch();
+  }, [stepIndexTrack]);
 
   return (
     <>

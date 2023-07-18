@@ -201,6 +201,17 @@ export function useRealm(realmType: RealmType) {
     watch: true,
     cacheOnBlock: true,
     keepPreviousData: true,
+    allowFailure: true,
+    staleTime: 500,
+    // @ts-ignore
+    structuralSharing: (prev, next) => {
+      const prevData = JSON.stringify(prev);
+      const nextData = JSON.stringify(next);
+      if (prevData === nextData) {
+        return prev;
+      }
+      return next;
+    },
   });
 
   const props = [
@@ -416,6 +427,7 @@ export function useRealm(realmType: RealmType) {
       result.contract = realmContracts;
       result.collateralBalance = totalCollateralBalance;
       result.collateralPrice = totalCollateralPrice;
+      console.log("update realm", result);
       setRealm(result);
     }
 

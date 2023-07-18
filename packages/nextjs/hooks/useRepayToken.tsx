@@ -128,6 +128,9 @@ export function useRepayToken(realm: Realm, market: Market) {
             stepIndex: TradeStep.ENTER_AMOUNT,
           }),
         );
+        await new Promise(resolve => {
+          setTimeout(resolve, 3000);
+        });
         toast.success("Repay success");
       } catch (e: any) {
         store.dispatch(

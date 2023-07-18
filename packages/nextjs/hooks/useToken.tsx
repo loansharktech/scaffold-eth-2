@@ -15,6 +15,7 @@ export function useToken(realm: Realm, market: Market) {
   const { data: balance } = useBalance({
     address,
     token: contract ? token?.address : "",
+    watch: true,
   });
 
   return {
