@@ -68,7 +68,7 @@ export function useRepayToken(realm: Realm, market: Market) {
   });
 
   const repay = useCallback(
-    async (amount: number) => {
+    async (amount: number, isMax: boolean) => {
       if (!isLogin) {
         return login();
       }
@@ -101,15 +101,17 @@ export function useRepayToken(realm: Realm, market: Market) {
             ],
           });
         } else {
-          console.log(amount);
-          res = await wrappedContract.repayBehalfExplicit(address, market.address, {
-            value: ethers.utils.parseEther(amount.toFixed(18)),
-          });
-          // res = await tokenRepay({
-          //   recklesslySetUnpreparedOverrides: {
-          //     value: ethers.utils.parseEther(amount.toFixed(18)),
-          //   },
-          // });
+          if (isMax) {
+            res = await wrappedContract.repayBehalfExplicit(address, market.address, {
+              value: ethers.utils.parseEther(amount.toFixed(18)),
+            });
+          } else {
+            res = await tokenRepay({
+              recklesslySetUnpreparedOverrides: {
+                value: ethers.utils.parseEther(amount.toFixed(18)),
+              },
+            });
+          }
         }
 
         store.dispatch(
