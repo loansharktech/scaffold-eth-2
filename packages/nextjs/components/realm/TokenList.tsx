@@ -87,7 +87,7 @@ const TokenList: FunctionComponent<{
   const [market, setMarket] = useState<Market | null>(null);
   const markets = realm.markets || [];
   return (
-    <div className={`bg-white/80 border border-[#E3F2FF] rounded-lg ${className} overflow-x-scroll`}>
+    <div className={`bg-white/80 border border-[#E3F2FF] rounded-lg ${className} overflow-x-scroll scrollbar-hide`}>
       <Table horizontalSpacing="xl">
         <thead>
           <tr>

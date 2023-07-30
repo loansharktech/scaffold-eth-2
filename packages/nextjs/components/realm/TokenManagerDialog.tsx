@@ -118,7 +118,7 @@ const TokenManagerDialog: FunctionComponent<{
       </div>
       <div className="bg-white rounded-md mt-5 p-5 rounded-r-lg flex">
         <div className="flex-1">
-          <div>Your Borrow Limit</div>
+          <div>Your Borrow Utilization</div>
           <div className="mt-[11px] flex items-center">
             <div className="font-bold text-[22px] flex-shrink-0">{amountDesc(userBorrowLimit, 2)}%</div>
             <div className="ml-3 flex-1">

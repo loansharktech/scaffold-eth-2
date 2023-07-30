@@ -14,11 +14,11 @@ export const navTabs = [
 ];
 
 export const leadingLinks = [
-  {
-    icon: <UnionIcon></UnionIcon>,
-    label: "union",
-    link: "",
-  },
+  // {
+  //   icon: <UnionIcon></UnionIcon>,
+  //   label: "union",
+  //   link: "",
+  // },
   {
     icon: <GitbookIcon></GitbookIcon>,
     label: "Gitbook",

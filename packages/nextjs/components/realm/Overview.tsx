@@ -21,28 +21,28 @@ const RealmOverview: FunctionComponent<{
 
   return (
     <div
-      className={`rounded-lg  bg-white grid grid-cols-1 sm:grid-cols-2 ${className}`}
+      className={`rounded-lg  bg-white flex items-center flex-wrap ${className}`}
       style={{
         boxShadow: "2px 4px 4px rgba(148, 148, 148, 0.1)",
       }}
     >
-      <div className="border border-[#E3F2FF] py-8 px-12 rounded-l-lg flex justify-between flex-wrap">
-        <div className="flex-shrink-0">
+      <div className="border border-[#E3F2FF] py-8 px-12 rounded-l-lg grid grid-cols-2 gap-12">
+        <div className="flex flex-col items-center justify-center">
           <div>Total Supply</div>
           <div className="text-[22px] font-bold mt-[11px]">${totalSupply}</div>
         </div>
-        <div className="flex-shrink-0">
+        <div className="flex flex-col items-center justify-center">
           <div>Total Borrow</div>
           <div className="text-[22px] font-bold mt-[11px]">${totalBorrow}</div>
         </div>
-        <div className="flex-shrink-0">
-          <div>Your Net APY</div>
-          <div className="text-[22px] font-bold mt-[11px] text-[#538EE4]">{netAPY}%</div>
-        </div>
       </div>
-      <div className="border border-[#E3F2FF] p-8 rounded-r-lg flex">
+      <div className="border border-[#E3F2FF] p-8 flex flex-col items-center justify-center flex-grow sm:flex-grow-0">
+        <div>Your Net APY</div>
+        <div className="text-[22px] font-bold mt-[11px] text-[#538EE4]">{netAPY}%</div>
+      </div>
+      <div className="border border-[#E3F2FF] p-8 rounded-r-lg flex flex-col sm:flex-row flex-grow gap-4 sm:gap-10">
         <div className="flex-1">
-          <div>Your Borrow Limit</div>
+          <div>Your Borrow Utilization</div>
           <div className="mt-[11px] flex items-center">
             <div className="font-bold text-[22px] flex-shrink-0">{userBorrowLimit.toFixed(2)}%</div>
             <div className="ml-3 flex-1">
@@ -56,7 +56,7 @@ const RealmOverview: FunctionComponent<{
             </div>
           </div>
         </div>
-        <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-col gap-1 ml-10 flex-shrink-0">
+        <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-col gap-1  flex-shrink-0">
           <div className="flex justify-end">
             <span>Borrowed</span>
             <span className="text-[#2679B8] ml-[6px]">${borrowed}</span>

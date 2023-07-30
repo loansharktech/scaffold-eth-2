@@ -45,13 +45,13 @@ const Pools: FunctionComponent = () => {
                 <div className="text-[28px] font-bold mt-1">${deposit}</div>
               </div>
             </div>
-            <div className="flex flex-col gap-y-6 sm:gap-y-[57px] items-center">
+            <div className="flex flex-col gap-y-6 sm:gap-y-[57px]">
               <div className="flex flex-col sm:flex-row">
                 <span>Total Supply</span>
                 <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">${totalSupply}</div>
               </div>
               <div className="flex flex-col sm:flex-row">
-                <span>Total borrow</span>
+                <span>Total Borrow</span>
                 <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">${totalBorrow}</div>
               </div>
             </div>

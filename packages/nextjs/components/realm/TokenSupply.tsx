@@ -147,7 +147,7 @@ const TokenSupply: FunctionComponent<{
           <div>${amountDesc(suppliedPrice, 2)}</div>
         </div>
         <div className="flex items-center justify-between mt-4">
-          <div>LTV</div>
+          <div>Collateral Factor</div>
           <div>{LTV * 100}%</div>
         </div>
         <div className="flex items-center justify-between mt-4">

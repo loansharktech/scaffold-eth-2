@@ -26,12 +26,12 @@ const ConnectWallet: FC = () => {
       )}
       {isLogin && (
         <>
-          {!invalidNetwork && (
+          {/* {!invalidNetwork && (
             <div className="flex items-center py-1 px-3 border border-[#C6DFEC] rounded-lg action">
               <Image src="/logo-s.png" width={35} height={35} alt="logo"></Image>
               <span className="font-medium ml-2 text-gray-400">{balance?.toFixed(2)}</span>
             </div>
-          )}
+          )} */}
 
           {invalidNetwork ? (
             <div

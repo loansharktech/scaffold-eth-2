@@ -141,7 +141,7 @@ const TokenRepay: FunctionComponent<{
         <div className="flex items-center justify-between mt-4">
           <div>Amount Borrowed</div>
           <div className="text-end">
-            <div>{borrowAmount.isEqualTo(0) ? "-.--" : `${amountDesc(borrowAmount, 2)}${market.token}`}</div>
+            <div>{borrowAmount.isEqualTo(0) ? "-.--" : `${amountDesc(borrowAmount, 2)} ${market.token}`}</div>
             <div className="text-xs">${amountDesc(borrowPrice, 2)}</div>
           </div>
         </div>
