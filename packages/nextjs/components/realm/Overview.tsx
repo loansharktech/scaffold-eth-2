@@ -26,7 +26,7 @@ const RealmOverview: FunctionComponent<{
         boxShadow: "2px 4px 4px rgba(148, 148, 148, 0.1)",
       }}
     >
-      <div className="border border-[#E3F2FF] py-8 px-12 rounded-l-lg grid grid-cols-2 gap-12">
+      <div className="border border-[#E3F2FF] py-8 sm:px-12 rounded-l-lg grid grid-cols-2 gap-12 flex-1">
         <div className="flex flex-col items-center justify-center">
           <div>Total Supply</div>
           <div className="text-[22px] font-bold mt-[11px]">${totalSupply}</div>
@@ -36,38 +36,40 @@ const RealmOverview: FunctionComponent<{
           <div className="text-[22px] font-bold mt-[11px]">${totalBorrow}</div>
         </div>
       </div>
-      <div className="border border-[#E3F2FF] p-8 flex flex-col items-center justify-center flex-grow sm:flex-grow-0">
-        <div>Your Net APY</div>
-        <div className="text-[22px] font-bold mt-[11px] text-[#538EE4]">{netAPY}%</div>
-      </div>
-      <div className="border border-[#E3F2FF] p-8 rounded-r-lg flex flex-col sm:flex-row flex-grow gap-4 sm:gap-10">
-        <div className="flex-1">
-          <div>Your Borrow Utilization</div>
-          <div className="mt-[11px] flex items-center">
-            <div className="font-bold text-[22px] flex-shrink-0">{userBorrowLimit.toFixed(2)}%</div>
-            <div className="ml-3 flex-1">
-              <Progress
-                value={userBorrowLimit.toNumber()}
-                classNames={{
-                  root: "bg-[#CFE7FC]",
-                  bar: "bg-blue",
-                }}
-              />
+      <div className="border border-[#E3F2FF] p-8 sm:px-12 rounded-r-lg flex flex-wrap  flex-grow gap-4 sm:gap-10">
+        <div className="flex flex-col items-center justify-center">
+          <div>Your Net APY</div>
+          <div className="text-[22px] font-bold mt-[11px] text-[#538EE4]">{netAPY}%</div>
+        </div>
+        <div className="flex flex-wrap flex-grow gap-4 sm:gap-10">
+          <div className="flex-grow">
+            <div>Your Borrow Utilization</div>
+            <div className="mt-[11px] flex items-center">
+              <div className="font-bold text-[22px] flex-shrink-0">{userBorrowLimit.toFixed(2)}%</div>
+              <div className="ml-3 flex-1">
+                <Progress
+                  value={userBorrowLimit.toNumber()}
+                  classNames={{
+                    root: "bg-[#CFE7FC]",
+                    bar: "bg-blue",
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-        <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-col gap-1  flex-shrink-0">
-          <div className="flex justify-end">
-            <span>Borrowed</span>
-            <span className="text-[#2679B8] ml-[6px]">${borrowed}</span>
-          </div>
-          <div className="flex justify-end">
-            <span>Limit</span>
-            <span className="text-[#2679B8] ml-[6px]">${limit}</span>
-          </div>
-          <div className="flex justify-end">
-            <span>Collateral</span>
-            <span className="text-[#2679B8] ml-[6px]">${collateral}</span>
+          <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-col gap-1  flex-shrink-0">
+            <div className="flex justify-end">
+              <span>Borrowed</span>
+              <span className="text-[#2679B8] ml-[6px]">${borrowed}</span>
+            </div>
+            <div className="flex justify-end">
+              <span>Limit</span>
+              <span className="text-[#2679B8] ml-[6px]">${limit}</span>
+            </div>
+            <div className="flex justify-end">
+              <span>Collateral</span>
+              <span className="text-[#2679B8] ml-[6px]">${collateral}</span>
+            </div>
           </div>
         </div>
       </div>
