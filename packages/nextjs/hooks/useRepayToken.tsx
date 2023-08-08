@@ -38,7 +38,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...tokenContract,
     functionName: "approve",
     chainId: parseInt(realm.contract.chainId),
-    args: [marketData?.address, ethers.utils.parseUnits(((tradeData.amount || 0) * 1.01)?.toFixed(18) || "0", 18)],
+    args: [marketData?.address, ethers.utils.parseUnits(((tradeData.amount || 0) * 1.01)?.toString() || "0", 18)],
   } as any);
 
   const { status: approveTransStatus } = useWaitForTransaction({
@@ -51,7 +51,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
+    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toString() || "0", 18)] : [],
   } as any);
 
   // const { writeAsync: ethRepay } = useContractWrite({
@@ -97,18 +97,18 @@ export function useRepayToken(realm: Realm, market: Market) {
             recklesslySetUnpreparedArgs: [
               amount === -1
                 ? EBigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-                : ethers.utils.parseEther(amount.toFixed(18)),
+                : ethers.utils.parseEther(amount.toString()),
             ],
           });
         } else {
           if (isMax) {
             res = await wrappedContract.repayBehalfExplicit(address, market.address, {
-              value: ethers.utils.parseEther(amount.toFixed(18)),
+              value: ethers.utils.parseEther(amount.toString()),
             });
           } else {
             res = await tokenRepay({
               recklesslySetUnpreparedOverrides: {
-                value: ethers.utils.parseEther(amount.toFixed(18)),
+                value: ethers.utils.parseEther(amount.toString()),
               },
             });
           }
