@@ -55,7 +55,7 @@ const TokenSupply: FunctionComponent<{
     );
   }, []);
 
-  let gas = 0.0001;
+  let gas = 0.00005;
 
   if (market.token !== "ETH") {
     gas = 0;

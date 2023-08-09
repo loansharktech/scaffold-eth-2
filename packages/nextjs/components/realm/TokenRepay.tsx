@@ -52,7 +52,7 @@ const TokenRepay: FunctionComponent<{
 
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
-  let gas = 0.0001;
+  let gas = 0.00005;
 
   if (market.token !== "ETH") {
     gas = 0;
