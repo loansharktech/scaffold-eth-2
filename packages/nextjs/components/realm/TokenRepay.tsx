@@ -52,13 +52,19 @@ const TokenRepay: FunctionComponent<{
 
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
+  let gas = 0.0001;
+
+  if (market.token !== "ETH") {
+    gas = 0;
+  }
+
   useEffect(() => {
-    let maxAmount = new BigNumber(Math.min(balance?.toNumber() || 0, borrowAmount?.toNumber() || 0));
+    let maxAmount = new BigNumber(Math.min((balance?.toNumber() || 0) - gas, borrowAmount?.toNumber() || 0));
     if (maxAmount.lt(0.0001)) {
       maxAmount = new BigNumber(0);
     }
     setMaxAmount(maxAmount);
-  }, [balance?.toString(), borrowAmount?.toString()]);
+  }, [balance?.toString(), borrowAmount?.toString(), gas]);
 
   const changeAmount = useCallback((amount: number | undefined | "") => {
     store.dispatch(
@@ -87,7 +93,7 @@ const TokenRepay: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(maxAmount.toNumber());
+              changeAmount(maxAmount?.toNumber() || 0);
             }}
           >
             MAX

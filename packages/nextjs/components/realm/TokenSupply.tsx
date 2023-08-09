@@ -55,6 +55,22 @@ const TokenSupply: FunctionComponent<{
     );
   }, []);
 
+  let gas = 0.0001;
+
+  if (market.token !== "ETH") {
+    gas = 0;
+  }
+
+  const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
+
+  useEffect(() => {
+    let maxAmount = new BigNumber((balance?.toNumber() || 0) - gas);
+    if (maxAmount.lt(0.0001)) {
+      maxAmount = new BigNumber(0);
+    }
+    setMaxAmount(maxAmount);
+  }, [balance?.toString(), gas]);
+
   const isInsufficientBalance = (suppyToken.amount || 0) > (balance?.toNumber() || 0);
   const needApprove = !suppyToken.isNativeToken && suppyToken.approveAllowanceAmount.isLessThan(suppyToken.amount || 0);
 
@@ -68,20 +84,12 @@ const TokenSupply: FunctionComponent<{
         <div className="font-bold text-xl"></div>
         <div className="flex items-center">
           <span className="text-sm text-[#3481BD] mr-2">
-            Balance: {balance?.toFormat(amountDecimal(balance), BigNumber.ROUND_FLOOR)} {market.token}
+            Balance: {maxAmount.toFormat(amountDecimal(maxAmount), BigNumber.ROUND_FLOOR)} {market.token}
           </span>
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              let amount = balance?.toNumber() || 0;
-              if (market.token === "ETH") {
-                if (amount > 0.001) {
-                  amount = amount - 0.001;
-                } else {
-                  amount = 0;
-                }
-              }
-              changeAmount(balance?.toNumber());
+              changeAmount(maxAmount?.toNumber() || 0);
             }}
           >
             MAX

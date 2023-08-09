@@ -98,11 +98,9 @@ export function useSupplyToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "mint",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18) || "0", 18)] : [],
+    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toString() || "0", 18)] : [],
     overrides: {
-      value: tokenContract
-        ? 0
-        : ethers.utils.parseEther(new BigNumber(tradeData.amount || "0").toFixed(8, BigNumber.ROUND_DOWN)),
+      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData.amount?.toString() || "0"),
     },
   } as any);
 
@@ -156,6 +154,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
         }),
       );
       toast.error(e.message);
+      throw new Error(e.message);
     } finally {
       store.dispatch(
         actions.trade.updateSupply({

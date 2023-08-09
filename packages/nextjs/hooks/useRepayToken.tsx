@@ -140,6 +140,7 @@ export function useRepayToken(realm: Realm, market: Market) {
           }),
         );
         toast.error(e.message);
+        throw new Error(e.message);
       } finally {
         store.dispatch(
           actions.trade.updateRepay({
@@ -192,6 +193,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         }),
       );
       toast.error(e.message);
+      throw new Error(e.message);
     } finally {
       store.dispatch(
         actions.trade.updateRepay({

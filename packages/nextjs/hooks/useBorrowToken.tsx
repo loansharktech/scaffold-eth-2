@@ -70,6 +70,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
         }),
       );
       toast.error(e.message);
+      throw new Error(e.message);
     } finally {
       store.dispatch(
         actions.trade.updateBorrow({
