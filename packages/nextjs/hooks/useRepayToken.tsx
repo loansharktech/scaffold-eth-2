@@ -38,7 +38,7 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...tokenContract,
     functionName: "approve",
     chainId: parseInt(realm.contract.chainId),
-    args: [marketData?.address, ethers.utils.parseUnits(((tradeData.amount || 0) * 1.01)?.toString() || "0", 18)],
+    args: [marketData?.address, ethers.utils.parseUnits(tradeData.amount?.multipliedBy(1.01).toString() || "0", 18)],
   } as any);
 
   const { status: approveTransStatus } = useWaitForTransaction({
@@ -68,7 +68,7 @@ export function useRepayToken(realm: Realm, market: Market) {
   });
 
   const repay = useCallback(
-    async (amount: number, isMax: boolean) => {
+    async (amount: BigNumber, isMax: boolean) => {
       if (!isLogin) {
         return login();
       }
@@ -95,7 +95,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         if (tokenContract) {
           res = await tokenRepay({
             recklesslySetUnpreparedArgs: [
-              amount === -1
+              amount.isEqualTo(new BigNumber(-1))
                 ? EBigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
                 : ethers.utils.parseEther(amount.toString()),
             ],

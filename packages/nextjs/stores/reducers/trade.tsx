@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import BigNumber from "bignumber.js";
 
 export enum TradeStep {
   ENTER_AMOUNT,
@@ -14,7 +15,7 @@ export enum TradeType {
 }
 
 type TradeData = {
-  amount?: number;
+  amount?: BigNumber;
   stepIndex: TradeStep;
   approving: boolean;
   approveTx?: string;

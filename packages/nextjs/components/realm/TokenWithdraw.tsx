@@ -74,7 +74,7 @@ const TokenWithdraw: FunctionComponent<{
   // const maxWithdrawAmount = supplyAmount;
   const maxWithdrawPrice = maxWithdrawAmount.multipliedBy(marketData?.price || 0);
 
-  const changeAmount = useCallback((amount: number | undefined | "") => {
+  const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
     store.dispatch(
       actions.trade.updateWithdraw({
         amount: amount || undefined,
@@ -82,7 +82,7 @@ const TokenWithdraw: FunctionComponent<{
     );
   }, []);
 
-  const isInsufficientBalance = (withdrawToken.amount || 0) > (maxWithdrawAmount?.toNumber() || 0);
+  const isInsufficientBalance = withdrawToken.amount?.isGreaterThan(maxWithdrawAmount);
 
   if (!marketData) {
     return null;
@@ -99,7 +99,7 @@ const TokenWithdraw: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(maxWithdrawAmount?.toNumber());
+              changeAmount(maxWithdrawAmount);
             }}
           >
             MAX
@@ -129,10 +129,10 @@ const TokenWithdraw: FunctionComponent<{
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
           max={maxWithdrawAmount.toNumber()}
-          value={withdrawToken.amount}
+          value={withdrawToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(parseFloat(e.currentTarget.value));
+            changeAmount(BigNumber(e.currentTarget.value));
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}

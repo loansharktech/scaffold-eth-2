@@ -66,7 +66,7 @@ const TokenRepay: FunctionComponent<{
     setMaxAmount(maxAmount);
   }, [balance?.toString(), borrowAmount?.toString(), gas]);
 
-  const changeAmount = useCallback((amount: number | undefined | "") => {
+  const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
     store.dispatch(
       actions.trade.updateRepay({
         amount: amount || undefined,
@@ -74,8 +74,8 @@ const TokenRepay: FunctionComponent<{
     );
   }, []);
 
-  const isInsufficientBalance = (repayToken.amount || 0) > (balance?.toNumber() || 0);
-  const isExceededAmountBorrowed = (repayToken.amount || 0) > (borrowAmount?.toNumber() || 0);
+  const isInsufficientBalance = repayToken.amount?.isGreaterThan(balance || 0);
+  const isExceededAmountBorrowed = repayToken.amount?.isGreaterThan(borrowAmount);
   const needApprove = !repayToken.isNativeToken && repayToken.approveAllowanceAmount.isLessThan(repayToken.amount || 0);
   if (!marketData) {
     return null;
@@ -93,7 +93,7 @@ const TokenRepay: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(maxAmount?.toNumber() || 0);
+              changeAmount(maxAmount);
             }}
           >
             MAX
@@ -123,10 +123,10 @@ const TokenRepay: FunctionComponent<{
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
           max={maxAmount.toNumber()}
-          value={repayToken.amount}
+          value={repayToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(parseFloat(e.currentTarget.value));
+            changeAmount(BigNumber(e.currentTarget.value));
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
@@ -199,20 +199,18 @@ const TokenRepay: FunctionComponent<{
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           onClick={async () => {
             const isETH = market.token === "ETH";
-            let amount = repayToken.amount || 0;
+            let amount = repayToken.amount || new BigNumber(0);
             let isMax = false;
-            if (maxAmount.toNumber() === repayToken.amount) {
+            if (maxAmount.isEqualTo(repayToken.amount || 0)) {
               isMax = true;
               if (!isETH) {
-                amount = -1;
+                amount = new BigNumber(-1);
               } else {
-                amount = new BigNumber(
-                  Math.min(balance?.toNumber() || 0, borrowAmount.multipliedBy(1.01)?.toNumber() || 0),
-                ).toNumber();
+                amount = BigNumber.min(balance || 0, borrowAmount.multipliedBy(1.01));
               }
             }
-            await repayToken.repay(amount as number, isMax);
-            setMaxAmount(amount === -1 ? new BigNumber(0) : maxAmount.minus(amount || 0));
+            await repayToken.repay(amount, isMax);
+            setMaxAmount(amount.isEqualTo(new BigNumber(-1)) ? new BigNumber(0) : maxAmount.minus(amount || 0));
           }}
         >
           Repay

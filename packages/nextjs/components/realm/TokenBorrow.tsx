@@ -62,7 +62,7 @@ const TokenBorrow: FunctionComponent<{
     setMaxAmount(maxAmount || new BigNumber(0));
   }, [marketData?.price?.toString(), realm.accountLiquidity?.[1]?.toString()]);
 
-  const changeAmount = useCallback((amount: number | undefined | "") => {
+  const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
     store.dispatch(
       actions.trade.updateBorrow({
         amount: amount || undefined,
@@ -70,7 +70,7 @@ const TokenBorrow: FunctionComponent<{
     );
   }, []);
 
-  const isInsufficientBalance = (borrowToken.amount || 0) > (maxAmount?.toNumber() || 0);
+  const isInsufficientBalance = borrowToken.amount?.isGreaterThan(maxAmount);
 
   if (!marketData) {
     return null;
@@ -88,7 +88,7 @@ const TokenBorrow: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount((maxAmount?.toNumber() || 0) * 0.8);
+              changeAmount(maxAmount.multipliedBy(0.8));
             }}
           >
             80%
@@ -118,10 +118,10 @@ const TokenBorrow: FunctionComponent<{
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
           max={maxAmount?.toNumber()}
-          value={borrowToken.amount}
+          value={borrowToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(parseFloat(e.currentTarget.value));
+            changeAmount(BigNumber(e.currentTarget.value));
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}

@@ -47,7 +47,7 @@ const TokenSupply: FunctionComponent<{
     setbalance(tokenInfo.balance?.div(p18) || new BigNumber(0));
   }, [tokenInfo.balance?.toString()]);
 
-  const changeAmount = useCallback((amount: number | undefined | "") => {
+  const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
     store.dispatch(
       actions.trade.updateSupply({
         amount: amount || undefined,
@@ -63,15 +63,18 @@ const TokenSupply: FunctionComponent<{
 
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
+  console.log("balance", balance?.toString());
+  console.log("maxAmount", maxAmount?.toString());
+
   useEffect(() => {
-    let maxAmount = new BigNumber((balance?.toNumber() || 0) - gas);
+    let maxAmount = new BigNumber(balance?.minus(gas) || 0);
     if (maxAmount.lt(0.0001)) {
       maxAmount = new BigNumber(0);
     }
     setMaxAmount(maxAmount);
   }, [balance?.toString(), gas]);
 
-  const isInsufficientBalance = (suppyToken.amount || 0) > (balance?.toNumber() || 0);
+  const isInsufficientBalance = suppyToken.amount?.isGreaterThan(balance);
   const needApprove = !suppyToken.isNativeToken && suppyToken.approveAllowanceAmount.isLessThan(suppyToken.amount || 0);
 
   if (!marketData) {
@@ -89,7 +92,7 @@ const TokenSupply: FunctionComponent<{
           <div
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
-              changeAmount(maxAmount?.toNumber() || 0);
+              changeAmount(maxAmount);
             }}
           >
             MAX
@@ -119,10 +122,10 @@ const TokenSupply: FunctionComponent<{
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
           max={balance?.toNumber()}
-          value={suppyToken.amount}
+          value={suppyToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(parseFloat(e.currentTarget.value));
+            changeAmount(BigNumber(e.currentTarget.value));
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
