@@ -25,7 +25,8 @@ const RealmPage: NextPage = () => {
       state.trade.borrow.stepIndex +
       state.trade.repay.stepIndex +
       state.trade.supply.stepIndex +
-      state.trade.withdraw.stepIndex
+      state.trade.withdraw.stepIndex +
+      state.trade.collateralTrigger
     );
   });
 

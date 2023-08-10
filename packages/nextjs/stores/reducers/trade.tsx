@@ -53,14 +53,19 @@ const slice = createSlice({
       executing: false,
     },
     tradeType: TradeType.Supply,
+    collateralTrigger: 1,
   } as {
     supply: TradeData;
     borrow: TradeData;
     withdraw: TradeData;
     repay: TradeData;
     tradeType: TradeType;
+    collateralTrigger: number;
   },
   reducers: {
+    updateCollateralTrigger(state) {
+      state.collateralTrigger = state.collateralTrigger + 1;
+    },
     updateSupply(state, action: PayloadAction<Partial<TradeData>>) {
       state.supply = {
         ...state.supply,

@@ -74,7 +74,7 @@ const TokenSupply: FunctionComponent<{
     setMaxAmount(maxAmount);
   }, [balance?.toString(), gas]);
 
-  const isInsufficientBalance = suppyToken.amount?.isGreaterThan(balance);
+  const isInsufficientBalance = suppyToken.amount?.isGreaterThan(maxAmount);
   const needApprove = !suppyToken.isNativeToken && suppyToken.approveAllowanceAmount.isLessThan(suppyToken.amount || 0);
 
   if (!marketData) {

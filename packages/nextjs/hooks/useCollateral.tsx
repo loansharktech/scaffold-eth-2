@@ -5,6 +5,7 @@ import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
 import { getContract } from "~~/services/redstone";
 import * as toast from "~~/services/toast";
+import store, { actions } from "~~/stores";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 
 export function useCollateral(realm: Realm, market: Market) {
@@ -40,8 +41,8 @@ export function useCollateral(realm: Realm, market: Market) {
     try {
       setLoading(true);
       await _enterMarkets();
-
       await refetch();
+      store.dispatch(actions.trade.updateCollateralTrigger());
     } catch (e: any) {
       toast.error(e.message);
     } finally {
@@ -56,8 +57,8 @@ export function useCollateral(realm: Realm, market: Market) {
     try {
       setLoading(true);
       await _exitMarket();
-
       await refetch();
+      store.dispatch(actions.trade.updateCollateralTrigger());
     } catch (e: any) {
       toast.error(e.message);
     } finally {

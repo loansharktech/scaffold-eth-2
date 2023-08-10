@@ -74,7 +74,7 @@ const TokenRepay: FunctionComponent<{
     );
   }, []);
 
-  const isInsufficientBalance = repayToken.amount?.isGreaterThan(balance || 0);
+  const isInsufficientBalance = repayToken.amount?.isGreaterThan(maxAmount);
   const isExceededAmountBorrowed = repayToken.amount?.isGreaterThan(borrowAmount);
   const needApprove = !repayToken.isNativeToken && repayToken.approveAllowanceAmount.isLessThan(repayToken.amount || 0);
   if (!marketData) {
