@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from "react";
+import BigNumber from "bignumber.js";
 import { ethers } from "ethers";
 import { useWaitForTransaction } from "wagmi";
 import abi from "~~/abi/market.json";
@@ -41,7 +42,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
 
       const wrappedContract = await getContract(market.address, abi);
 
-      const amounts = ethers.utils.parseUnits(tradeData.amount.toString(), 18);
+      const amounts = ethers.utils.parseUnits(tradeData.amount.toFixed(18, BigNumber.ROUND_FLOOR), 18);
       const res = await wrappedContract.borrow(amounts);
 
       store.dispatch(

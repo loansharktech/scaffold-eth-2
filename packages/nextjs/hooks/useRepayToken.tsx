@@ -54,7 +54,9 @@ export function useRepayToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toString() || "0", 18)] : [],
+    args: tokenContract
+      ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18)]
+      : [],
   } as any);
 
   // const { writeAsync: ethRepay } = useContractWrite({
@@ -100,18 +102,18 @@ export function useRepayToken(realm: Realm, market: Market) {
             recklesslySetUnpreparedArgs: [
               amount.isEqualTo(new BigNumber(-1))
                 ? EBigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
-                : ethers.utils.parseEther(amount.toString()),
+                : ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
             ],
           });
         } else {
           if (isMax) {
             res = await wrappedContract.repayBehalfExplicit(address, market.address, {
-              value: ethers.utils.parseEther(amount.toString()),
+              value: ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
             });
           } else {
             res = await tokenRepay({
               recklesslySetUnpreparedOverrides: {
-                value: ethers.utils.parseEther(amount.toString()),
+                value: ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
               },
             });
           }

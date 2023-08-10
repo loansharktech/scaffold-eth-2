@@ -98,9 +98,11 @@ export function useSupplyToken(realm: Realm, market: Market) {
     ...cTokenContract,
     functionName: "mint",
     chainId: parseInt(realm.contract.chainId),
-    args: tokenContract ? [ethers.utils.parseUnits(tradeData.amount?.toString() || "0", 18)] : [],
+    args: tokenContract
+      ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18)]
+      : [],
     overrides: {
-      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData.amount?.toString() || "0"),
+      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0"),
     },
   } as any);
 
