@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from "react";
 import BigNumber from "bignumber.js";
-import { BigNumber as EBigNumber, ethers } from "ethers";
+import { ethers } from "ethers";
 import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
@@ -98,10 +98,11 @@ export function useRepayToken(realm: Realm, market: Market) {
 
         let res;
         if (tokenContract) {
+          console.log("amount.isEqualTo(new BigNumber(-1))", amount.toFixed(18, BigNumber.ROUND_FLOOR));
           res = await tokenRepay({
             recklesslySetUnpreparedArgs: [
               amount.isEqualTo(new BigNumber(-1))
-                ? EBigNumber.from("0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff")
+                ? ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR))
                 : ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
             ],
           });

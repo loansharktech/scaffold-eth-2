@@ -28,14 +28,16 @@ export function useSupplyToken(realm: Realm, market: Market) {
     args: [address, marketData?.address],
     watch: true,
   } as any);
-
   const approveAllowanceAmount = new BigNumber((approveAllowance as any)?.toString() || 0).div(p18);
   const { writeAsync: _tokenApprove } = useContractWrite({
     mode: "recklesslyUnprepared",
     ...tokenContract,
     functionName: "approve",
     chainId: parseInt(realm.contract.chainId),
-    args: [marketData?.address, ethers.utils.parseUnits(tradeData.amount?.toString() || "0", 18)],
+    args: [
+      marketData?.address,
+      ethers.utils.parseUnits(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18),
+    ],
   } as any);
 
   const { status: approveTransStatus } = useWaitForTransaction({

@@ -121,7 +121,7 @@ const TokenBorrow: FunctionComponent<{
           value={borrowToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(BigNumber(e.currentTarget.value));
+            changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}

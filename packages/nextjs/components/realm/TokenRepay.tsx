@@ -59,7 +59,7 @@ const TokenRepay: FunctionComponent<{
   }
 
   useEffect(() => {
-    let maxAmount = new BigNumber(Math.min((balance?.toNumber() || 0) - gas, borrowAmount?.toNumber() || 0));
+    let maxAmount = BigNumber.min(balance?.minus(gas) || 0, borrowAmount);
     if (maxAmount.lt(0.0001)) {
       maxAmount = new BigNumber(0);
     }
@@ -126,7 +126,7 @@ const TokenRepay: FunctionComponent<{
           value={repayToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(BigNumber(e.currentTarget.value));
+            changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
@@ -201,11 +201,12 @@ const TokenRepay: FunctionComponent<{
             const isETH = market.token === "ETH";
             let amount = repayToken.amount || new BigNumber(0);
             let isMax = false;
-            if (maxAmount.isEqualTo(repayToken.amount || 0)) {
-              isMax = true;
-              if (!isETH) {
+            if (balance?.isEqualTo(repayToken.amount || 0)) {
+              if (!isETH && repayToken.amount?.isEqualTo(borrowAmount)) {
+                isMax = true;
                 amount = new BigNumber(-1);
               } else {
+                isMax = true;
                 amount = BigNumber.min(balance || 0, borrowAmount.multipliedBy(1.01));
               }
             }

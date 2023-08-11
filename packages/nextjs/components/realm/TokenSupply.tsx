@@ -63,9 +63,6 @@ const TokenSupply: FunctionComponent<{
 
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
-  console.log("balance", balance?.toString());
-  console.log("maxAmount", maxAmount?.toString());
-
   useEffect(() => {
     let maxAmount = new BigNumber(balance?.minus(gas) || 0);
     if (maxAmount.lt(0.0001)) {
@@ -125,7 +122,7 @@ const TokenSupply: FunctionComponent<{
           value={suppyToken.amount?.toString()}
           type="number"
           onChange={e => {
-            changeAmount(BigNumber(e.currentTarget.value));
+            changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);
           }}
           styles={{ rightSection: { pointerEvents: "none" } }}
           rightSectionWidth={70}
