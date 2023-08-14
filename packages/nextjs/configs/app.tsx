@@ -5,12 +5,7 @@ export const navTabs = [
     id: "lending",
     label: "Lending",
     route: "/",
-  },
-  {
-    id: "contract",
-    label: "Contract",
-    route: "/lending",
-  },
+  }
 ];
 
 export const leadingLinks = [

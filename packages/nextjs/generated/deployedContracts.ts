@@ -403,7 +403,7 @@ const contracts = {
           ],
         },
         cWETH: {
-          address: "0x4b4f7608bA4569dBb605D3B7b92502C2C334c367",
+          address: "0x75F9d174e2BF5031b69Ec92241813aDF4583Ed26",
           abi: [
             {
               type: "function",
