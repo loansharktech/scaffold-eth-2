@@ -19321,7 +19321,7 @@ __metadata:
 
 "wagmi@file:./wagmi::locator=%40se-2%2Fnextjs%40workspace%3Apackages%2Fnextjs":
   version: 0.11.6
-  resolution: "wagmi@file:./wagmi#./wagmi::hash=f7c4ff&locator=%40se-2%2Fnextjs%40workspace%3Apackages%2Fnextjs"
+  resolution: "wagmi@file:./wagmi#./wagmi::hash=562b00&locator=%40se-2%2Fnextjs%40workspace%3Apackages%2Fnextjs"
   dependencies:
     "@tanstack/query-sync-storage-persister": ^4.14.5
     "@tanstack/react-query": ^4.14.5
@@ -19336,7 +19336,7 @@ __metadata:
   peerDependenciesMeta:
     typescript:
       optional: true
-  checksum: 06d5f82472360cb5243c2e4afd30e80200238fca9d321c5abc9abd5faca6c5567f9a7c9e79a56544bed4d4b649b485b847e09d362caedc6d915fc72abf05c203
+  checksum: 9037ea36139e24eb09f2840c6a8d8c8ccc407ef46b54973b860cb2c8b084cef7cf12d085b5d9aa3dcfb573e966b9aa7b58026b1d2bb6cad8ca90cc9fa8d07526
   languageName: node
   linkType: hard
 

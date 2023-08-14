@@ -8,7 +8,7 @@ const Home: NextPage = () => {
   return (
     <>
       <Head>
-        <title>Leading</title>
+        <title>Lending</title>
         <meta name="description" content="Loanshark Scroll Alpha Testnet" />
       </Head>
       <main className="w-screen bg-white h-[--main-height] overflow-y-scroll page-bg flex flex-col items-center justify-between pt-[50px] pb-[60px]">
