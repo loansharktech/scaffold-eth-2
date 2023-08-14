@@ -4,7 +4,6 @@ const contracts = {
       name: "scrollAlphaTestnet",
       chainId: "534353",
       contracts: {
-        
         SimplePriceOracle: {
           address: "0x75BaFFD109B71b0854B54C2f597A81757232CD32",
           abi: [
@@ -404,7 +403,7 @@ const contracts = {
           ],
         },
         cWETH: {
-          address: "0x75F9d174e2BF5031b69Ec92241813aDF4583Ed26",
+          address: "0x4b4f7608bA4569dBb605D3B7b92502C2C334c367",
           abi: [
             {
               type: "function",
@@ -1083,7 +1082,7 @@ const contracts = {
           ],
         },
         cUSDC: {
-          address: "0x84b9D6ed4B98d6CDA4009DB92B0dec861520935C",
+          address: "0xf677d99F21256Bf204960Af96b7E24C4D8073D93",
           abi: [
             {
               type: "function",
