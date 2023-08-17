@@ -42,6 +42,7 @@ const TokenSupply: FunctionComponent<{
     .multipliedBy(marketData?.price || 0);
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setbalance(tokenInfo.balance?.div(p18) || new BigNumber(0));
@@ -90,6 +91,9 @@ const TokenSupply: FunctionComponent<{
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
               changeAmount(maxAmount);
+              if (inputRef.current) {
+                inputRef.current.value = maxAmount.toFixed(18);
+              }
             }}
           >
             MAX
@@ -118,8 +122,9 @@ const TokenSupply: FunctionComponent<{
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
+          ref={inputRef}
           max={balance?.toNumber()}
-          value={suppyToken.amount?.toString()}
+          defaultValue={suppyToken.amount?.toString()}
           type="number"
           onChange={e => {
             changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);

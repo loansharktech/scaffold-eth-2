@@ -110,7 +110,10 @@ export function useRealm(realmType: RealmType) {
       });
     })
     .filter(contract => {
-      return !!contract;
+      const names = realmInfo?.markets.map(market => {
+        return market.cToken;
+      });
+      return names?.includes(contractAddressName[contract?.address as any]);
     });
 
   const avaliableMarkets = realmInfo!.markets.map(market => {

@@ -48,6 +48,7 @@ const TokenWithdraw: FunctionComponent<{
         .toNumber()
     : 0;
   const borrowUtilization2 = borrowUtilization1 - baseBorrowUtilization;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
@@ -100,6 +101,9 @@ const TokenWithdraw: FunctionComponent<{
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
               changeAmount(maxWithdrawAmount);
+              if (inputRef.current) {
+                inputRef.current.value = maxWithdrawAmount.toFixed(18);
+              }
             }}
           >
             MAX
@@ -128,8 +132,9 @@ const TokenWithdraw: FunctionComponent<{
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
+          ref={inputRef}
           max={maxWithdrawAmount.toNumber()}
-          value={withdrawToken.amount?.toString()}
+          defaultValue={withdrawToken.amount?.toString()}
           type="number"
           onChange={e => {
             changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);

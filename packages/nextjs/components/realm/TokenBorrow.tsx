@@ -36,6 +36,7 @@ const TokenBorrow: FunctionComponent<{
   const totalBorrow = marketData?.totalBorrows?.div(p18);
   const totalBorrowPrice = totalBorrow?.multipliedBy(marketData?.price || 0);
   const globalBorrowPrice = realm.totalUserBorrowed;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const _C = new BigNumber(borrowToken.amount || 0).multipliedBy(marketData?.price || 0);
 
@@ -89,6 +90,9 @@ const TokenBorrow: FunctionComponent<{
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
               changeAmount(maxAmount.multipliedBy(0.8));
+              if (inputRef.current) {
+                inputRef.current.value = maxAmount.multipliedBy(0.8).toFixed(18);
+              }
             }}
           >
             80%
@@ -117,8 +121,9 @@ const TokenBorrow: FunctionComponent<{
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
+          ref={inputRef}
           max={maxAmount?.toNumber()}
-          value={borrowToken.amount?.toString()}
+          defaultValue={borrowToken.amount?.toString()}
           type="number"
           onChange={e => {
             changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);

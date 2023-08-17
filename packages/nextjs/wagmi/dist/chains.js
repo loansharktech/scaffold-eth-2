@@ -22,9 +22,9 @@ import {
   filecoinCalibration,
   filecoinHyperspace,
   foundry,
-  goerli,
   gnosis,
   gnosisChiado,
+  goerli,
   hardhat,
   iotex,
   iotexTestnet,
@@ -46,33 +46,32 @@ import {
   telos,
   telosTestnet,
   zkSync,
-  zkSyncTestnet
+  zkSyncTestnet,
 } from "@wagmi/core/chains";
 
 var scrollAlphaTestnet = {
-    id: 534353,
-    name: "Scroll Alpha Tesnet",
-    network: "scrollAlphaTestnet",
-    nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
-    rpcUrls: {
-      default: {
-        http: ["https://alpha-rpc.scroll.io/l2"],
-        webSocket: ["wss://alpha-rpc.scroll.io/l2ws"]
-      },
-      public: {
-        http: ["https://alpha-rpc.scroll.io/l2"],
-        webSocket: ["wss://alpha-rpc.scroll.io/l2/ws"]
-      }
+  id: 534353,
+  name: "Scroll Alpha Tesnet",
+  network: "scrollAlphaTestnet",
+  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ["https://scroll-alphanet.blastapi.io/61e51c33-8629-4159-8d38-261697477edc"],
+      webSocket: ["wss://scroll-alphanet.blastapi.io/61e51c33-8629-4159-8d38-261697477edc"],
     },
-    blockExplorers: {
-      default: {
-        name: "Block Scout",
-        url: "https://blockscout.scroll.io/"
-      }
+    public: {
+      http: ["https://scroll-alphanet.blastapi.io/61e51c33-8629-4159-8d38-261697477edc"],
+      webSocket: ["wss://scroll-alphanet.blastapi.io/61e51c33-8629-4159-8d38-261697477edc"],
     },
-    testnet: true
-  };
-  
+  },
+  blockExplorers: {
+    default: {
+      name: "Block Scout",
+      url: "https://blockscout.scroll.io/",
+    },
+  },
+  testnet: true,
+};
 
 export {
   arbitrum,
@@ -122,5 +121,5 @@ export {
   telosTestnet,
   zkSync,
   zkSyncTestnet,
-  scrollAlphaTestnet
+  scrollAlphaTestnet,
 };
