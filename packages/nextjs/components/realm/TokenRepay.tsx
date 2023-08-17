@@ -38,6 +38,7 @@ const TokenRepay: FunctionComponent<{
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
   const globalBorrowPrice = realm.totalUserBorrowed || new BigNumber(0);
@@ -94,6 +95,9 @@ const TokenRepay: FunctionComponent<{
             className="action font-extrabold text-[#3481BD]"
             onClick={() => {
               changeAmount(maxAmount);
+              if (inputRef.current) {
+                inputRef.current.value = maxAmount.toFixed(18);
+              }
             }}
           >
             MAX
@@ -122,8 +126,9 @@ const TokenRepay: FunctionComponent<{
             input:
               "bg-[#F0F5F9] h-[50px] border-none bg-[#F0F5F9] rounded-[12px] text-lg font-bold placeholder:text-[#9CA3AF]",
           }}
+          ref={inputRef}
           max={maxAmount.toNumber()}
-          value={repayToken.amount?.toString()}
+          defaultValue={repayToken.amount?.toString()}
           type="number"
           onChange={e => {
             changeAmount(e.currentTarget.value ? new BigNumber(e.currentTarget.value) : undefined);

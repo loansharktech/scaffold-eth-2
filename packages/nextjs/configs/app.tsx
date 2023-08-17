@@ -1,11 +1,11 @@
-import { DiscordIcon, GitbookIcon, GithubIcon, TwitterIcon, UnionIcon } from "~~/components/common/icons";
+import { DiscordIcon, GitbookIcon, GithubIcon, TwitterIcon } from "~~/components/common/icons";
 
 export const navTabs = [
   {
     id: "lending",
     label: "Lending",
     route: "/",
-  }
+  },
 ];
 
 export const leadingLinks = [
@@ -17,21 +17,21 @@ export const leadingLinks = [
   {
     icon: <GitbookIcon></GitbookIcon>,
     label: "Gitbook",
-    link: "",
+    link: "https://docs.loanshark.tech",
   },
   {
     icon: <GithubIcon></GithubIcon>,
     label: "Github",
-    link: "",
+    link: "https://github.com/loansharktechteam",
   },
   {
     icon: <TwitterIcon></TwitterIcon>,
     label: "Twitter",
-    link: "",
+    link: "https://twitter.com/loansharktech",
   },
   {
     icon: <DiscordIcon></DiscordIcon>,
     label: "Discord",
-    link: "",
+    link: "https://discord.com/invite/tbSEWQYMKV",
   },
 ];

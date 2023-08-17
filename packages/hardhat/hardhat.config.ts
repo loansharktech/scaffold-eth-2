@@ -68,7 +68,7 @@ const config: HardhatUserConfig = {
       accounts: [deployerPrivateKey],
     },
     scrollAlphaTestnet: {
-      url: `https://alpha-rpc.scroll.io/l2`,
+      url: `https://scroll-alphanet.blastapi.io/61e51c33-8629-4159-8d38-261697477edc`,
       accounts: [""],
     },
   },

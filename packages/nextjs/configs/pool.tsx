@@ -33,10 +33,10 @@ export const realms: RealmConfig[] = [
         cToken: "cETH",
         token: "ETH",
       },
-      {
-        cToken: "cWETH",
-        token: "WETH",
-      },
+      // {
+      //   cToken: "cWETH",
+      //   token: "WETH",
+      // },
       {
         cToken: "cUSDC",
         token: "USDC",
@@ -48,11 +48,11 @@ export const realms: RealmConfig[] = [
         address: "0xA0D71B9877f44C744546D649147E3F1e70a93760",
         icon: "/assets/tokens/usdc.svg",
       },
-      {
-        name: "WETH",
-        icon: "/assets/tokens/eth.svg",
-        address: "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
-      },
+      // {
+      //   name: "WETH",
+      //   icon: "/assets/tokens/eth.svg",
+      //   address: "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
+      // },
       {
         name: "ETH",
         icon: "/assets/tokens/eth.svg",
