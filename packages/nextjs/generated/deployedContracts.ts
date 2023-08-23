@@ -1,8 +1,8 @@
 const contracts = {
-  534353: [
+  534351: [
     {
-      name: "scrollAlphaTestnet",
-      chainId: "534353",
+      name: "scrollSepoliaTestnet",
+      chainId: "534351",
       contracts: {
         SimplePriceOracle: {
           address: "0x75BaFFD109B71b0854B54C2f597A81757232CD32",
