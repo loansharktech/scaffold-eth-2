@@ -73,6 +73,29 @@ var scrollAlphaTestnet = {
   testnet: true,
 };
 
+var scrollSepoliaTestnet = {
+  id: 534351,
+  name: "Scroll Sepolia Tesnet",
+  network: "scrollSepoliaTestnet",
+  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
+    default: {
+      http: ["https://sepolia-rpc.scroll.io"],
+      webSocket: ["wss://sepolia-rpc.scroll.io/l2ws"]
+    },
+    public: {
+      http: ["https://sepolia-rpc.scroll.io"],
+      webSocket: ["wss://sepolia-rpc.scroll.io/l2ws"]
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: "Block Scout",
+      url: "https://sepolia-blockscout.scroll.io/"
+    },
+  },
+  testnet: true,
+};
 export {
   arbitrum,
   arbitrumGoerli,
@@ -122,4 +145,5 @@ export {
   zkSync,
   zkSyncTestnet,
   scrollAlphaTestnet,
+  scrollSepoliaTestnet,
 };

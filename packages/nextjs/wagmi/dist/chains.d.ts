@@ -1,25 +1,25 @@
-export declare const scrollAlphaTestnet: {
-  readonly id: 534353;
-  readonly name: "Scroll Alpha Tesnet";
-  readonly network: "scrollAlphaTestnet";
-  readonly nativeCurrency: { name: "Ether"; symbol: "ETH"; decimals: 18 };
-  readonly rpcUrls: {
+export declare const scrollSepoliaTestnet:{
+  id: 534351,
+  name: "Scroll Sepolia Tesnet",
+  network: "scrollSepoliaTestnet",
+  nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
+  rpcUrls: {
     default: {
-      http: ["https://alpha-rpc.scroll.io/l2"];
-      webSocket: ["wss://alpha-rpc.scroll.io/l2ws"];
-    };
+      http: ["https://sepolia-rpc.scroll.io"],
+      webSocket: ["wss://sepolia-rpc.scroll.io/l2ws"]
+    },
     public: {
-      http: ["https://alpha-rpc.scroll.io/l2"];
-      webSocket: ["wss://alpha-rpc.scroll.io/l2/ws"];
-    };
-  };
-  readonly blockExplorers: {
+      http: ["https://sepolia-rpc.scroll.io"],
+      webSocket: ["wss://sepolia-rpc.scroll.io/l2ws"]
+    },
+  },
+  blockExplorers: {
     default: {
-      name: "Block Scout";
-      url: "https://blockscout.scroll.io/";
-    };
-  };
-  readonly testnet: true;
+      name: "Block Scout",
+      url: "https://sepolia-blockscout.scroll.io/"
+    },
+  },
+  testnet: true,
 };
 
 export {
