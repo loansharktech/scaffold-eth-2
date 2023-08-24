@@ -5,7 +5,7 @@ const contracts = {
       chainId: "534351",
       contracts: {
         SimplePriceOracle: {
-          address: "0x75BaFFD109B71b0854B54C2f597A81757232CD32",
+          address: "0x8925ED9b52A7C9d2b16F0eB41F853E7887fDd33f",
           abi: [
             {
               type: "function",
