@@ -1,6 +1,6 @@
 import type { ContractName } from "~~/utils/scaffold-eth/contract";
 
-export type RealmType = "main" | "stakednear" | "aurora" | "multichain";
+export type RealmType = "main";
 
 export type Token = {
   name: "USDC" | "ETH" | "WETH";
@@ -33,10 +33,6 @@ export const realms: RealmConfig[] = [
         cToken: "cETH",
         token: "ETH",
       },
-      // {
-      //   cToken: "cWETH",
-      //   token: "WETH",
-      // },
       {
         cToken: "cUSDC",
         token: "USDC",
@@ -45,14 +41,9 @@ export const realms: RealmConfig[] = [
     tokens: [
       {
         name: "USDC",
-        address: "0xA0D71B9877f44C744546D649147E3F1e70a93760",
+        address: "0x2FfCCE0faaECA62993c031Fd325F482B8cb54684",
         icon: "/assets/tokens/usdc.svg",
       },
-      // {
-      //   name: "WETH",
-      //   icon: "/assets/tokens/eth.svg",
-      //   address: "0xa1EA0B2354F5A344110af2b6AD68e75545009a03",
-      // },
       {
         name: "ETH",
         icon: "/assets/tokens/eth.svg",
@@ -60,19 +51,4 @@ export const realms: RealmConfig[] = [
       },
     ],
   },
-  // {
-  //   id: "stakednear",
-  //   name: "Staked NEAR Realm",
-  //   icon: "/assets/realm/realm-main.png",
-  // },
-  // {
-  //   id: "aurora",
-  //   name: "Aurora Realm",
-  //   icon: "/assets/realm/realm-main.png",
-  // },
-  // {
-  //   id: "multichain",
-  //   name: "Multichain Realm",
-  //   icon: "/assets/realm/realm-main.png",
-  // },
 ];

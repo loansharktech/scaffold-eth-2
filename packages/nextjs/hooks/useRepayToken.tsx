@@ -21,7 +21,7 @@ export function useRepayToken(realm: Realm, market: Market) {
 
   const tokenContract = realm.contract.contracts[market.token as ContractName];
   const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
-  // const maximillionContract = realm.contract.contracts.Maximillion;
+  const maximillionContract = realm.contract.contracts.Maximillion;
 
   const { data: approveAllowance, refetch } = useContractRead({
     ...tokenContract,
@@ -59,13 +59,13 @@ export function useRepayToken(realm: Realm, market: Market) {
       : [],
   } as any);
 
-  // const { writeAsync: ethRepay } = useContractWrite({
-  //   mode: "recklesslyUnprepared",
-  //   ...maximillionContract,
-  //   functionName: "repayBehalfExplicit",
-  //   chainId: parseInt(realm.contract.chainId),
-  //   args: [address, market.address],
-  // } as any);
+  const { writeAsync: ethRepay } = useContractWrite({
+    mode: "recklesslyUnprepared",
+    ...maximillionContract,
+    functionName: "repayBehalfExplicit",
+    chainId: parseInt(realm.contract.chainId),
+    args: [address, market.address],
+  } as any);
 
   const { status: minteTransStatus } = useWaitForTransaction({
     hash: tradeData.executeTx as any,
@@ -78,7 +78,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         return login();
       }
 
-      if (!tokenRepay) {
+      if (!tokenRepay || !ethRepay) {
         return;
       }
       try {
@@ -112,7 +112,7 @@ export function useRepayToken(realm: Realm, market: Market) {
               value: ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
             });
           } else {
-            res = await tokenRepay({
+            res = await ethRepay({
               recklesslySetUnpreparedOverrides: {
                 value: ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
               },
@@ -155,7 +155,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         );
       }
     },
-    [isLogin, tokenRepay, login, tokenContract, market],
+    [isLogin, tokenRepay, login, tokenContract, market, ethRepay],
   );
 
   const approveToken = useCallback(async () => {
