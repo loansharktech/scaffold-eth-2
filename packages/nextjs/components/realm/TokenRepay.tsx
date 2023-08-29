@@ -206,13 +206,18 @@ const TokenRepay: FunctionComponent<{
             const isETH = market.token === "ETH";
             let amount = repayToken.amount || new BigNumber(0);
             let isMax = false;
+            // click max
             if (maxAmount?.isEqualTo(repayToken.amount || 0)) {
-              if (!isETH) {
-                isMax = true;
-                amount = new BigNumber(-1);
-              } else {
-                isMax = true;
-                amount = maxAmount;
+              // wallet balance > borrow amount
+              if (balance?.isGreaterThan(borrowAmount)) {
+                // usdc token
+                if (!isETH) {
+                  isMax = true;
+                  amount = new BigNumber(-1);
+                } else {
+                  isMax = true;
+                  amount = maxAmount;
+                }
               }
             }
             await repayToken.repay(amount, isMax);

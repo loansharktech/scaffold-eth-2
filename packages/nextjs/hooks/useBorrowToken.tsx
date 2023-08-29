@@ -43,6 +43,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
       const wrappedContract = await getContract(market.address, abi);
 
       const amounts = ethers.utils.parseUnits(tradeData.amount.toFixed(18, BigNumber.ROUND_FLOOR), 18);
+      console.log("borrow", amounts.toString());
       const res = await wrappedContract.borrow(amounts);
 
       store.dispatch(

@@ -89,7 +89,6 @@ export function useRepayToken(realm: Realm, market: Market) {
             stepIndex: TradeStep.EXECUTE,
           }),
         );
-
         let res;
         if (tokenContract) {
           res = await tokenRepay({
