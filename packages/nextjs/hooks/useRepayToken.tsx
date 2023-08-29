@@ -4,7 +4,6 @@ import { ethers } from "ethers";
 import { useContractRead, useContractWrite, useWaitForTransaction } from "wagmi";
 import { useAccount } from "~~/hooks/useAccount";
 import { Market, Realm } from "~~/hooks/useRealm";
-import { getContract } from "~~/services/redstone";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
@@ -91,25 +90,21 @@ export function useRepayToken(realm: Realm, market: Market) {
           }),
         );
 
-        const wrappedContract = await getContract(
-          realm.contract.contracts.Maximillion.address,
-          realm.contract.contracts.Maximillion.abi,
-        );
-
         let res;
         if (tokenContract) {
-          console.log("amount.isEqualTo(new BigNumber(-1))", amount.toFixed(18, BigNumber.ROUND_FLOOR));
           res = await tokenRepay({
             recklesslySetUnpreparedArgs: [
               amount.isEqualTo(new BigNumber(-1))
-                ? ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR))
+                ? "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
                 : ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
             ],
           });
         } else {
           if (isMax) {
-            res = await wrappedContract.repayBehalfExplicit(address, market.address, {
-              value: ethers.utils.parseEther(amount.multipliedBy(1.01).toFixed(18, BigNumber.ROUND_FLOOR)),
+            res = await ethRepay({
+              recklesslySetUnpreparedOverrides: {
+                value: ethers.utils.parseEther(amount.multipliedBy(1.01).toFixed(18, BigNumber.ROUND_FLOOR)),
+              },
             });
           } else {
             res = await ethRepay({
