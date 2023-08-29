@@ -109,7 +109,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         } else {
           if (isMax) {
             res = await wrappedContract.repayBehalfExplicit(address, market.address, {
-              value: ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
+              value: ethers.utils.parseEther(amount.multipliedBy(1.01).toFixed(18, BigNumber.ROUND_FLOOR)),
             });
           } else {
             res = await ethRepay({
