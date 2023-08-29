@@ -72,6 +72,9 @@ const TokenBorrow: FunctionComponent<{
   }, []);
 
   const isInsufficientBalance = borrowToken.amount?.isGreaterThan(maxAmount);
+  const isInvalidInput = borrowToken.amount?.isLessThan(0);
+  const cash = marketData?.cash?.div(1e18) || new BigNumber(0);
+  const isInsufficientLiquidity = borrowToken.amount?.isGreaterThan(cash);
 
   if (!marketData) {
     return null;
@@ -178,12 +181,26 @@ const TokenBorrow: FunctionComponent<{
         >
           Enter a Value
         </Button>
+      ) : isInvalidInput ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Invalid Input
+        </Button>
       ) : isInsufficientBalance ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           disabled
         >
           Exceeded Borrow Limit
+        </Button>
+      ) : isInsufficientLiquidity ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Insufficient Liquidity
         </Button>
       ) : (
         <Button

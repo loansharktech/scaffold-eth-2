@@ -73,6 +73,7 @@ const TokenSupply: FunctionComponent<{
   }, [balance?.toString(), gas]);
 
   const isInsufficientBalance = suppyToken.amount?.isGreaterThan(maxAmount);
+  const isInvalidInput = suppyToken.amount?.isLessThan(0);
   const needApprove = !suppyToken.isNativeToken && suppyToken.approveAllowanceAmount.isLessThan(suppyToken.amount || 0);
 
   if (!marketData) {
@@ -186,6 +187,13 @@ const TokenSupply: FunctionComponent<{
           disabled
         >
           Insufficient Balance
+        </Button>
+      ) : isInvalidInput ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Invalid Input
         </Button>
       ) : needApprove ? (
         <Button

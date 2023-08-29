@@ -76,6 +76,7 @@ const TokenRepay: FunctionComponent<{
   }, []);
 
   const isInsufficientBalance = repayToken.amount?.isGreaterThan(maxAmount);
+  const isInvalidInput = repayToken.amount?.isLessThan(0);
   const isExceededAmountBorrowed = repayToken.amount?.isGreaterThan(borrowAmount);
   const needApprove = !repayToken.isNativeToken && repayToken.approveAllowanceAmount.isLessThan(repayToken.amount || 0);
   if (!marketData) {
@@ -182,6 +183,13 @@ const TokenRepay: FunctionComponent<{
           disabled
         >
           Insufficient Balance
+        </Button>
+      ) : isInvalidInput ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Invalid Input
         </Button>
       ) : isExceededAmountBorrowed ? (
         <Button

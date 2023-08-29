@@ -84,6 +84,9 @@ const TokenWithdraw: FunctionComponent<{
   }, []);
 
   const isInsufficientBalance = withdrawToken.amount?.isGreaterThan(maxWithdrawAmount);
+  const isInvalidInput = withdrawToken.amount?.isLessThan(0);
+  const cash = marketData?.cash?.div(1e18) || new BigNumber(0);
+  const isInsufficientLiquidity = withdrawToken.amount?.isGreaterThan(cash);
 
   if (!marketData) {
     return null;
@@ -190,12 +193,26 @@ const TokenWithdraw: FunctionComponent<{
         >
           Enter a Value
         </Button>
+      ) : isInvalidInput ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Invalid Input
+        </Button>
       ) : isInsufficientBalance ? (
         <Button
           className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
           disabled
         >
           Exceeded Max Withdrawal
+        </Button>
+      ) : isInsufficientLiquidity ? (
+        <Button
+          className="w-full rounded-lg h-16 flex items-center justify-center bg-[#039DED] mt-[10px] text-lg text-white font-semibold action"
+          disabled
+        >
+          Insufficient Liquidity
         </Button>
       ) : (
         <Button

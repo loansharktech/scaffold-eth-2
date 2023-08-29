@@ -436,7 +436,6 @@ export function useRealm(realmType: RealmType) {
 
     fetchMyAPI();
   }, [data, address]);
-
   return {
     realm,
     refetch,
