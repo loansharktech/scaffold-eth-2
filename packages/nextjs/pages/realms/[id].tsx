@@ -37,8 +37,8 @@ const RealmPage: NextPage = () => {
   return (
     <>
       <Head>
-        <title>{realmInfo?.name}</title>
-        <meta name="description" content="Loanshark Scroll Alpha Testnet" />
+        <title>Loanshark</title>
+        <meta name="description" content="Risk-Isolated Money Market on Scroll" />
       </Head>
       <main className="bg-white h-[--main-height] flex flex-col sm:flex-row">
         <SideMenu></SideMenu>
