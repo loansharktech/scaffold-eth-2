@@ -28,11 +28,11 @@ const RealmOverview: FunctionComponent<{
     >
       <div className="border border-[#E3F2FF] py-8 sm:px-12 rounded-l-lg grid grid-cols-2 gap-12 flex-1">
         <div className="flex flex-col items-center justify-center">
-          <div>Total Supply</div>
+          <div className="whitespace-nowrap">Total Supply</div>
           <div className="text-[22px] font-bold mt-[11px]">${totalSupply}</div>
         </div>
         <div className="flex flex-col items-center justify-center">
-          <div>Total Borrow</div>
+          <div className="whitespace-nowrap">Total Borrow</div>
           <div className="text-[22px] font-bold mt-[11px]">${totalBorrow}</div>
         </div>
       </div>
@@ -42,7 +42,7 @@ const RealmOverview: FunctionComponent<{
           <div className="text-[22px] font-bold mt-[11px] text-[#538EE4]">{netAPY}%</div>
         </div>
         <div className="flex flex-wrap flex-grow gap-4 sm:gap-10">
-          <div className="flex-grow">
+          <div className="flex-grow w-full sm:w-auto">
             <div>Your Borrow Utilization</div>
             <div className="mt-[11px] flex items-center">
               <div className="font-bold text-[22px] flex-shrink-0">{userBorrowLimit.toFixed(2)}%</div>
@@ -57,7 +57,7 @@ const RealmOverview: FunctionComponent<{
               </div>
             </div>
           </div>
-          <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-col gap-1  flex-shrink-0">
+          <div className="text-[#9CA3AF] text-sm w-[110px] flex flex-wrap sm:flex-col gap-4 sm:gap-1  flex-shrink-0">
             <div className="flex justify-end">
               <span>Borrowed</span>
               <span className="text-[#2679B8] ml-[6px]">${borrowed}</span>

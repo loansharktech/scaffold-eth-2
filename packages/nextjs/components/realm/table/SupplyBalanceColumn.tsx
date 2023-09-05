@@ -10,7 +10,7 @@ const SupplyBalanceColumn: FunctionComponent<{
 }> = ({ amount, price, token }) => {
   return (
     <div>
-      <div className="font-bold text-base">
+      <div className="font-bold text-lg whitespace-nowrap">
         {amount?.toString() !== "0"
           ? `${amountDesc(amount, amountDecimal(amount))} ${token.name.toUpperCase()}`
           : "-.--"}
