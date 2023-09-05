@@ -2,9 +2,14 @@ import { DiscordIcon, GitbookIcon, GithubIcon, TwitterIcon } from "~~/components
 
 export const navTabs = [
   {
+    id: "overview",
+    label: "Overview",
+    route: "/",
+  },
+  {
     id: "lending",
     label: "Lending",
-    route: "/",
+    route: "/realms/main",
   },
 ];
 

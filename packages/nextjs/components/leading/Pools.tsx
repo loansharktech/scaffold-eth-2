@@ -33,7 +33,7 @@ const Pools: FunctionComponent = () => {
             </div>
           </div>
           <div className="w-full flex flex-wrap justify-center  sm:justify-between gap-x-8 sm:gap-x-0 gap-y-4 mt-12">
-            <div className="flex flex-col ml-2 gap-6">
+            <div className="flex flex-col ml-2 gap-6 leading-none">
               <div>
                 <div>Your Net APY</div>
                 <div className={`text-[28px] font-bold  mt-1 ${netAPY <= 0 ? "text-green" : ""}`}>
@@ -61,7 +61,7 @@ const Pools: FunctionComponent = () => {
                 {realm?.markets?.map(market => {
                   const cToken = realm[market.address];
                   return (
-                    <div key={market.address} className="flex gap-[10px] items-center text-[28px]">
+                    <div key={market.address} className="flex gap-[10px] items-center text-xl">
                       {cToken?.token?.icon && (
                         <img className="w-7 h-auto object-contain" src={cToken?.token?.icon} alt="Img" />
                       )}

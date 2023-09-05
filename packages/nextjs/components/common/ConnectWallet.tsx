@@ -1,19 +1,18 @@
 import type { FC } from "react";
-import Image from "next/image";
 import { useAccountModal } from "@rainbow-me/rainbowkit";
 import { useSwitchNetwork } from "wagmi";
-import { useAccountBalance } from "~~/hooks/scaffold-eth";
 import { useAccount } from "~~/hooks/useAccount";
+import { useAddNetwork } from "~~/hooks/useAddNetwork";
 import { trimAddr } from "~~/utils/format";
 import { getTargetNetwork } from "~~/utils/scaffold-eth";
 
 const ConnectWallet: FC = () => {
   const { isLogin, login, address, chain } = useAccount();
 
-  const { balance } = useAccountBalance(address);
   const targetNetwork = getTargetNetwork();
   const { switchNetwork } = useSwitchNetwork();
   const { openAccountModal } = useAccountModal();
+  const { addNetworkToMetamask } = useAddNetwork();
 
   const invalidNetwork = chain?.id !== targetNetwork.id;
 
@@ -37,7 +36,10 @@ const ConnectWallet: FC = () => {
             <div
               className="py-[10px] px-5 rounded-lg bg-red-500 text-white action"
               onClick={() => {
-                switchNetwork?.(targetNetwork.id);
+                try {
+                  switchNetwork?.(targetNetwork.id);
+                  addNetworkToMetamask();
+                } catch (e) {}
               }}
             >
               WRONG NETWORK

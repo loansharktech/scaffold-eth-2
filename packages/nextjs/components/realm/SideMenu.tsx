@@ -15,7 +15,7 @@ const SideMenu: FunctionComponent = () => {
             <Link href={`/realms/${realm.id}`} key={realm.id}>
               <div
                 className={`whitespace-nowrap px-4 py-[10px] action transition-all ${
-                  isActive ? "text-[#039DED] sm:bg-[#C6DFEC] rounded-lg font-semibold" : ""
+                  isActive ? "text-dark1 sm:bg-[#C6DFEC] rounded-lg font-semibold" : ""
                 }`}
               >
                 {realm.name}

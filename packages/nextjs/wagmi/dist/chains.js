@@ -80,11 +80,11 @@ var scrollSepoliaTestnet = {
   nativeCurrency: { name: "Ether", symbol: "ETH", decimals: 18 },
   rpcUrls: {
     default: {
-      http: [" https://scroll-sepolia.blockpi.network/v1/rpc/003722cf3fe858ca24424df15e619a90e18f4220"],
+      http: ["https://scroll-sepolia.blockpi.network/v1/rpc/003722cf3fe858ca24424df15e619a90e18f4220"],
       webSocket: ["wss://scroll-sepolia.blockpi.network/v1/ws/003722cf3fe858ca24424df15e619a90e18f4220"],
     },
     public: {
-      http: [" https://scroll-sepolia.blockpi.network/v1/rpc/003722cf3fe858ca24424df15e619a90e18f4220"],
+      http: ["https://scroll-sepolia.blockpi.network/v1/rpc/003722cf3fe858ca24424df15e619a90e18f4220"],
       webSocket: ["wss://scroll-sepolia.blockpi.network/v1/ws/003722cf3fe858ca24424df15e619a90e18f4220"],
     },
   },

@@ -106,7 +106,7 @@ module.exports = {
         green: "#55CB30",
       },
       fontFamily: {
-        "bai-jamjuree": ["Bai Jamjuree", "sans-serif"],
+        inter: "Inter",
       },
       keyframes: {
         grow: {

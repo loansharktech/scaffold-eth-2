@@ -19,8 +19,10 @@ const RealmHeader: FunctionComponent<{
       >
         <NavBackIcon></NavBackIcon>
       </ActionIcon>
+      {realm.config?.icon && (
+        <Image className="ml-5" alt="pool icon" src={realm.config?.icon || ""} width={47} height={47}></Image>
+      )}
 
-      <Image className="ml-5" alt="pool icon" src={realm.config?.icon || ""} width={47} height={47}></Image>
       <div className="ml-3 text-2xl font-bold text-dark2">{realm.config?.name}</div>
     </div>
   );

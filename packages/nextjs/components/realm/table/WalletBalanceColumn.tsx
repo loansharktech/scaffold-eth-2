@@ -15,7 +15,7 @@ const WalletBalanceColumn: FunctionComponent<{
           ? `${amount?.toFormat(amountDecimal(amount))} ${token.name.toUpperCase()}`
           : "-.--"}
       </div>
-      <div className="text-sm">${amountDesc(price, 2)}</div>
+      <div className="text-sm text-[#6E788C]">${amountDesc(price, 2)}</div>
     </div>
   );
 };
