@@ -33,7 +33,7 @@ const Pools: FunctionComponent = () => {
             </div>
           </div>
           <div className="w-full flex flex-wrap justify-center  sm:justify-between gap-x-8 sm:gap-x-0 gap-y-4 mt-12">
-            <div className="flex flex-col ml-2 gap-6 leading-none">
+            <div className="flex flex-col ml-2 gap-8 sm:gap-[41px] leading-none">
               <div>
                 <div>Your Net APY</div>
                 <div className={`text-[28px] font-bold  mt-1 ${netAPY <= 0 ? "text-green" : ""}`}>
@@ -45,17 +45,17 @@ const Pools: FunctionComponent = () => {
                 <div className="text-[28px] font-bold mt-1">${deposit}</div>
               </div>
             </div>
-            <div className="flex flex-col gap-y-6 sm:gap-y-[57px]">
+            <div className="flex flex-col gap-y-6 sm:gap-y-[57px] leading-none">
               <div className="flex flex-col sm:flex-row">
                 <span>Total Supply</span>
-                <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">${totalSupply}</div>
+                <div className="text-4xl font-bold sm:ml-[10px] mt-1 sm:-mt-1 leading-none">${totalSupply}</div>
               </div>
               <div className="flex flex-col sm:flex-row">
                 <span>Total Borrow</span>
-                <div className="text-4xl font-bold sm:ml-[10px] sm:mt-0 mt-1">${totalBorrow}</div>
+                <div className="text-4xl font-bold sm:ml-[10px] mt-1 sm:-mt-1 leading-none">${totalBorrow}</div>
               </div>
             </div>
-            <div className="flex sm:mr-[50px] sm:flex-row flex-col sm:items-start items-center">
+            <div className="flex sm:mr-[50px] sm:flex-row flex-col sm:items-start items-center leading-none">
               <div className="sm:mr-[17px]">Assets</div>
               <div className="flex flex-col gap-2 w-fit">
                 {realm?.markets?.map(market => {

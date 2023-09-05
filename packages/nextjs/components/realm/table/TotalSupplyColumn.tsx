@@ -10,7 +10,7 @@ const TotalSupplyColumn: FunctionComponent<{
 }> = ({ token, amount, price }) => {
   return (
     <div>
-      <div className="font-bold text-lg whitespace-nowrap">{amount ? `$${amountDesc(price, 2)}` : "-.--"}</div>
+      <div className="text-lg whitespace-nowrap">{amount ? `$${amountDesc(price, 2)}` : "-.--"}</div>
       <div className="text-sm text-[#6E788C]">
         {amountDesc(amount, 2)} {token.name.toUpperCase()}
       </div>
