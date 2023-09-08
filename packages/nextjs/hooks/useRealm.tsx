@@ -258,6 +258,7 @@ export function useRealm(realmType: RealmType) {
       let accountLiquidtityResult = undefined;
       try {
         const res = await wrappedContract.getAccountLiquidity(address);
+        console.log("getAccountLiquidity res", res);
         accountLiquidtityResult = res.map((item: any) => {
           return processContractValue(item);
         });
