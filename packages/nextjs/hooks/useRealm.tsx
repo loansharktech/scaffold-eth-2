@@ -263,6 +263,7 @@ export function useRealm(realmType: RealmType) {
         });
         accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
       } catch (e) {
+        console.error(e);
         console.error("fetch getAccountLiquidity fail");
       }
 
