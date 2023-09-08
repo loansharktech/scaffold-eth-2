@@ -53,19 +53,20 @@ const TokenRepay: FunctionComponent<{
 
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
-  const isETH = market.token === "ETH";
+  let gas = 0.001;
+
+  if (market.token !== "ETH") {
+    gas = 0;
+  }
 
   useEffect(() => {
-    let _balance = balance || new BigNumber(0);
-    if (isETH) {
-      _balance = _balance.multipliedBy(0.95);
-    }
+    const _balance = (balance || new BigNumber(0)).minus(gas);
     let maxAmount = BigNumber.min(_balance, borrowAmount);
     if (maxAmount.lt(0.0001)) {
       maxAmount = new BigNumber(0);
     }
     setMaxAmount(maxAmount);
-  }, [balance?.toString(), borrowAmount?.toString(), isETH]);
+  }, [balance?.toString(), borrowAmount?.toString(), gas]);
 
   const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
     store.dispatch(

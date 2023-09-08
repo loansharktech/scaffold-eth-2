@@ -56,20 +56,21 @@ const TokenSupply: FunctionComponent<{
     );
   }, []);
 
+  let gas = 0.001;
+
+  if (market.token !== "ETH") {
+    gas = 0;
+  }
+
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
-  const isETH = market.token === "ETH";
-
   useEffect(() => {
-    let maxAmount = balance;
-    if (isETH) {
-      maxAmount = maxAmount.multipliedBy(0.95);
-    }
+    let maxAmount = new BigNumber(balance?.minus(gas) || 0);
     if (maxAmount.lt(0.0001)) {
       maxAmount = new BigNumber(0);
     }
     setMaxAmount(maxAmount);
-  }, [balance?.toString(), isETH]);
+  }, [balance?.toString(), gas]);
 
   const isInsufficientBalance = suppyToken.amount?.isGreaterThan(maxAmount);
   const isInvalidInput = suppyToken.amount?.isLessThan(0);
