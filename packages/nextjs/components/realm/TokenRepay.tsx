@@ -53,19 +53,19 @@ const TokenRepay: FunctionComponent<{
 
   const [maxAmount, setMaxAmount] = useState(new BigNumber(0));
 
-  let gas = 0.00005;
-
-  if (market.token !== "ETH") {
-    gas = 0;
-  }
+  const isETH = market.token === "ETH";
 
   useEffect(() => {
-    let maxAmount = BigNumber.min(balance?.minus(gas) || 0, borrowAmount);
+    let _balance = balance || new BigNumber(0);
+    if (isETH) {
+      _balance = _balance.multipliedBy(0.95);
+    }
+    let maxAmount = BigNumber.min(_balance, borrowAmount);
     if (maxAmount.lt(0.0001)) {
       maxAmount = new BigNumber(0);
     }
     setMaxAmount(maxAmount);
-  }, [balance?.toString(), borrowAmount?.toString(), gas]);
+  }, [balance?.toString(), borrowAmount?.toString(), isETH]);
 
   const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
     store.dispatch(
@@ -215,16 +215,13 @@ const TokenRepay: FunctionComponent<{
             let amount = repayToken.amount || new BigNumber(0);
             let isMax = false;
             // click max
-            if (maxAmount?.isEqualTo(repayToken.amount || 0)) {
-              // wallet balance > borrow amount
-              if (balance?.isGreaterThan(borrowAmount)) {
+            if (maxAmount?.isEqualTo(amount)) {
+              // wallet balance >= borrow amount
+              if (amount?.isGreaterThanOrEqualTo(borrowAmount)) {
+                isMax = true;
                 // usdc token
                 if (!isETH) {
-                  isMax = true;
                   amount = new BigNumber(-1);
-                } else {
-                  isMax = true;
-                  amount = maxAmount;
                 }
               }
             }
