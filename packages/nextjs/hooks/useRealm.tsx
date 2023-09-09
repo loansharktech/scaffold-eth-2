@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { captureException } from "@sentry/nextjs";
 import BigNumber from "bignumber.js";
 import { BigNumber as EBigNumber, ethers } from "ethers";
 import redstone from "redstone-api";
@@ -264,8 +265,7 @@ export function useRealm(realmType: RealmType) {
         });
         accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
       } catch (e) {
-        console.error(e);
-        console.error("fetch getAccountLiquidity fail");
+        captureException(e);
       }
 
       const result = {} as Realm;
