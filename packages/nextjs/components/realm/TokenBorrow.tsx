@@ -163,7 +163,7 @@ const TokenBorrow: FunctionComponent<{
           <div>Total Borrow</div>
           <div className="text-end">
             <div className="">
-              {amountDesc(totalBorrow, 2)} {market.token}
+              {amountDesc(totalBorrow, 4)} {market.token}
             </div>
             <div className="text-xs">${amountDesc(totalBorrowPrice, 2)}</div>
           </div>
