@@ -1,11 +1,14 @@
 import { useEffect, useState } from "react";
+import { captureException } from "@sentry/nextjs";
 import BigNumber from "bignumber.js";
 import { BigNumber as EBigNumber, ethers } from "ethers";
 import redstone from "redstone-api";
 import { useContractRead, useContractReads } from "wagmi";
+import abi from "~~/abi/comptroller.json";
 import { RealmConfig, RealmType, Token, realms } from "~~/configs/pool";
 import contracts from "~~/generated/deployedContracts";
 import { useAccount } from "~~/hooks/useAccount";
+import { getContract } from "~~/services/redstone";
 import { p18 } from "~~/utils/amount";
 import { ContractName, RealmContract } from "~~/utils/scaffold-eth/contract";
 
@@ -252,18 +255,18 @@ export function useRealm(realmType: RealmType) {
       priceArray.set("WETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
 
-      // const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
-      // let accountLiquidtityResult = undefined;
-      // try {
-      //   const res = await wrappedContract.getAccountLiquidity(address);
-      //   console.log("getAccountLiquidity res", res);
-      //   accountLiquidtityResult = res.map((item: any) => {
-      //     return processContractValue(item);
-      //   });
-      //   accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
-      // } catch (e) {
-      //   captureException(e);
-      // }
+      const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
+      let accountLiquidtityResult = undefined;
+      try {
+        const res = await wrappedContract.getAccountLiquidity(address);
+        console.log("getAccountLiquidity res", res);
+        accountLiquidtityResult = res.map((item: any) => {
+          return processContractValue(item);
+        });
+        accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
+      } catch (e) {
+        captureException(e);
+      }
 
       const result = {} as Realm;
       data?.forEach((item, index) => {
@@ -433,6 +436,9 @@ export function useRealm(realmType: RealmType) {
       result.contract = realmContracts;
       result.collateralBalance = totalCollateralBalance;
       result.collateralPrice = totalCollateralPrice;
+      const test = finalLimit.minus(totalUserBorrowed);
+      console.log("test.accountLiquidity", test.toString());
+      console.log("api.accountLiquidity", accountLiquidtityResult?.[1]?.toString());
       console.log("update realm", result);
       setRealm(result);
     }
