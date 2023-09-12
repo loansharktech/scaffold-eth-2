@@ -10,12 +10,12 @@ const WalletBalanceColumn: FunctionComponent<{
 }> = ({ amount, price, token }) => {
   return (
     <div>
-      <div className="text-lg whitespace-nowrap">
+      <div className="text-lg whitespace-nowrap number">
         {amount && amount?.toString() !== "0"
           ? `${amount?.toFormat(amountDecimal(amount))} ${token.name.toUpperCase()}`
           : "-.--"}
       </div>
-      <div className="text-sm text-[#6E788C]">${amountDesc(price, 2)}</div>
+      <div className="text-sm text-[#6E788C] number">${amountDesc(price, 2)}</div>
     </div>
   );
 };

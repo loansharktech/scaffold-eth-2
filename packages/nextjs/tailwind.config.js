@@ -107,6 +107,7 @@ module.exports = {
       },
       fontFamily: {
         inter: "Inter",
+        DMSans: "DM Sans",
       },
       keyframes: {
         grow: {

@@ -17,6 +17,10 @@ export default class _Document extends Document {
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap"
             rel="stylesheet"
           />
+          <link
+            href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,700&family=Inter:wght@500&display=swap"
+            rel="stylesheet"
+          ></link>
         </Head>
         <body>
           <Main />

@@ -36,23 +36,23 @@ const Pools: FunctionComponent = () => {
             <div className="flex flex-col ml-2 gap-8 sm:gap-[41px] leading-none">
               <div>
                 <div>Your Net APY</div>
-                <div className={`text-[28px] font-bold  mt-1 ${netAPY <= 0 ? "text-green" : ""}`}>
+                <div className={`text-[28px] font-bold number mt-1 ${netAPY <= 0 ? "text-green" : ""}`}>
                   {netAPY.toFixed(2)}%
                 </div>
               </div>
               <div>
                 <div>Amount Deposited</div>
-                <div className="text-[28px] font-bold mt-1">${deposit}</div>
+                <div className="text-[28px] font-bold mt-1 number">${deposit}</div>
               </div>
             </div>
             <div className="flex flex-col gap-y-6 sm:gap-y-[57px] leading-none">
               <div className="flex flex-col sm:flex-row">
                 <span>Total Supply</span>
-                <div className="text-4xl font-bold sm:ml-[10px] mt-1 sm:-mt-1 leading-none">${totalSupply}</div>
+                <div className="text-4xl number font-bold sm:ml-[10px] mt-1 sm:-mt-1 leading-none">${totalSupply}</div>
               </div>
               <div className="flex flex-col sm:flex-row">
                 <span>Total Borrow</span>
-                <div className="text-4xl font-bold sm:ml-[10px] mt-1 sm:-mt-1 leading-none">${totalBorrow}</div>
+                <div className="text-4xl number font-bold sm:ml-[10px] mt-1 sm:-mt-1 leading-none">${totalBorrow}</div>
               </div>
             </div>
             <div className="flex sm:mr-[50px] sm:flex-row flex-col sm:items-start items-center leading-none">
@@ -65,7 +65,7 @@ const Pools: FunctionComponent = () => {
                       {cToken?.token?.icon && (
                         <img className="w-7 h-auto object-contain" src={cToken?.token?.icon} alt="Img" />
                       )}
-                      <span className="font-bold">${amountDesc(cToken?.value, 2)}</span>
+                      <span className="font-bold number">${amountDesc(cToken?.value, 2)}</span>
                     </div>
                   );
                 })}

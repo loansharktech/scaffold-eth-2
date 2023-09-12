@@ -9,9 +9,10 @@ import { getContract } from "~~/services/redstone";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
+import { switchNetwork } from "~~/wagmi/actions";
 
 export function useWithdrawToken(realm: Realm, market: Market) {
-  const { isLogin, login } = useAccount();
+  const { isLogin, login, chain } = useAccount();
 
   const tradeData = useTypedSelector(state => {
     return state.trade.withdraw;
@@ -39,6 +40,12 @@ export function useWithdrawToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.EXECUTE,
         }),
       );
+
+      if (chain?.id !== realm.config?.key) {
+        await switchNetwork({
+          chainId: realm.config?.key as number,
+        });
+      }
 
       const wrappedContract = await getContract(market.address, abi);
 
@@ -79,7 +86,7 @@ export function useWithdrawToken(realm: Realm, market: Market) {
         }),
       );
     }
-  }, [isLogin, login, tradeData.amount, tradeData.executing, market]);
+  }, [isLogin, login, tradeData.amount, tradeData.executing, market, chain, realm]);
 
   useEffect(() => {
     if (withdrawTransStatus === "error") {

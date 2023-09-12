@@ -29,26 +29,27 @@ const RealmOverview: FunctionComponent<{
       <div className="border border-[#E3F2FF] py-8 sm:px-12 rounded-l-lg grid grid-cols-2 gap-12 flex-1">
         <div className="flex flex-col items-center justify-center">
           <div className="whitespace-nowrap">Total Supply</div>
-          <div className="text-[22px] font-bold mt-[11px]">${totalSupply}</div>
+          <div className="text-[22px] font-bold mt-[11px] number">${totalSupply}</div>
         </div>
         <div className="flex flex-col items-center justify-center">
           <div className="whitespace-nowrap">Total Borrow</div>
-          <div className="text-[22px] font-bold mt-[11px]">${totalBorrow}</div>
+          <div className="text-[22px] font-bold mt-[11px] number">${totalBorrow}</div>
         </div>
       </div>
       <div className="border border-[#E3F2FF] p-8 sm:px-12 rounded-r-lg flex flex-wrap  flex-grow gap-4 sm:gap-10">
         <div className="flex flex-col items-center justify-center">
           <div>Your Net APY</div>
-          <div className="text-[22px] font-bold mt-[11px] text-[#538EE4]">{netAPY}%</div>
+          <div className="text-[22px] font-bold mt-[11px] text-[#538EE4] number">{netAPY}%</div>
         </div>
         <div className="flex flex-wrap flex-grow gap-4 sm:gap-10">
           <div className="flex-grow w-full sm:w-auto">
             <div>Your Borrow Utilization</div>
             <div className="mt-[11px] flex items-center">
-              <div className="font-bold text-[22px] flex-shrink-0">{userBorrowLimit.toFixed(2)}%</div>
+              <div className="font-bold text-[22px] flex-shrink-0 number">{userBorrowLimit.toFixed(2)}%</div>
               <div className="ml-3 flex-1">
                 <Progress
                   value={userBorrowLimit.toNumber()}
+                  // @ts-ignore
                   classNames={{
                     root: "bg-[#CFE7FC]",
                     bar: "bg-blue",

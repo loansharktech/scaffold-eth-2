@@ -3,6 +3,12 @@
 @import "tailwindcss/utilities";
 @import "./preflight.css";
 
+@layer components {
+  .number {
+    @apply font-DMSans;
+  }
+}
+
 body {
   min-height: 100vh;
   background: #fff;

@@ -153,7 +153,7 @@ const TokenWithdraw: FunctionComponent<{
           <div>Max Withdrawal</div>
           <div className="text-end">
             <div className="">
-              {maxWithdrawAmount?.toFormat(2, BigNumber.ROUND_FLOOR)} {market.token}
+              {maxWithdrawAmount?.toFormat(4, BigNumber.ROUND_FLOOR)} {market.token}
             </div>
             <div className="text-xs">${amountDesc(maxWithdrawPrice, 2)}</div>
           </div>
@@ -162,7 +162,7 @@ const TokenWithdraw: FunctionComponent<{
           <div>Amount Supplied</div>
           <div className="text-end">
             <div>
-              {supplyBalanceAmount.isEqualTo(0) ? "-.--" : `${amountDesc(supplyBalanceAmount, 2)} ${market.token}`}
+              {supplyBalanceAmount.isEqualTo(0) ? "-.--" : `${amountDesc(supplyBalanceAmount, 4)} ${market.token}`}
             </div>
             <div className="text-xs">${amountDesc(supplyBalancePrice, 2)}</div>
           </div>

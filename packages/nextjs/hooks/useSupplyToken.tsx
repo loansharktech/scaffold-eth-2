@@ -9,10 +9,11 @@ import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
+import { switchNetwork } from "~~/wagmi/actions";
 
 export function useSupplyToken(realm: Realm, market: Market) {
   const marketData = realm[market.address];
-  const { isLogin, login, address } = useAccount();
+  const { isLogin, login, address, chain } = useAccount();
 
   const tradeData = useTypedSelector(state => {
     return state.trade.supply;
@@ -64,6 +65,11 @@ export function useSupplyToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.APPROVE,
         }),
       );
+      if (chain?.id !== realm.config?.key) {
+        await switchNetwork({
+          chainId: realm.config?.key as number,
+        });
+      }
       const res = await _tokenApprove();
       actions.trade.updateSupply({
         approveTx: res.hash,
@@ -93,7 +99,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
         }),
       );
     }
-  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, refetch]);
+  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, refetch, chain, realm]);
 
   const { writeAsync: _mint } = useContractWrite({
     mode: "recklesslyUnprepared",
@@ -130,6 +136,11 @@ export function useSupplyToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.EXECUTE,
         }),
       );
+      if (chain?.id !== realm.config?.key) {
+        await switchNetwork({
+          chainId: realm.config?.key as number,
+        });
+      }
       const res = await _mint();
 
       store.dispatch(
@@ -166,7 +177,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
         }),
       );
     }
-  }, [isLogin, _mint, login]);
+  }, [isLogin, _mint, login, chain, realm]);
 
   useEffect(() => {
     if (approveTransStatus === "error") {

@@ -1,14 +1,11 @@
 import { useEffect, useState } from "react";
-import { captureException } from "@sentry/nextjs";
 import BigNumber from "bignumber.js";
 import { BigNumber as EBigNumber, ethers } from "ethers";
 import redstone from "redstone-api";
 import { useContractRead, useContractReads } from "wagmi";
-import abi from "~~/abi/comptroller.json";
 import { RealmConfig, RealmType, Token, realms } from "~~/configs/pool";
 import contracts from "~~/generated/deployedContracts";
 import { useAccount } from "~~/hooks/useAccount";
-import { getContract } from "~~/services/redstone";
 import { p18 } from "~~/utils/amount";
 import { ContractName, RealmContract } from "~~/utils/scaffold-eth/contract";
 
@@ -255,18 +252,18 @@ export function useRealm(realmType: RealmType) {
       priceArray.set("WETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
 
-      const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
-      let accountLiquidtityResult = undefined;
-      try {
-        const res = await wrappedContract.getAccountLiquidity(address);
-        console.log("getAccountLiquidity res", res);
-        accountLiquidtityResult = res.map((item: any) => {
-          return processContractValue(item);
-        });
-        accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
-      } catch (e) {
-        captureException(e);
-      }
+      // const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
+      // let accountLiquidtityResult = undefined;
+      // try {
+      //   const res = await wrappedContract.getAccountLiquidity(address);
+      //   console.log("getAccountLiquidity res", res);
+      //   accountLiquidtityResult = res.map((item: any) => {
+      //     return processContractValue(item);
+      //   });
+      //   accountLiquidtityResult[1] = accountLiquidtityResult[1].div(1e8);
+      // } catch (e) {
+      //   captureException(e);
+      // }
 
       const result = {} as Realm;
       data?.forEach((item, index) => {
@@ -317,6 +314,7 @@ export function useRealm(realmType: RealmType) {
       let totalUserLimit = new BigNumber(0);
       let totalCollateralBalance = new BigNumber(0);
       let totalCollateralPrice = new BigNumber(0);
+      let finalLimit = new BigNumber(0);
 
       let netAPYSUM = new BigNumber(0);
       let supplyAmountSUM = new BigNumber(0);
@@ -412,6 +410,9 @@ export function useRealm(realmType: RealmType) {
           result[marketAddress]!.borrowLimitPrice = result[marketAddress]!.borrowLimit?.multipliedBy(price);
           totalUserLimit = totalUserLimit.plus(result[marketAddress]!.borrowLimitPrice!);
         }
+        if (result[marketAddress]?.borrowLimit && result[marketAddress]?.collateralPrice && markets) {
+          finalLimit = finalLimit.plus(result[marketAddress]!.collateralPrice!.multipliedBy(markets[1].div(p18)));
+        }
       });
 
       result.totalValueLocked = marketTotalValueLocked;
@@ -421,7 +422,7 @@ export function useRealm(realmType: RealmType) {
       result.totalBorrow = marketTotalBorrow;
       result.totalSupply = marketTotalSupply;
       result.totalUserBorrowed = totalUserBorrowed;
-      result.accountLiquidity = accountLiquidtityResult;
+      result.accountLiquidity = [new BigNumber(0), finalLimit.minus(totalUserBorrowed), new BigNumber(0)];
       result.totalUserLimit = (result.accountLiquidity?.[1] || new BigNumber(0)).plus(totalUserBorrowed);
       result.userBorrowLimit = result.totalUserBorrowed.div(result.totalUserLimit);
       if (result.userBorrowLimit.isNaN()) {

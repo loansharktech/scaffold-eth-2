@@ -9,10 +9,11 @@ import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
 import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
+import { switchNetwork } from "~~/wagmi/actions";
 
 export function useRepayToken(realm: Realm, market: Market) {
   const marketData = realm[market.address];
-  const { isLogin, login, address } = useAccount();
+  const { isLogin, login, address, chain } = useAccount();
 
   const tradeData = useTypedSelector(state => {
     return state.trade.repay;
@@ -89,6 +90,11 @@ export function useRepayToken(realm: Realm, market: Market) {
             stepIndex: TradeStep.EXECUTE,
           }),
         );
+        if (chain?.id !== realm.config?.key) {
+          await switchNetwork({
+            chainId: realm.config?.key as number,
+          });
+        }
         let res;
         if (tokenContract) {
           res = await tokenRepay({
@@ -149,7 +155,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         );
       }
     },
-    [isLogin, tokenRepay, login, tokenContract, market, ethRepay],
+    [isLogin, tokenRepay, login, tokenContract, market, ethRepay, chain, realm],
   );
 
   const approveToken = useCallback(async () => {
@@ -171,6 +177,11 @@ export function useRepayToken(realm: Realm, market: Market) {
           stepIndex: TradeStep.APPROVE,
         }),
       );
+      if (chain?.id !== realm.config?.key) {
+        await switchNetwork({
+          chainId: realm.config?.key as number,
+        });
+      }
       const res = await _tokenApprove();
       actions.trade.updateRepay({
         approveTx: res.hash,
@@ -201,7 +212,7 @@ export function useRepayToken(realm: Realm, market: Market) {
         }),
       );
     }
-  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, refetch]);
+  }, [isLogin, _tokenApprove, login, tokenContract, tradeData.amount, refetch, chain, realm]);
 
   useEffect(() => {
     if (approveTransStatus === "error") {
