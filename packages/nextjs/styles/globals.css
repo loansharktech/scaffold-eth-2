@@ -65,23 +65,7 @@ p {
 }
 
 .page-bg {
-  background-size: center;
+  background-size: cover;
   background-repeat: no-repeat;
-  background: radial-gradient(
-      50% 50% at 50% 50%,
-      rgba(189, 223, 223, 0.1) 0%,
-      rgba(150, 177, 218, 0.1) 40.1%,
-      rgba(225, 240, 242, 0.1) 73.44%,
-      rgba(221, 235, 241, 0.1) 98.96%
-    ),
-    radial-gradient(
-        47.47% 150.04% at 55.21% 47.18%,
-        rgba(122, 152, 203, 0.123) 4.95%,
-        rgba(179, 203, 244, 0.3) 25.86%,
-        rgba(122, 147, 198, 0.147) 47.86%,
-        rgba(230, 255, 248, 0.081) 100%
-      )
-      /* warning: gradient uses a rotation that is not supported by CSS and may not behave as expected */,
-    radial-gradient(50% 50% at 50% 50%, #cfe7e0 0%, #e3f5f5 48.96%, #e2f0f7 100%);
-  backdrop-filter: blur(2px);
+  background-image: url("/assets/page-bg.png");
 }

@@ -18,7 +18,7 @@ const Tab: FunctionComponent<{
     <Link
       href={`${tab.route}`}
       className={`action py-[6px] px-4 rounded-lg font-medium leading-6 ${
-        isActive ? "text-white bg-blue shadow-[0px_1px_2px_rgba(0,0,0,0.05)]" : "text-dark1"
+        isActive ? "text-white bg-[#3781D7] shadow-[0px_1px_2px_rgba(0,0,0,0.05)]" : "text-dark1"
       }`}
       aria-label={tab.label}
     >
