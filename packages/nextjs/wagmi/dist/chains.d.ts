@@ -1,25 +1,25 @@
-export declare const scrollSepoliaTestnet: {
-  id: 534351;
-  name: "Scroll Sepolia Tesnet";
-  network: "scrollSepoliaTestnet";
+export declare const scroll: {
+  id: 534352;
+  name: "Scroll";
+  network: "scroll";
   nativeCurrency: { name: "Ether"; symbol: "ETH"; decimals: 18 };
   rpcUrls: {
     default: {
-      http: ["https://scroll-sepolia.blockpi.network/v1/rpc/003722cf3fe858ca24424df15e619a90e18f4220"];
-      webSocket: ["wss://scroll-sepolia.blockpi.network/v1/ws/003722cf3fe858ca24424df15e619a90e18f4220"];
+      http: ["https://rpc.scroll.io"];
+      webSocket: ["wss://rpc.scroll.io"];
     };
     public: {
-      http: ["https://scroll-sepolia.blockpi.network/v1/rpc/003722cf3fe858ca24424df15e619a90e18f4220"];
-      webSocket: ["wss://scroll-sepolia.blockpi.network/v1/ws/003722cf3fe858ca24424df15e619a90e18f4220"];
+      http: ["https://rpc.scroll.io"];
+      webSocket: ["wss://rpc.scroll.io"];
     };
   };
   blockExplorers: {
     default: {
       name: "Block Scout";
-      url: "https://sepolia-blockscout.scroll.io/";
+      url: "https://blockscout.scroll.io/";
     };
   };
-  testnet: true;
+  testnet: false;
 };
 
 export {

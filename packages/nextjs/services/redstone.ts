@@ -14,10 +14,9 @@ export async function getContract(contractAddr: string, abi: any) {
   const yourEthersContract = new Contract(contractAddr, abi, signer);
   const redstoneCacheLayerUrls = ["https://d33trozg86ya9x.cloudfront.net"];
   const test = {
-    dataServiceId: "redstone-main-demo",
-    uniqueSignersCount: 1,
+    dataServiceId: "redstone-primary-prod",
+    uniqueSignersCount: 3,
     dataFeeds: ["USDC", "ETH"],
-    urls: redstoneCacheLayerUrls,
   };
   const wrappedContract = WrapperBuilder.wrap(yourEthersContract).usingDataService(test);
   return wrappedContract;

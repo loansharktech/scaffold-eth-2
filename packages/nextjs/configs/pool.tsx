@@ -17,7 +17,7 @@ export type RealmConfig = {
   id: RealmType;
   name: string;
   icon: string;
-  key: 534351;
+  key: 534352;
   tokens: Token[];
   markets: Market[];
 };
@@ -27,16 +27,16 @@ export const realms: RealmConfig[] = [
     id: "main",
     name: "Main Hub",
     icon: "/assets/realm/realm-main.png",
-    key: 534351,
+    key: 534352,
     markets: [
       {
         cToken: "cETH",
         token: "ETH",
       },
-      {
-        cToken: "cUSDC",
-        token: "USDC",
-      },
+      //{
+      //  cToken: "cUSDC",
+      //  token: "USDC",
+      //},
     ],
     tokens: [
       {

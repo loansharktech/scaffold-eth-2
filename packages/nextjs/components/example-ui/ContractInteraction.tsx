@@ -31,24 +31,23 @@ export const ContractInteraction = () => {
 
     const signer = provider.getSigner(walletAddress)
     const yourEthersContract = new EthersContract(
-      "0xC770E58CDaB256458db6d53DCD6aE2703A574478", 
-      cUSDCabi, 
+      "0x0E77417EbD5014B1a2c63648b7438F679a80B53F", 
+      abi, 
       signer);
       const redstoneCacheLayerUrls = [
         "https://d33trozg86ya9x.cloudfront.net",
       ];
       const config = {
-        dataServiceId: "redstone-main-demo",
-        uniqueSignersCount: 1,
-        dataFeeds: ["USDC", "ETH"],
-        urls: redstoneCacheLayerUrls
+        dataServiceId: "redstone-primary-prod",
+        uniqueSignersCount: 3,
+        dataFeeds: ["USDC", "ETH"]
       };
       const wrappedContract = WrapperBuilder.wrap(yourEthersContract).usingDataService(
         config
       );
 
 
-    const tx = await wrappedContract.repayBorrow ("5020000000039952"
+    const tx = await wrappedContract._setCollateralFactor ("0xd9183863A76e0F98dcE31ebd4D1Afa6F09eB9267","800000000000000000"
     );      
 
       //8041998586023902
