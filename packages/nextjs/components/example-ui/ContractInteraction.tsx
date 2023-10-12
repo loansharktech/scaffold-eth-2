@@ -47,7 +47,7 @@ export const ContractInteraction = () => {
       );
 
 
-    const tx = await wrappedContract._setCollateralFactor ("0xd9183863A76e0F98dcE31ebd4D1Afa6F09eB9267","800000000000000000"
+    const tx = await wrappedContract._setCollateralFactor ("0xfaBD624b12830C04fDe9d2EaC4D96d057eAb177b","800000000000000000"
     );      
 
       //8041998586023902

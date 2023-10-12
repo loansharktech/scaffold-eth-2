@@ -33,15 +33,15 @@ export const realms: RealmConfig[] = [
         cToken: "cETH",
         token: "ETH",
       },
-      //{
-      //  cToken: "cUSDC",
-      //  token: "USDC",
-      //},
+      {
+       cToken: "cUSDC",
+       token: "USDC",
+      },
     ],
     tokens: [
       {
         name: "USDC",
-        address: "0x2FfCCE0faaECA62993c031Fd325F482B8cb54684",
+        address: "0x06eFdBFf2a14a7c8E15944D1F4A48F9F95F663A4",
         icon: "/assets/tokens/usdc.svg",
       },
       {
