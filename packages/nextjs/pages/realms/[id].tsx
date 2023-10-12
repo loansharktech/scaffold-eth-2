@@ -45,7 +45,7 @@ const RealmPage: NextPage = () => {
               <div className="flex flex-col h-full">
                 <RealmHeader realm={realm}></RealmHeader>
                 <RealmOverview className="mt-4" realm={realm}></RealmOverview>
-                <TokenList className="mt-4" realm={realm}></TokenList>
+                <TokenList className="mt-4 flex-shrink-0" realm={realm}></TokenList>
                 <div className="flex-1"></div>
                 <div className="pt-20 pb-14 w-full flex justify-center">
                   <Footer></Footer>
