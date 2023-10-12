@@ -21,7 +21,7 @@ const Home: NextPage = () => {
   return (
     <>
       <main className="w-screen bg-white h-[--main-height] overflow-y-scroll page-bg flex flex-col items-center  pt-[50px] pb-[60px]">
-        <div className="flex flex-col items-center">
+        <div className="flex flex-col items-center px-5">
           <div className="text-[32px] font-semibold">Bridging the Gap</div>
           <div className="mt-2 text-center max-w-[500px]">
             Scroll seamlessly extends Ethereum’s capabilities through zero knowledge tech and EVM equivalence.
