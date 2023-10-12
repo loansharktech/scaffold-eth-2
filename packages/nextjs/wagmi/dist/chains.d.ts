@@ -6,11 +6,11 @@ export declare const scroll: {
   rpcUrls: {
     default: {
       http: ["https://rpc.scroll.io"];
-      webSocket: ["wss://rpc.scroll.io"];
+      webSocket: ["wss://wss-rpc.scroll.io/ws/"];
     };
     public: {
       http: ["https://rpc.scroll.io"];
-      webSocket: ["wss://rpc.scroll.io"];
+      webSocket: ["wss://wss-rpc.scroll.io/ws/"];
     };
   };
   blockExplorers: {

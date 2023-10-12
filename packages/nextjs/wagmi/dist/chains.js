@@ -106,11 +106,11 @@ var scroll = {
   rpcUrls: {
     default: {
       http: ["https://rpc.scroll.io"],
-      webSocket: ["wss://rpc.scroll.io"],
+      webSocket: ["wss://wss-rpc.scroll.io/ws/"],
     },
     public: {
       http: ["https://rpc.scroll.io"],
-      webSocket: ["wss://rpc.scroll.io"],
+      webSocket: ["wss://wss-rpc.scroll.io/ws/"],
     },
   },
   blockExplorers: {
@@ -119,7 +119,7 @@ var scroll = {
       url: "https://blockscout.scroll.io/",
     },
   },
-  testnet: true,
+  testnet: false,
 };
 
 export {
