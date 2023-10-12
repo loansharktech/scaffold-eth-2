@@ -27,9 +27,9 @@ const Home: NextPage = () => {
             Scroll seamlessly extends Ethereum’s capabilities through zero knowledge tech and EVM equivalence.
           </div>
         </div>
-        <div className="max-w-[1440px] mx-auto px-24 mt-[47px]">
+        <div className="max-w-[1440px] mx-auto px-5 sm:px-24 mt-[47px]">
           <div className="text-center text-[21px] font-semibold text-[#538EE4]">Choose a bridge</div>
-          <div className="grid grid-cols-3 gap-5 mt-[17px]">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5 mt-[17px]">
             {bridges.map((bridge, index) => {
               return (
                 <a
