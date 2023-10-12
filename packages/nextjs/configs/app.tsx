@@ -11,6 +11,11 @@ export const navTabs = [
     label: "Lending",
     route: "/realms/main",
   },
+  {
+    id: "bridge",
+    label: "Bridge",
+    route: "/bridge",
+  },
 ];
 
 export const leadingLinks = [
