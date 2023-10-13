@@ -47,7 +47,7 @@ export function useBorrowToken(realm: Realm, market: Market) {
       }
       const wrappedContract = await getContract(market.address, abi);
 
-      const decimals = realm[market.cToken]?.token.decimals;
+      const decimals = realm[market.address]?.token.decimals;
 
       const amounts = ethers.utils.parseUnits(
         tradeData.amount.toFixed(decimals || 18, BigNumber.ROUND_FLOOR),
