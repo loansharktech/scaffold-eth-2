@@ -341,20 +341,21 @@ export function useRealm(realmType: RealmType) {
           markets,
           isMember,
         } = result[marketAddress]!;
+        const decimals = new BigNumber(10).pow(result[marketAddress]?.token?.decimals || 18);
         if (price && cash) {
-          result[marketAddress]!.value = cash.div(p18).multipliedBy(price);
+          result[marketAddress]!.value = cash.div(decimals).multipliedBy(price);
           marketTotalValueLocked = marketTotalValueLocked.plus(result[marketAddress]!.value!);
         }
         if (totalSupply && exchangeRate && price) {
-          result[marketAddress]!.supply = totalSupply.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+          result[marketAddress]!.supply = totalSupply.div(decimals).multipliedBy(exchangeRate).multipliedBy(price);
           marketTotalSupply = marketTotalSupply.plus(result[marketAddress]!.supply!);
         }
         if (totalBorrows && exchangeRate && price) {
-          result[marketAddress]!.borrow = totalBorrows.div(p18).multipliedBy(price);
+          result[marketAddress]!.borrow = totalBorrows.div(decimals).multipliedBy(price);
           marketTotalBorrow = marketTotalBorrow.plus(result[marketAddress]!.borrow!);
         }
         if (balance && supplyRatePerBlock && exchangeRate && price) {
-          const supplyAmount = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
+          const supplyAmount = balance.div(decimals).multipliedBy(price).multipliedBy(exchangeRate);
           result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
             supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
           );
@@ -378,7 +379,7 @@ export function useRealm(realmType: RealmType) {
             .minus(1);
         }
         if (borrowBalanceStored && borrowRatePerBlock && exchangeRate && price) {
-          const borrowAmount = borrowBalanceStored.div(p18).multipliedBy(exchangeRate).multipliedBy(price);
+          const borrowAmount = borrowBalanceStored.div(decimals).multipliedBy(exchangeRate).multipliedBy(price);
           result[marketAddress]!.borrowAPY = borrowAmount.multipliedBy(
             borrowRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
           );
@@ -391,24 +392,24 @@ export function useRealm(realmType: RealmType) {
           netAPYSUM = netAPYSUM.plus(result[marketAddress]!.netAPY!);
         }
         if (balance && price && exchangeRate && typeof isMember !== "undefined") {
-          result[marketAddress]!.deposit = balance.div(p18).multipliedBy(price).multipliedBy(exchangeRate);
+          result[marketAddress]!.deposit = balance.div(decimals).multipliedBy(price).multipliedBy(exchangeRate);
           marketDeposit = marketDeposit.plus(result[marketAddress]!.deposit!);
           if (isMember) {
-            result[marketAddress]!.collateralBalance = balance.div(p18).multipliedBy(exchangeRate);
+            result[marketAddress]!.collateralBalance = balance.div(decimals).multipliedBy(exchangeRate);
             result[marketAddress]!.collateralPrice = result[marketAddress]!.collateralBalance?.multipliedBy(price);
             totalCollateralBalance = totalCollateralBalance.plus(result[marketAddress]!.collateralBalance!);
             totalCollateralPrice = totalCollateralPrice.plus(result[marketAddress]!.collateralPrice!);
           }
         }
         if (exchangeRate && borrowBalanceStored && price) {
-          result[marketAddress]!.userBorrowed = borrowBalanceStored.div(p18).multipliedBy(price);
+          result[marketAddress]!.userBorrowed = borrowBalanceStored.div(decimals).multipliedBy(price);
           totalUserBorrowed = totalUserBorrowed.plus(result[marketAddress]!.userBorrowed!);
         }
         if (markets && balance && price && exchangeRate) {
           result[marketAddress]!.borrowLimit = markets[1]
             .div(p18)
             .multipliedBy(balance)
-            .div(p18)
+            .div(decimals)
             .multipliedBy(exchangeRate);
           result[marketAddress]!.borrowLimitPrice = result[marketAddress]!.borrowLimit?.multipliedBy(price);
           totalUserLimit = totalUserLimit.plus(result[marketAddress]!.borrowLimitPrice!);

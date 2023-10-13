@@ -29,11 +29,12 @@ const TokenBorrow: FunctionComponent<{
 
   const amountPrice = new BigNumber(borrowToken.amount || 0)?.multipliedBy(marketData?.price || 0);
   const borrowLimitPrice = realm?.totalUserLimit || new BigNumber(0);
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
 
-  const borrowAmount = marketData?.borrowBalanceStored?.div(p18);
+  const borrowAmount = marketData?.borrowBalanceStored?.div(decimals);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
-  const totalBorrow = marketData?.totalBorrows?.div(p18);
+  const totalBorrow = marketData?.totalBorrows?.div(decimals);
   const totalBorrowPrice = totalBorrow?.multipliedBy(marketData?.price || 0);
   const globalBorrowPrice = realm.totalUserBorrowed;
   const inputRef = useRef<HTMLInputElement>(null);
@@ -94,7 +95,7 @@ const TokenBorrow: FunctionComponent<{
             onClick={() => {
               changeAmount(maxAmount.multipliedBy(0.8));
               if (inputRef.current) {
-                inputRef.current.value = maxAmount.multipliedBy(0.8).toFixed(18);
+                inputRef.current.value = maxAmount.multipliedBy(0.8).toFixed(marketData?.token?.decimals || 18);
               }
             }}
           >

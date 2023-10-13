@@ -9,10 +9,10 @@ import TokenColumn from "./table/TokenColumn";
 import TotalSupplyColumn from "./table/TotalSupplyColumn";
 import WalletBalanceColumn from "./table/WalletBalanceColumn";
 import { Table } from "@mantine/core";
+import BigNumber from "bignumber.js";
 import TokenManagerDialog from "~~/components/realm/TokenManagerDialog";
 import type { Market, Realm } from "~~/hooks/useRealm";
 import { useToken } from "~~/hooks/useToken";
-import { p18 } from "~~/utils/amount";
 
 const TokenItem: FunctionComponent<{
   realm: Realm;
@@ -25,18 +25,18 @@ const TokenItem: FunctionComponent<{
   })!;
   const tokenInfo = useToken(realm, market);
   const price = marketData?.price?.toFixed(2);
-  const walletBalanceAmount = tokenInfo.balance?.div(p18);
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
+  const walletBalanceAmount = tokenInfo.balance?.div(decimals);
   const walletBalancePrice = walletBalanceAmount?.multipliedBy(marketData?.price || 0);
-
-  const supplyAmount = marketData?.totalSupply?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const supplyAmount = marketData?.totalSupply?.div(decimals).multipliedBy(marketData.exchangeRate || 0);
   const supplyPrice = supplyAmount?.multipliedBy(marketData?.price || 0);
 
-  const supplyBalanceAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const supplyBalanceAmount = marketData?.balance?.div(decimals).multipliedBy(marketData.exchangeRate || 0);
   const supplyBalancePrice = supplyBalanceAmount?.multipliedBy(marketData?.price || 0);
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
-  const borrowAmount = marketData?.borrowBalanceStored?.div(p18);
+  const borrowAmount = marketData?.borrowBalanceStored?.div(decimals);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
 

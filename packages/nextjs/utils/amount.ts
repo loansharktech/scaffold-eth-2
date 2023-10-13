@@ -6,7 +6,6 @@ export const K = new BigNumber(10).pow(3);
 
 export const p18 = new BigNumber(10).pow(18);
 export const p16 = new BigNumber(10).pow(16);
-BigNumber.ROUND_UP;
 
 export function amountDecimal(amount?: BigNumber) {
   if (!amount || amount.eq(0)) {

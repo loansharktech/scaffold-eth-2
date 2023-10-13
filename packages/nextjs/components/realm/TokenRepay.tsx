@@ -7,7 +7,6 @@ import { useRepayToken } from "~~/hooks/useRepayToken";
 import { useToken } from "~~/hooks/useToken";
 import store, { actions } from "~~/stores";
 import { amountDecimal, amountDesc } from "~~/utils/amount";
-import { p18 } from "~~/utils/amount";
 
 const TokenRepay: FunctionComponent<{
   market: Market;
@@ -30,12 +29,12 @@ const TokenRepay: FunctionComponent<{
   const tokenInfo = useToken(realm, market);
 
   const repayToken = useRepayToken(realm, market);
-
-  const balance = tokenInfo.balance?.div(p18);
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
+  const balance = tokenInfo.balance?.div(decimals);
   const balancePrice = balance?.multipliedBy(marketData?.price || 0);
   const amountPrice = new BigNumber(repayToken.amount || 0)?.multipliedBy(marketData?.price || 0);
 
-  const borrowAmount = marketData?.borrowBalanceStored?.div(p18) || new BigNumber(0);
+  const borrowAmount = marketData?.borrowBalanceStored?.div(decimals) || new BigNumber(0);
   const borrowPrice = borrowAmount?.multipliedBy(marketData?.price || 0);
 
   const borrowAPY = marketData?.tokenBorrowAPY?.multipliedBy(100).toNumber() || 0;
@@ -99,7 +98,7 @@ const TokenRepay: FunctionComponent<{
             onClick={() => {
               changeAmount(maxAmount);
               if (inputRef.current) {
-                inputRef.current.value = maxAmount.toFixed(18);
+                inputRef.current.value = maxAmount.toFixed(marketData?.token?.decimals || 18);
               }
             }}
           >

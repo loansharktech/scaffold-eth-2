@@ -21,6 +21,7 @@ const TokenSupply: FunctionComponent<{
   const { isMember, enterMarkets, exitMarket, loading } = useCollateral(realm, market);
 
   const suppyToken = useSupplyToken(realm, market);
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
 
   const tokenSelectList =
     realm.markets?.map(market => {
@@ -32,8 +33,9 @@ const TokenSupply: FunctionComponent<{
       };
     }) || [];
   const [balance, setbalance] = useState(new BigNumber(0));
+
   const amountPrice = new BigNumber(suppyToken.amount || 0)?.multipliedBy(marketData?.price || 0);
-  const supplied = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0);
+  const supplied = marketData?.balance?.div(decimals).multipliedBy(marketData.exchangeRate || 0);
   const suppliedPrice = supplied?.multipliedBy(marketData?.price || 0);
   const LTV = marketData?.markets?.[1].div(p18).toNumber() || 0;
   const borrowLimit = new BigNumber(suppyToken.amount || 0)
@@ -45,7 +47,7 @@ const TokenSupply: FunctionComponent<{
   const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
-    setbalance(tokenInfo.balance?.div(p18) || new BigNumber(0));
+    setbalance(tokenInfo.balance?.div(decimals) || new BigNumber(0));
   }, [tokenInfo.balance?.toString()]);
 
   const changeAmount = useCallback((amount: BigNumber | undefined | "") => {
@@ -93,7 +95,7 @@ const TokenSupply: FunctionComponent<{
             onClick={() => {
               changeAmount(maxAmount);
               if (inputRef.current) {
-                inputRef.current.value = maxAmount.toFixed(18);
+                inputRef.current.value = maxAmount.toFixed(marketData?.token?.decimals || 18);
               }
             }}
           >

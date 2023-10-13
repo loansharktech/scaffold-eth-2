@@ -29,8 +29,10 @@ const TokenWithdraw: FunctionComponent<{
 
   const amountPrice = new BigNumber(withdrawToken.amount || 0)?.multipliedBy(marketData?.price || 0);
 
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
+
   const supplyBalanceAmount =
-    marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
+    marketData?.balance?.div(decimals).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   const supplyBalancePrice = supplyBalanceAmount.multipliedBy(marketData?.price || 0);
 
   const borrowLimitChangedPrice = amountPrice.multipliedBy(marketData?.markets?.[1].div(p18) || 0);
@@ -52,7 +54,8 @@ const TokenWithdraw: FunctionComponent<{
 
   const supplyAPY = marketData?.tokenSupplyAPY?.multipliedBy(100).toNumber() || 0;
 
-  const supplyAmount = marketData?.balance?.div(p18).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
+  const supplyAmount =
+    marketData?.balance?.div(decimals).multipliedBy(marketData.exchangeRate || 0) || new BigNumber(0);
   let maxWithdrawAmount = new BigNumber(0);
   const liquidity = realm.accountLiquidity?.[1] || new BigNumber(0);
   if (marketData?.isMember) {
@@ -105,7 +108,7 @@ const TokenWithdraw: FunctionComponent<{
             onClick={() => {
               changeAmount(maxWithdrawAmount);
               if (inputRef.current) {
-                inputRef.current.value = maxWithdrawAmount.toFixed(18);
+                inputRef.current.value = maxWithdrawAmount.toFixed(marketData?.token?.decimals || 18);
               }
             }}
           >

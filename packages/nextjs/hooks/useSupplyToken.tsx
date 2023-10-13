@@ -7,7 +7,6 @@ import { Market, Realm } from "~~/hooks/useRealm";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
-import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { switchNetwork } from "~~/wagmi/actions";
 
@@ -21,6 +20,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
 
   const tokenContract = realm.contract.contracts[market.token as ContractName];
   const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
 
   const { data: approveAllowance, refetch } = useContractRead({
     ...tokenContract,
@@ -29,7 +29,7 @@ export function useSupplyToken(realm: Realm, market: Market) {
     args: [address, marketData?.address],
     watch: true,
   } as any);
-  const approveAllowanceAmount = new BigNumber((approveAllowance as any)?.toString() || 0).div(p18);
+  const approveAllowanceAmount = new BigNumber((approveAllowance as any)?.toString() || 0).div(decimals);
   const { writeAsync: _tokenApprove } = useContractWrite({
     mode: "recklesslyUnprepared",
     ...tokenContract,
@@ -37,7 +37,10 @@ export function useSupplyToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
     args: [
       marketData?.address,
-      ethers.utils.parseUnits(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18),
+      ethers.utils.parseUnits(
+        tradeData.amount?.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR) || "0",
+        marketData?.token?.decimals || 18,
+      ),
     ],
   } as any);
 
@@ -107,10 +110,19 @@ export function useSupplyToken(realm: Realm, market: Market) {
     functionName: "mint",
     chainId: parseInt(realm.contract.chainId),
     args: tokenContract
-      ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18)]
+      ? [
+          ethers.utils.parseUnits(
+            tradeData.amount?.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR) || "0",
+            marketData?.token?.decimals || 18,
+          ),
+        ]
       : [],
     overrides: {
-      value: tokenContract ? 0 : ethers.utils.parseEther(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0"),
+      value: tokenContract
+        ? 0
+        : ethers.utils.parseEther(
+            tradeData.amount?.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR) || "0",
+          ),
     },
   } as any);
 

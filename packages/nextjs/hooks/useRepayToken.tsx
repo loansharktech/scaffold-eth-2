@@ -7,7 +7,6 @@ import { Market, Realm } from "~~/hooks/useRealm";
 import * as toast from "~~/services/toast";
 import store, { actions, useTypedSelector } from "~~/stores";
 import { TradeStep } from "~~/stores/reducers/trade";
-import { p18 } from "~~/utils/amount";
 import { ContractName } from "~~/utils/scaffold-eth/contract";
 import { switchNetwork } from "~~/wagmi/actions";
 
@@ -31,7 +30,9 @@ export function useRepayToken(realm: Realm, market: Market) {
     watch: true,
   } as any);
 
-  const approveAllowanceAmount = new BigNumber((approveAllowance as any)?.toString() || 0).div(p18);
+  const decimals = new BigNumber(10).pow(marketData?.token?.decimals || 18);
+
+  const approveAllowanceAmount = new BigNumber((approveAllowance as any)?.toString() || 0).div(decimals);
 
   const { writeAsync: _tokenApprove } = useContractWrite({
     mode: "recklesslyUnprepared",
@@ -40,7 +41,10 @@ export function useRepayToken(realm: Realm, market: Market) {
     chainId: parseInt(realm.contract.chainId),
     args: [
       marketData?.address,
-      ethers.utils.parseUnits(tradeData.amount?.multipliedBy(1.01).toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18),
+      ethers.utils.parseUnits(
+        tradeData.amount?.multipliedBy(1.01).toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR) || "0",
+        marketData?.token?.decimals || 18,
+      ),
     ],
   } as any);
 
@@ -55,7 +59,12 @@ export function useRepayToken(realm: Realm, market: Market) {
     functionName: "repayBorrow",
     chainId: parseInt(realm.contract.chainId),
     args: tokenContract
-      ? [ethers.utils.parseUnits(tradeData.amount?.toFixed(18, BigNumber.ROUND_FLOOR) || "0", 18)]
+      ? [
+          ethers.utils.parseUnits(
+            tradeData.amount?.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR) || "0",
+            marketData?.token?.decimals || 18,
+          ),
+        ]
       : [],
   } as any);
 
@@ -101,20 +110,24 @@ export function useRepayToken(realm: Realm, market: Market) {
             recklesslySetUnpreparedArgs: [
               amount.isEqualTo(new BigNumber(-1))
                 ? "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                : ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
+                : ethers.utils.parseEther(amount.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR)),
             ],
           });
         } else {
           if (isMax) {
             res = await ethRepay({
               recklesslySetUnpreparedOverrides: {
-                value: ethers.utils.parseEther(amount.multipliedBy(1.01).toFixed(18, BigNumber.ROUND_FLOOR)),
+                value: ethers.utils.parseEther(
+                  amount.multipliedBy(1.01).toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR),
+                ),
               },
             });
           } else {
             res = await ethRepay({
               recklesslySetUnpreparedOverrides: {
-                value: ethers.utils.parseEther(amount.toFixed(18, BigNumber.ROUND_FLOOR)),
+                value: ethers.utils.parseEther(
+                  amount.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR),
+                ),
               },
             });
           }
