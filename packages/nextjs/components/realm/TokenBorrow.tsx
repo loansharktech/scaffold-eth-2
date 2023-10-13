@@ -74,7 +74,7 @@ const TokenBorrow: FunctionComponent<{
 
   const isInsufficientBalance = borrowToken.amount?.isGreaterThan(maxAmount);
   const isInvalidInput = borrowToken.amount?.isLessThan(0);
-  const cash = marketData?.cash?.div(1e18) || new BigNumber(0);
+  const cash = marketData?.cash?.div(decimals) || new BigNumber(0);
   const isInsufficientLiquidity = borrowToken.amount?.isGreaterThan(cash);
 
   if (!marketData) {

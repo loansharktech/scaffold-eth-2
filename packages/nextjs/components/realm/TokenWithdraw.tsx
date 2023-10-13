@@ -88,7 +88,7 @@ const TokenWithdraw: FunctionComponent<{
 
   const isInsufficientBalance = withdrawToken.amount?.isGreaterThan(maxWithdrawAmount);
   const isInvalidInput = withdrawToken.amount?.isLessThan(0);
-  const cash = marketData?.cash?.div(1e18) || new BigNumber(0);
+  const cash = marketData?.cash?.div(decimals) || new BigNumber(0);
   const isInsufficientLiquidity = withdrawToken.amount?.isGreaterThan(cash);
 
   if (!marketData) {
