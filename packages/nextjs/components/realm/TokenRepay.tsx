@@ -217,13 +217,10 @@ const TokenRepay: FunctionComponent<{
             let isMax = false;
             // click max
             if (maxAmount?.isEqualTo(amount)) {
-              // wallet balance >= borrow amount
-              if (amount?.isGreaterThanOrEqualTo(borrowAmount)) {
-                isMax = true;
-                // usdc token
-                if (!isETH) {
-                  amount = new BigNumber(-1);
-                }
+              isMax = true;
+              // usdc token
+              if (!isETH) {
+                amount = new BigNumber(-1);
               }
             }
             await repayToken.repay(amount, isMax);
