@@ -220,7 +220,7 @@ const TokenRepay: FunctionComponent<{
             // click max
             if (maxAmount?.isEqualTo(amount)) {
               // wallet balance >= borrow amount
-              if (amount?.isGreaterThanOrEqualTo(borrowAmount)) {
+              if (balance?.isGreaterThan(borrowAmount)) {
                 isMax = true;
                 // usdc token
                 if (!isETH) {
