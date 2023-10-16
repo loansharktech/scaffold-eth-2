@@ -110,23 +110,28 @@ export function useRepayToken(realm: Realm, market: Market) {
             recklesslySetUnpreparedArgs: [
               amount.isEqualTo(new BigNumber(-1))
                 ? "0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff"
-                : ethers.utils.parseEther(amount.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR)),
+                : ethers.utils.parseUnits(
+                    amount.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR),
+                    marketData?.token?.decimals || 18,
+                  ),
             ],
           });
         } else {
           if (isMax) {
             res = await ethRepay({
               recklesslySetUnpreparedOverrides: {
-                value: ethers.utils.parseEther(
+                value: ethers.utils.parseUnits(
                   amount.multipliedBy(1.01).toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR),
+                  marketData?.token?.decimals || 18,
                 ),
               },
             });
           } else {
             res = await ethRepay({
               recklesslySetUnpreparedOverrides: {
-                value: ethers.utils.parseEther(
+                value: ethers.utils.parseUnits(
                   amount.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR),
+                  marketData?.token?.decimals || 18,
                 ),
               },
             });

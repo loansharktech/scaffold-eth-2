@@ -120,8 +120,9 @@ export function useSupplyToken(realm: Realm, market: Market) {
     overrides: {
       value: tokenContract
         ? 0
-        : ethers.utils.parseEther(
+        : ethers.utils.parseUnits(
             tradeData.amount?.toFixed(marketData?.token?.decimals || 18, BigNumber.ROUND_FLOOR) || "0",
+            marketData?.token?.decimals || 18,
           ),
     },
   } as any);
