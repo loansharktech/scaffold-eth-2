@@ -105,6 +105,7 @@ export function useRepayToken(realm: Realm, market: Market) {
           });
         }
         let res;
+        console.log("debug:", isMax, amount.toString(), tokenContract);
         if (tokenContract) {
           res = await tokenRepay({
             recklesslySetUnpreparedArgs: [

@@ -17,7 +17,6 @@ const TokenRepay: FunctionComponent<{
   const marketData = realm[market.address];
   const tokenSelectList =
     realm.markets?.map(market => {
-      console.log("market", market);
       const marketData = realm[market.address];
       return {
         icon: marketData!.token.icon,
@@ -215,12 +214,18 @@ const TokenRepay: FunctionComponent<{
             const isETH = market.token === "ETH";
             let amount = repayToken.amount || new BigNumber(0);
             let isMax = false;
+            console.log("debug borrowAmount", borrowAmount.toString());
+            console.log("debug amount", amount.toString());
+            console.log("debug maxAmount", maxAmount.toString());
             // click max
             if (maxAmount?.isEqualTo(amount)) {
-              isMax = true;
-              // usdc token
-              if (!isETH) {
-                amount = new BigNumber(-1);
+              // wallet balance >= borrow amount
+              if (amount?.isGreaterThanOrEqualTo(borrowAmount)) {
+                isMax = true;
+                // usdc token
+                if (!isETH) {
+                  amount = new BigNumber(-1);
+                }
               }
             }
             await repayToken.repay(amount, isMax);
