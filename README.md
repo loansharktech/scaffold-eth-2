@@ -12,9 +12,9 @@ Loanshark's design of risk-isolated pools strikes an optimal balance between ris
 | Name              | Address                                                                                                                 |
 | :---------------- | :---------------------------------------------------------------------------------------------------------------------- |
 | Unitroller        | 0xC1D290D7D618b77C419B905D17673Aad0e989777 |
-| Comptroller       | 0x0E77417EbD5014B1a2c63648b7438F679a80B53F |
-| cETH              | 0xd9183863A76e0F98dcE31ebd4D1Afa6F09eB9267 | 
-| cUSDC             | 0xfaBD624b12830C04fDe9d2EaC4D96d057eAb177b | 
+| Comptroller       | 0xEFB0697700E5c489073a9BDF7EF94a2B2bc884a5 |
+| cETH              | 0xF017f9CF11558d143E603d56Ec81E4E3B6d39D7F | 
+| cUSDC             | 0x466da81A766Ff502FE8eA318D4d1E044b1Bf84C1 | 
 | Maximillion       | 0x4F5196f8b49D566342e42efD310F47Cc1C9F6d7E |
 
 ## Documentation

@@ -31,7 +31,7 @@ export const ContractInteraction = () => {
 
     const signer = provider.getSigner(walletAddress)
     const yourEthersContract = new EthersContract(
-      "0x82d2422C8a48CFA7AebEFF27FE74e3BAd0074E1e", 
+      "0xEFB0697700E5c489073a9BDF7EF94a2B2bc884a5", 
       abi, 
       signer);
       const redstoneCacheLayerUrls = [
@@ -47,7 +47,8 @@ export const ContractInteraction = () => {
       );
 
 
-    const result = await wrappedContract.getAccountLiquidity ("0x2254957426F17D301df996e1351a82BF79dD99A9"
+    const result = await wrappedContract._setCollateralFactor ("0xF017f9CF11558d143E603d56Ec81E4E3B6d39D7F",
+    "800000000000000000"
     );      
 
       //8041998586023902
