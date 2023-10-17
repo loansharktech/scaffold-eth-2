@@ -752,7 +752,7 @@ const contracts = {
           ],
         },
         Comptroller: {
-          address: "0x0E77417EbD5014B1a2c63648b7438F679a80B53F",
+          address: "0x82d2422C8a48CFA7AebEFF27FE74e3BAd0074E1e",
           abi: [
             { type: "constructor", inputs: [] },
             {
