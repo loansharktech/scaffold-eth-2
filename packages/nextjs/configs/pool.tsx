@@ -1,6 +1,6 @@
 import type { ContractName } from "~~/utils/scaffold-eth/contract";
 
-export type RealmType = "main";
+export type RealmType = "main" | "lsd";
 
 export type Token = {
   name: "USDC" | "ETH" | "WETH" | "USDT";
@@ -21,6 +21,8 @@ export type RealmConfig = {
   key: 534352;
   tokens: Token[];
   markets: Market[];
+  comptroller: string;
+  unitroller: string;
 };
 
 export const realms: RealmConfig[] = [
@@ -29,6 +31,8 @@ export const realms: RealmConfig[] = [
     name: "Main Hub",
     icon: "/assets/realm/realm-main.png",
     key: 534352,
+    comptroller: "Comptroller",
+    unitroller: "Unitroller",
     markets: [
       {
         cToken: "cETH",
@@ -37,7 +41,7 @@ export const realms: RealmConfig[] = [
       {
         cToken: "cUSDC",
         token: "USDC",
-      }, 
+      },
       {
         cToken: "cUSDT",
         token: "USDT",
@@ -56,6 +60,32 @@ export const realms: RealmConfig[] = [
         icon: "/assets/tokens/usdt.svg",
         decimals: 6,
       },
+      {
+        name: "ETH",
+        icon: "/assets/tokens/eth.svg",
+        address: "0x0000000000000000000000000000000000000000",
+        decimals: 18,
+      },
+    ],
+  },
+  {
+    id: "lsd",
+    name: "LSD Hub",
+    icon: "/assets/realm/realm-main.png",
+    key: 534352,
+    comptroller: "LSD_Comptroller",
+    unitroller: "LSD_Unitroller",
+    markets: [
+      {
+        cToken: "LSD_cETH",
+        token: "ETH",
+      },
+      {
+        cToken: "LSD_cwstETH",
+        token: "ETH",
+      },
+    ],
+    tokens: [
       {
         name: "ETH",
         icon: "/assets/tokens/eth.svg",

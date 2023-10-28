@@ -90,8 +90,15 @@ export function useRealm(realmType: RealmType) {
     contract: realmContracts,
   } as Realm);
 
+  useEffect(() => {
+    setRealm({
+      contract: realmContracts,
+    } as Realm);
+  }, [realmType]);
+
   const { data: marketAddresses = [] } = useContractRead({
-    ...realmContracts.contracts.Comptroller,
+    // @ts-ignore
+    ...realmContracts.contracts[realmInfo?.comptroller as any],
     functionName: "getAllMarkets",
   });
 
@@ -130,7 +137,7 @@ export function useRealm(realmType: RealmType) {
       return;
     }
     const SimplePriceOracleContract = realmContracts.contracts.SimplePriceOracle;
-    const ComptrollerContract = realmContracts.contracts.Comptroller;
+    const ComptrollerContract = realmContracts.contracts[realmInfo?.comptroller as ContractName];
     calls.push({
       ...marketContract,
       functionName: "getCash",
@@ -257,7 +264,10 @@ export function useRealm(realmType: RealmType) {
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("USDC", ethers.utils.parseUnits(price3.value.toString()));
 
-      const wrappedContract = await getContract(realm.contract.contracts.Comptroller.address, abi);
+      const wrappedContract = await getContract(
+        realm.contract.contracts[realmInfo?.comptroller as ContractName].address,
+        abi,
+      );
       let accountLiquidtityResult = undefined;
       try {
         const res = await wrappedContract.getAccountLiquidity(address);

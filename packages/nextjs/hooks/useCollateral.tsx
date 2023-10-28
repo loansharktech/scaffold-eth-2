@@ -12,7 +12,7 @@ import { switchNetwork } from "~~/wagmi/actions";
 export function useCollateral(realm: Realm, market: Market) {
   const { address, chain, isLogin, login } = useAccount();
 
-  const contract = realm.contract.contracts.Comptroller;
+  const contract = realm.contract.contracts[realm.config?.comptroller as "Comptroller"];
   const cTokenContract = realm.contract.contracts[market.cToken as ContractName];
   const [loading, setLoading] = useState(false);
 
