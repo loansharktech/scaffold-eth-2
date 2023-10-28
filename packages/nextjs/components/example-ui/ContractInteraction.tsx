@@ -31,8 +31,8 @@ export const ContractInteraction = () => {
 
     const signer = provider.getSigner(walletAddress)
     const yourEthersContract = new EthersContract(
-      "0x8Af46952d44F5e32ED3CDad2De0dfCeA06897B41", 
-      cethabi, 
+      "0xEFB0697700E5c489073a9BDF7EF94a2B2bc884a5", 
+      abi, 
       signer);
       const redstoneCacheLayerUrls = [
         "https://d33trozg86ya9x.cloudfront.net",
@@ -47,7 +47,7 @@ export const ContractInteraction = () => {
       );
 
 
-    const result = await wrappedContract.borrow ("5000000000000"
+    const result = await wrappedContract.getAccountLiquidity ("0x2254957426F17D301df996e1351a82BF79dD99A9"
     );      
 
       //8041998586023902
