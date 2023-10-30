@@ -369,7 +369,7 @@ export function useRealm(realmType: RealmType) {
         if (balance && supplyRatePerBlock && exchangeRate && price) {
           const supplyAmount = balance.div(decimals).multipliedBy(price).multipliedBy(exchangeRate);
           result[marketAddress]!.supplyAPY = supplyAmount.multipliedBy(
-            supplyRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
+            supplyRatePerBlock.div(p18).multipliedBy(36000).plus(1).pow(365).minus(1),
           );
           supplyAmountSUM = supplyAmountSUM.plus(supplyAmount);
         }
@@ -377,7 +377,7 @@ export function useRealm(realmType: RealmType) {
         if (supplyRatePerBlock) {
           result[marketAddress]!.tokenSupplyAPY = supplyRatePerBlock
             ?.div(p18)
-            .multipliedBy(7200)
+            .multipliedBy(36000)
             .plus(1)
             .pow(365)
             .minus(1);
@@ -385,7 +385,7 @@ export function useRealm(realmType: RealmType) {
         if (borrowRatePerBlock) {
           result[marketAddress]!.tokenBorrowAPY = borrowRatePerBlock
             ?.div(p18)
-            .multipliedBy(7200)
+            .multipliedBy(36000)
             .plus(1)
             .pow(365)
             .minus(1);
@@ -393,7 +393,7 @@ export function useRealm(realmType: RealmType) {
         if (borrowBalanceStored && borrowRatePerBlock && exchangeRate && price) {
           const borrowAmount = borrowBalanceStored.div(decimals).multipliedBy(exchangeRate).multipliedBy(price);
           result[marketAddress]!.borrowAPY = borrowAmount.multipliedBy(
-            borrowRatePerBlock.div(p18).multipliedBy(7200).plus(1).pow(365).minus(1),
+            borrowRatePerBlock.div(p18).multipliedBy(36000).plus(1).pow(365).minus(1),
           );
           borrowAmountSUM = borrowAmountSUM.plus(borrowAmount);
         }
