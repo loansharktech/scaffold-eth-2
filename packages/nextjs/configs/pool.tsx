@@ -3,7 +3,7 @@ import type { ContractName } from "~~/utils/scaffold-eth/contract";
 export type RealmType = "main" | "lsd";
 
 export type Token = {
-  name: "USDC" | "ETH" | "WETH" | "USDT";
+  name: "USDC" | "ETH" | "WETH" | "USDT" | "wstETH";
   address: string;
   icon: string;
   decimals: number;
@@ -82,12 +82,18 @@ export const realms: RealmConfig[] = [
       },
       {
         cToken: "LSD_cwstETH",
-        token: "ETH",
+        token: "wstETH",
       },
     ],
     tokens: [
       {
         name: "ETH",
+        icon: "/assets/tokens/eth.svg",
+        address: "0x0000000000000000000000000000000000000000",
+        decimals: 18,
+      },
+      {
+        name: "wstETH",
         icon: "/assets/tokens/eth.svg",
         address: "0x0000000000000000000000000000000000000000",
         decimals: 18,

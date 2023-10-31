@@ -12,7 +12,7 @@ const TotalSupplyColumn: FunctionComponent<{
     <div>
       <div className="text-lg whitespace-nowrap number">{amount ? `$${amountDesc(price, 2)}` : "-.--"}</div>
       <div className="text-sm text-[#6E788C] number">
-        {amountDesc(amount, 2)} {token.name.toUpperCase()}
+        {amountDesc(amount, 2)} {token.name}
       </div>
     </div>
   );

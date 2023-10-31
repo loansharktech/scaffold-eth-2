@@ -69,6 +69,7 @@ export type Realm = {
 };
 
 function processContractValue(data: string | boolean | EBigNumber) {
+  console.log("data", data);
   if (typeof data === "boolean" || typeof data === "string") {
     return data;
   } else {
@@ -258,11 +259,13 @@ export function useRealm(realmType: RealmType) {
       const price1 = await redstone.getPrice("USDC");
       const price2 = await redstone.getPrice("ETH");
       const price3 = await redstone.getPrice("USDT");
+      const price4 = await redstone.getPrice("wstETH");
       const priceArray = new Map();
       priceArray.set("USDT", ethers.utils.parseUnits(price1.value.toString()));
       priceArray.set("WETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("USDC", ethers.utils.parseUnits(price3.value.toString()));
+      priceArray.set("wstETH", ethers.utils.parseUnits(price4.value.toString()));
 
       const wrappedContract = await getContract(
         realm.contract.contracts[realmInfo?.comptroller as ContractName].address,

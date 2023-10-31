@@ -15,6 +15,12 @@ const bridges = [
     link: "https://app.squidrouter.com/",
     icon: "/assets/squid.png",
   },
+  {
+    label: "Celer Bridge",
+    desc: "cBridge is a multi-chain, cross-layer asset bridge offering instant transfer with the most number of chains, lowest fee and zero trust.",
+    link: "https://cbridge.celer.network/",
+    icon: "/assets/celer.png",
+  },
 ];
 
 const Home: NextPage = () => {
