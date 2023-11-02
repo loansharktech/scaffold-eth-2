@@ -31,6 +31,9 @@ const LSDPool: FunctionComponent = () => {
               <div className="flex items-center gap-2 w-fit mt-[13px]">
                 {realm?.markets?.map(market => {
                   const cToken = realm[market.address];
+                  if (!cToken?.token?.icon) {
+                    return null;
+                  }
                   return (
                     <img
                       key={market.cToken}
