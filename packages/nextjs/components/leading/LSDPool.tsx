@@ -25,7 +25,10 @@ const LSDPool: FunctionComponent = () => {
             Isolated
           </div>
           <div className="flex items-start">
-            <Image alt="pool icon" src={defaultPool.icon} width={47} height={47}></Image>
+            <div className="border w-[47px] h-[47px] border-[#9CA3AF] rounded-[10px] bg-white flex items-center justify-center">
+              <Image alt="pool icon" src={defaultPool.icon} width={32} height={32}></Image>
+            </div>
+
             <div className="flex flex-col ml-[18px] mt-2 ">
               <div className="flex items-center">
                 <div className="text-2xl font-medium text-dark2">{defaultPool.name}</div>

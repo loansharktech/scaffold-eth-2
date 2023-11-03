@@ -70,7 +70,7 @@ const TokenManagerDialog: FunctionComponent<{
       }}
     >
       <div className="text-white text-[32px] font-bold flex items-center justify-between">
-        <span>{market.token.toUpperCase()}</span>
+        <span>{market.token}</span>
         <CloseButton
           size="lg"
           className="text-white !bg-transparent action"

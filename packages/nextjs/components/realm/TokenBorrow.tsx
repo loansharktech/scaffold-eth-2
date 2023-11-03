@@ -21,7 +21,7 @@ const TokenBorrow: FunctionComponent<{
       return {
         icon: marketData!.token.icon,
         value: market.address,
-        label: market.token.toUpperCase(),
+        label: market.token,
       };
     }) || [];
 
@@ -114,9 +114,17 @@ const TokenBorrow: FunctionComponent<{
           value={market.address}
           data={tokenSelectList}
           onChange={onChangeMarket}
-          rightSectionWidth={70}
+          rightSectionWidth={60}
           ref={selectRef}
-          rightSection={<Image alt={marketData.token.name} src={marketData.token.icon} width={32} height={32}></Image>}
+          rightSection={
+            <Image
+              className="rounded-full"
+              alt={marketData.token.name}
+              src={marketData.token.icon}
+              width={32}
+              height={32}
+            ></Image>
+          }
         />
         <Input
           placeholder="0.00"

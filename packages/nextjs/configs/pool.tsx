@@ -71,7 +71,7 @@ export const realms: RealmConfig[] = [
   {
     id: "lsd",
     name: "LSD Hub",
-    icon: "/assets/realm/realm-main.png",
+    icon: "/assets/realm/lsd.png",
     key: 534352,
     comptroller: "LSD_Comptroller",
     unitroller: "LSD_Unitroller",
