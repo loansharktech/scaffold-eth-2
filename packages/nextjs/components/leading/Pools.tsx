@@ -17,9 +17,6 @@ const Pools: FunctionComponent = () => {
 
   return (
     <div className="flex flex-col items-center mx-4">
-      <div className="bg-white w-[231px] h-[54px] flex items-center justify-center rounded-[10px] text-lg font-semibold">
-        Pools
-      </div>
       <Link href={`/realms/${defaultPool.id}`}>
         <div className="mt-7 bg-white/80 rounded-lg sm:w-[872px] px-4 sm:px-8 py-7 pb-[43px] action">
           <div className="flex items-center justify-between">

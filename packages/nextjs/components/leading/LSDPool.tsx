@@ -1,6 +1,7 @@
 import type { FunctionComponent } from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowRightIcon } from "~~/components/common/icons";
 import { realms } from "~~/configs/pool";
 import { useRealm } from "~~/hooks/useRealm";
 import { amountDesc } from "~~/utils/amount";
@@ -20,13 +21,17 @@ const LSDPool: FunctionComponent = () => {
     <div className="flex flex-col items-center mx-4">
       <Link href={`/realms/${defaultPool.id}`}>
         <div className="mt-7 bg-white/80 rounded-lg sm:w-[872px] px-4 sm:px-8 py-7 pb-[43px] action relative">
-          <div className="absolute top-[23px] w-[93px] h-[42px] right-[29px] flex items-center justify-center bg-white rounded-[10px] text-[#001910] font-DMSans font-[700]">
+          <div className="absolute top-[23px] w-[93px] h-8 right-[29px] flex items-center justify-center bg-[#1B2736] rounded-2xl text-white/80 text-sm">
             Isolated
           </div>
           <div className="flex items-start">
             <Image alt="pool icon" src={defaultPool.icon} width={47} height={47}></Image>
             <div className="flex flex-col ml-[18px] mt-2 ">
-              <div className="text-2xl font-medium text-dark2">{defaultPool.name}</div>
+              <div className="flex items-center">
+                <div className="text-2xl font-medium text-dark2">{defaultPool.name}</div>
+                <ArrowRightIcon className="ml-[10px]"></ArrowRightIcon>
+              </div>
+
               <div className="text-[#606060] mt-2">Dedicated realm for Liquid Staking Derivatives (LSD).</div>
               <div className="flex items-center gap-2 w-fit mt-[13px]">
                 {realm?.markets?.map(market => {

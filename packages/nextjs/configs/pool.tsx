@@ -71,7 +71,7 @@ export const realms: RealmConfig[] = [
   {
     id: "lsd",
     name: "LSD Hub",
-    icon: "/assets/realm/lsd.png",
+    icon: "/assets/realm/realm-main.png",
     key: 534352,
     comptroller: "LSD_Comptroller",
     unitroller: "LSD_Unitroller",
@@ -95,7 +95,7 @@ export const realms: RealmConfig[] = [
       {
         name: "wstETH",
         icon: "/assets/tokens/wsteth.jpeg",
-        address: "0x0000000000000000000000000000000000000000",
+        address: "0xf610A9dfB7C89644979b4A0f27063E9e7d7Cda32",
         decimals: 18,
       },
     ],

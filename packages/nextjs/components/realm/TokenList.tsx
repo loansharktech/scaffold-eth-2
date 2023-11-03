@@ -89,7 +89,7 @@ const TokenList: FunctionComponent<{
     <div className={`bg-white/80 border border-[#E3F2FF] rounded-lg ${className} overflow-x-scroll scrollbar-hide`}>
       <Table horizontalSpacing="xl">
         <thead>
-          <tr>
+          <tr className="number">
             <th className="columns-2 ">Token</th>
             <th>Collateral</th>
             <th>Wallet Balance</th>
