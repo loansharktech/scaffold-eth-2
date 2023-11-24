@@ -17,7 +17,7 @@ export function useAddNetwork() {
       const network = scaffoldConfig.targetNetwork;
 
       if (window.ethereum) {
-        const rpcUrls = ["https://scroll.blockpi.network/v1/rpc/fed5ba0f86f2d35aba97807cdb1b31c400e5e52a"];
+        const rpcUrls = ["https://rpc.scroll.io"];
 
         const params = {
           chainId: toHex(network.id), // A 0x-prefixed hexadecimal string

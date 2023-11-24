@@ -5,11 +5,11 @@ export declare const scroll: {
   nativeCurrency: { name: "Ether"; symbol: "ETH"; decimals: 18 };
   rpcUrls: {
     default: {
-      http: ["https://scroll.blockpi.network/v1/rpc/fed5ba0f86f2d35aba97807cdb1b31c400e5e52a"];
+      http: ["https://rpc.scroll.io"];
       webSocket: ["wss://wss-rpc.scroll.io/ws/"];
     };
     public: {
-      http: ["https://scroll.blockpi.network/v1/rpc/fed5ba0f86f2d35aba97807cdb1b31c400e5e52a"];
+      http: ["https://rpc.scroll.io"];
       webSocket: ["wss://wss-rpc.scroll.io/ws/"];
     };
   };
