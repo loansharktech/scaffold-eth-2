@@ -1,3 +1,4 @@
+import { okxWallet } from "./okx";
 import { connectorsForWallets } from "@rainbow-me/rainbowkit";
 import {
   braveWallet,
@@ -47,6 +48,7 @@ export const appChains = configureChains(
 
 const wallets = [
   metaMaskWallet({ chains: appChains.chains, shimDisconnect: true }),
+  okxWallet({ chains: appChains.chains }),
   walletConnectWallet({ chains: appChains.chains }),
   ledgerWallet({ chains: appChains.chains }),
   braveWallet({ chains: appChains.chains }),
