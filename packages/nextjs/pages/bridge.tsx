@@ -21,6 +21,12 @@ const bridges = [
     link: "https://cbridge.celer.network/",
     icon: "/assets/celer.png",
   },
+  {
+    label: "Rhino.fi",
+    desc: "Rhino.fi is the ultimate Layer 2 bridge for effortless multi-chian token movement.",
+    link: "https://rhino.fi/",
+    icon: "/assets/rhino.jpg",
+  },
 ];
 
 const Home: NextPage = () => {
