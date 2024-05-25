@@ -260,12 +260,14 @@ export function useRealm(realmType: RealmType) {
       const price2 = await redstone.getPrice("ETH");
       const price3 = await redstone.getPrice("USDT");
       const price4 = await redstone.getPrice("wstETH");
+      const price5 = await redstone.getPrice("STONE");
       const priceArray = new Map();
       priceArray.set("USDT", ethers.utils.parseUnits(price1.value.toString()));
       priceArray.set("WETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("ETH", ethers.utils.parseUnits(price2.value.toString()));
       priceArray.set("USDC", ethers.utils.parseUnits(price3.value.toString()));
       priceArray.set("wstETH", ethers.utils.parseUnits(price4.value.toString()));
+      priceArray.set("STONE", ethers.utils.parseUnits(price5.value.toString()));
 
       const wrappedContract = await getContract(
         realm.contract.contracts[realmInfo?.comptroller as ContractName].address,

@@ -3,7 +3,7 @@ import type { ContractName } from "~~/utils/scaffold-eth/contract";
 export type RealmType = "main" | "lsd";
 
 export type Token = {
-  name: "USDC" | "ETH" | "WETH" | "USDT" | "wstETH";
+  name: "USDC" | "ETH" | "WETH" | "USDT" | "wstETH" | "STONE";
   address: string;
   icon: string;
   decimals: number;
@@ -46,6 +46,10 @@ export const realms: RealmConfig[] = [
         cToken: "cUSDT",
         token: "USDT",
       },
+      {
+        cToken: "cSTONE",
+        token: "STONE",
+      },
     ],
     tokens: [
       {
@@ -64,6 +68,12 @@ export const realms: RealmConfig[] = [
         name: "ETH",
         icon: "/assets/tokens/eth.svg",
         address: "0x0000000000000000000000000000000000000000",
+        decimals: 18,
+      },
+      {
+        name: "STONE",
+        icon: "/assets/tokens/stone.jpg",
+        address: "0x80137510979822322193FC997d400D5A6C747bf7",
         decimals: 18,
       },
     ],

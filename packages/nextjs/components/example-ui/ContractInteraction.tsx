@@ -40,7 +40,7 @@ export const ContractInteraction = () => {
       const config = {
         dataServiceId: "redstone-primary-prod",
         uniqueSignersCount: 3,
-        dataFeeds: ["USDC", "ETH", "wstETH", "USDT"]
+        dataFeeds: ["USDC", "ETH", "wstETH", "USDT", "STONE"]
       };
       const wrappedContract = WrapperBuilder.wrap(yourEthersContract).usingDataService(
         config

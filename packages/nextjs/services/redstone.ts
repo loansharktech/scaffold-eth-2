@@ -16,7 +16,7 @@ export async function getContract(contractAddr: string, abi: any) {
   const test = {
     dataServiceId: "redstone-primary-prod",
     uniqueSignersCount: 3,
-    dataFeeds: ["USDC", "ETH", "wstETH", "USDT"],
+    dataFeeds: ["USDC", "ETH", "wstETH", "USDT", "STONE"],
   };
   const wrappedContract = WrapperBuilder.wrap(yourEthersContract).usingDataService(test);
   return wrappedContract;
